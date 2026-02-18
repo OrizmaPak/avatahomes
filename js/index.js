@@ -186,8 +186,22 @@ async function runPermissions(){
                      subitems[i].classList.remove('hidden');
              }}
         if(request.role != 'SUPERADMIN'){ 
+            const permissionAliases = {
+                'REGISTER CLIENT': ['REGISTER TENANT'],
+                'VIEW CLIENTS': ['VIEW TENANTS'],
+                'REGISTER TENANT': ['REGISTER CLIENT'],
+                'VIEW TENANTS': ['VIEW CLIENTS'] 
+            };
+            const permissionList = userpermission
+                ? (userpermission.includes('|') ? userpermission.split('|') : [userpermission])
+                    .map(item => item.trim().toUpperCase())
+                    .filter(Boolean)
+                : [];
             for(i=0; i<subitems.length; i++){
-              if(userpermission && userpermission.includes('|') ? userpermission.split('|').includes(subitems[i].textContent.toUpperCase().trim()) : userpermission.includes(subitems[i].textContent.toUpperCase().trim())){
+              const label = subitems[i].textContent.toUpperCase().trim();
+              const aliases = permissionAliases[label] || [];
+              const hasPermission = permissionList.includes(label) || aliases.some(alias => permissionList.includes(alias));
+              if(hasPermission){
                     if(permission_switch === 'ON')subitems[i].classList.remove('hidden');
                 }else{
                     if(permission_switch === 'ON')subitems[i].classList.add('hidden');

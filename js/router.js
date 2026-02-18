@@ -172,11 +172,6 @@ const routerTree = {
         startingFunction: 'balancesheetActive',
         scriptName: './js/balancesheet.js'
     },
-    generalaccountreport: {
-        template: 'generalaccountreport',
-        startingFunction: 'generalaccountreportActive',
-        scriptName: './js/generalaccountreport.js'
-    },
     morefees: {
         template: 'morefees',
         startingFunction: 'morefeesActive',
@@ -187,7 +182,7 @@ const routerTree = {
         startingFunction: 'expensesActive',
         scriptName:  './js/expenses.js'
     },
-    viewexpenses: {
+    viewexpenses: { 
         template: 'viewexpenses',
         startingFunction: 'viewexpensesActive',
         scriptName:  './js/viewexpenses.js'

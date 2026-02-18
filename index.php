@@ -200,10 +200,9 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
                                         <li class="navitem-child" id="trialbalance">Trial Balance</li>
                                         <li class="navitem-child" id="incomestatement">Income Statement</li>
                                         <li class="navitem-child" id="balancesheet">Balance Sheet</li>
-                                        <li class="navitem-child" id="generalaccountreport">General Account Report</li>
                                     </ul>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item"> 
                                     <span class="navitem-title group">
                                         <span class="material-symbols-outlined group-hover:text-primary-g"
                                             style="font-size: 20px;">settings</span>

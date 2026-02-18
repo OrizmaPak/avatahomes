@@ -22,9 +22,19 @@ const transaction_user = [
     "NET TRANSACTIONS"
   ]
 
+const accounts_user = [
+    "ADD GL ACCOUNT",
+    "VIEW GL ACCOUNTS", 
+    "ADD GL TRANSACTION",
+    "GL TRANSACTION HISTORY",
+    "TRIAL BALANCE",
+    "INCOME STATEMENT",
+    "BALANCE SHEET"
+  ]
+
 const settings_user = [
     "MORE FEES"
-  ]
+  ] 
   
   
 
@@ -33,6 +43,7 @@ const access_array = [
                         ['property_user', 'PROPERTY', property_user], 
                         ['tenancy_rental', 'CLIENTS/RENTAL', tenancy_rental],
                         ['transaction_user', 'OTHER TRANSACTION', transaction_user],
+                        ['accounts_user', 'ACCOUNTS', accounts_user],
                         ['settings_user', 'SETTINGS', settings_user],
                     ]
 
