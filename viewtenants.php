@@ -1,6 +1,6 @@
                     <section class="animate__animated animate__fadeIn">
                             <p class="page-title">
-                                <span>view Tenant</span>
+                                <span>View Client</span>
                             </p>
                             <form id="viewtenantssform">
                                 <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">
@@ -14,7 +14,7 @@
                                         <button type="button" id="submit" class="btn">
                                             <div class="btnloader" style="display: none;" ></div>
                                             <span>Submit</span>
-                                        </button>
+                                        </button> 
                                     </div>
                                     </div> 
                         

@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <style>
-        :root {
+        :root { 
             --white: #ffffff;
             --white-soft: #f8fbff;
             --line: #d8e4f5;
@@ -580,7 +580,7 @@
                         <span class="tag">Real Estate Operations</span>
                         <h1>Smart operations for property sales and management.</h1>
                         <p>
-                            WeRent helps teams manage unit listings, occupancy, tenant tracking, and property
+                            Avatar Homes helps teams manage unit listings, occupancy, client tracking, and property
                             transactions from one modern platform. This public page is your default inquiry channel
                             to start registration.
                         </p>
@@ -597,17 +597,17 @@
                 <article id="details" class="panel details animate__animated animate__fadeInUp">
                     <h2 class="section-title">Built for property teams that need speed and structure</h2>
                     <p class="section-sub">
-                        A clean workflow from inquiry to active tenancy, with practical tools for daily operations.
+                        A clean workflow from inquiry to active client lifecycle, with practical tools for daily operations.
                     </p>
 
                     <div class="stats-grid">
                         <div class="stats-item">
                             <strong>Single Dashboard</strong>
-                            Manage property and tenancy activity in one place.
+                            Manage property and client activity in one place.
                         </div>
                         <div class="stats-item">
                             <strong>Accurate Records</strong>
-                            Keep client, tenant, and dependent profiles organized.
+                            Keep client and dependent profiles organized.
                         </div>
                         <div class="stats-item">
                             <strong>Quicker Follow-Up</strong>
@@ -625,7 +625,7 @@
                             Organize available units and property metadata clearly.
                         </article>
                         <article class="service">
-                            <strong>Tenant and Client Intake</strong>
+                            <strong>Client Intake</strong>
                             Register details with validation and clean records.
                         </article>
                         <article class="service">
@@ -658,7 +658,7 @@
                             <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80" alt="Modern living room interior">
                             <div class="copy">
                                 <strong>Quality Accommodation</strong>
-                                Showcasing well-managed living spaces with clear tenant onboarding.
+                                Showcasing well-managed living spaces with clear client onboarding.
                             </div>
                         </article>
                         <article class="showcase-card">
@@ -672,7 +672,7 @@
                             <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80" alt="Apartment corridor">
                             <div class="copy">
                                 <strong>Organized Occupancy</strong>
-                                Structured unit assignment and verified tenant records.
+                                Structured unit assignment and verified client records.
                             </div>
                         </article>
                         <article class="showcase-card">
@@ -685,7 +685,7 @@
                     </div>
 
                     <p class="default-note">
-                        Default sign-up point: complete the inquiry form to register interest as a tenant, client, or dependent.
+                        Default sign-up point: complete the inquiry form to register interest as a client or dependent.
                     </p>
                 </article>
             </section>

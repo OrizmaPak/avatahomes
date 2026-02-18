@@ -21,7 +21,7 @@ async function fetchviewtenantss(id) {
             if(request.data.length) {
                 datasource = request.data
                 resolvePagination(datasource, onviewtenantsTableDataSignal)
-            }
+            } 
         }else{
              viewtenantsid = request.data[0].id
              addproductsid = request.data[0].id
@@ -33,7 +33,7 @@ async function fetchviewtenantss(id) {
 
 async function viewtenantsremove(id) {
     // Ask for confirmation
-    const confirmed = window.confirm("Are you sure you want to remove this tenant?");
+    const confirmed = window.confirm("Are you sure you want to remove this client?");
 
     // If not confirmed, do nothing
     if (!confirmed) {
@@ -87,7 +87,7 @@ async function showDependantModal(tenantId, tenantName) {
     // 1️⃣  Fetch the right tenant record
     const record = datasource.find(d => d.tenantdata.id === tenantId);
     if (!record) {
-      console.warn('Tenant not found:', tenantId);
+      console.warn('Client not found:', tenantId);
       return; 
     }
    
@@ -103,7 +103,7 @@ async function showDependantModal(tenantId, tenantName) {
   
     // 3️⃣  SweetAlert2 popup
     await Swal.fire({
-      title: `<h4 class="m-0" style="color:black">${tenantName}'s Dependants Below</h4>`,
+      title: `<h4 class="m-0" style="color:black">${tenantName}'s Dependants (Client)</h4>`,
       html: `
         <style>
           .swal2-popup table { border-collapse: collapse; width: 100%; }

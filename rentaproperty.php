@@ -8,9 +8,9 @@
             
             <div>
                 <div id="registeratenantform" class="hidden">
-                    <p class="section-title font-medium text-lg mb-2">Tenant Details</p>
+                    <p class="section-title font-medium text-lg mb-2">Client Details</p>
                     <hr>
-                    <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">
+                    <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm"> 
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div class="form-group">
                                 <label for="country" class="control-label">last name</label>
@@ -103,18 +103,18 @@
                     <button type="button" class="btn"
                         onclick="did('selecte').classList.add('hidden');did('registeratenantform').classList.add('hidden');did('existingtenant').classList.remove('hidden')">
                         <div class="btnloader" style="display: none;"></div>
-                        <span>Select from existing tenant</span>
+                        <span>Select from existing client</span>
                     </button>
                 </div>
 
 
                 <div id="existingtenant">
-                    <label for="tenantid" class="control-label text-gray-700 font-medium text-sm">Tenant</label>
+                    <label for="tenantid" class="control-label text-gray-700 font-medium text-sm">Client</label>
                     <div class="flex-1 flex items-center gap-2">
                         <select
                             class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-shadow"
                             name="tenantid" id="tenantid">
-                            <option value="">-- Select Existing Tenant --</option>
+                            <option value="">-- Select Existing Client --</option>
                         </select>
                         <button type="button"
                             onclick="did('selecte').classList.remove('hidden');did('registeratenantform').classList.remove('hidden');did('existingtenant').classList.add('hidden')"

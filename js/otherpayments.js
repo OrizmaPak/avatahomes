@@ -5,9 +5,9 @@ async function otherpaymentsActive() {
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', otherpaymentssubmitss)
     let request1 = await httpRequest2('../controllers/fetchtenants', null, null, 'json')
     if(request1.status){
-        document.getElementById('ownerid').innerHTML = `<option value="">-- Select Tenant --</option>`
+        document.getElementById('ownerid').innerHTML = `<option value="">-- Select Client --</option>`
             document.getElementById('ownerid').innerHTML += request1.data.map(data=>`<option value="${data.tenantdata.id}">${data.tenantdata.firstname} ${data.tenantdata.lastname} ${data.tenantdata.othernames}</option>`).join('');
-    }else return notification('Unable to retrieve tenants try reloading')
+    }else return notification('Unable to retrieve clients try reloading')
     if(otherpaymentsid){
         document.getElementById('id').value = otherpaymentsid
         function payloadd(){
@@ -17,7 +17,7 @@ async function otherpaymentsActive() {
         }
          let request = await httpRequest2('../controllers/paymenthistory', payloadd())
         //  request = JSON.parse(request)
-         if(request.status){
+         if(request.status){ 
              if(request.data.length){
                  console.log('data gotten', request.data)
                  populateData(request.data[0])

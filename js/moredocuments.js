@@ -11,13 +11,13 @@ async function moredocumentsActive() {
     let request1 = await httpRequest2('../controllers/fetchtenants', null, null, 'json')
     if(request1.status){
         console.log('request1', request1)   
-        document.getElementById('tenantid').innerHTML = `<option value="">-- Select Tenant --</option>`
+        document.getElementById('tenantid').innerHTML = `<option value="">-- Select Client --</option>`
             document.getElementById('tenantid').innerHTML += request1.data.map(data=>`<option value="${data.tenantdata.id}">${data.tenantdata.firstname} ${data.tenantdata.lastname} ${data.tenantdata.othernames}</option>`).join('');
-    }else return notification('Unable to retrieve tenants try reloading')
+    }else return notification('Unable to retrieve clients try reloading')
     if(moredocumentsid){
         document.getElementById('id').value = moredocumentsid
         function payloadd(){
-            let params = new FormData()
+            let params = new FormData() 
             params.append('id', moredocumentsid)
             return params
         }

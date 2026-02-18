@@ -10,16 +10,16 @@ async function paymenthistoryActive() {
   const tRes = await httpRequest2('../controllers/fetchtenants', null, null, 'json');
   if (tRes.status) {
     document.getElementById('ownerid').innerHTML =
-      `<option value="">-- Select Tenant --</option>` +
+      `<option value="">-- Select Client --</option>` +
       tRes.data.map(t => `<option value="${t.tenantdata.id}">${t.tenantdata.firstname} ${t.tenantdata.lastname} ${t.tenantdata.othernames}</option>`).join('');
-  } else notification('Unable to retrieve tenants, please reload.');
+  } else notification('Unable to retrieve clients, please reload.');
 
   /* Org */
   try {
     const res = await fetch('../controllers/fetchorganisation');
     const data = await res.json();
     if (data.status) organizationData = data.data[0];
-  } catch (err) { console.error('Org fetch error', err); }
+  } catch (err) { console.error('Org fetch error', err); } 
 }
 
 /* -------- FORM SUBMIT -------- */
@@ -53,7 +53,7 @@ async function paymenthistoryFormSubmitHandler(flag = '') {
 
 async function paymenthistoryremove(id) {
     // Ask for confirmation
-    const confirmed = window.confirm("Are you sure you want to remove this tenant?");
+    const confirmed = window.confirm("Are you sure you want to remove this client?");
 
     // If not confirmed, do nothing
     if (!confirmed) {
@@ -278,7 +278,7 @@ function generateReceiptHTML(item) {
                 <p><strong>Date:</strong> ${payDate}</p>
               </div>
               <div>
-                <p><strong>Tenant:</strong> ${item.firstname} ${item.lastname}</p>
+                <p><strong>Client:</strong> ${item.firstname} ${item.lastname}</p>
                 <p><strong>Description:</strong> ${item.description || '—'}</p>
               </div>
             </div>

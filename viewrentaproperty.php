@@ -13,7 +13,7 @@
                                             <label for="logoname" class="control-label">end date</label>
                                             <input type="date" name="enddate" id="enddate" class="form-control">
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group"> 
                                             <label for="logoname" class="control-label">Property Number
                                             </label>
                                              <input type="text" name="propertyidno" id="propertyidno" class="form-control">
@@ -58,7 +58,7 @@
         <tr style="background:#64748b !important; color: white !important;">
             <th>S/N</th>
             <th>Product</th>
-            <th>Tenant</th>
+            <th>Client</th>
             <th>Unit</th>
             <th>Amount Paid</th>
             <th class="hidden">Rent</th>
@@ -147,7 +147,7 @@
     
     <div class="details-grid row mb-4">
       <div class="col-md-6">
-        <p><strong>Tenant:</strong> <span id="rcptTenant"></span></p>
+        <p><strong>Client:</strong> <span id="rcptTenant"></span></p>
         <p><strong>Property:</strong> <span id="rcptProperty"></span></p>
         <p><strong>Unit:</strong> <span id="rcptUnit"></span></p>
       </div>

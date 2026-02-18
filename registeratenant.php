@@ -1,10 +1,10 @@
 <section class="animate__animated animate__fadeIn">
                                             <input type="hidden" id="id" >
                             <p class="page-title">
-                                <span>Register Tenant</span>
+                                <span>Register Client</span>
                             </p>
                             <form id="registeratenantform">
-                                <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">
+                                <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm"> 
                                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                         <div class="form-group">
                                             <label for="country" class="control-label">last name</label>

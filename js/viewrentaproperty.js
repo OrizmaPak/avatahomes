@@ -38,13 +38,13 @@ async function fetchviewrentapropertys(id) {
 
 async function viewrentapropertyremove(id) {
     // Ask for confirmation
-    const confirmed = window.confirm("Are you sure you want to remove this tenant?");
+    const confirmed = window.confirm("Are you sure you want to remove this client?");
 
     // If not confirmed, do nothing
     if (!confirmed) {
         return;
     }
-
+ 
     function getparamm() {
         let paramstr = new FormData();
         paramstr.append('id', id);

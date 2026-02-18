@@ -19,7 +19,7 @@ function getRentAddRowButton() {
 
 function setRentAddRowButtonLoading(isLoading) {
   const button = getRentAddRowButton();
-  if (!button) return;
+  if (!button) return; 
   if (isLoading) {
     button.dataset.ready = '';
     button.setAttribute('aria-busy', 'true');
@@ -62,12 +62,12 @@ async function rentapropertyActive() {
   const tRes = await httpRequest2('../controllers/fetchtenants', null, null, 'json');
   if (tRes.status) {
     document.getElementById('tenantid').innerHTML =
-      `<option value="">-- Select Tenant --</option>` +
+      `<option value="">-- Select Client --</option>` +
       tRes.data.map(d =>
         `<option value="${d.tenantdata.id}">${d.tenantdata.firstname} ${d.tenantdata.lastname} ${d.tenantdata.othernames}</option>`
       ).join('');
   } else {
-    return notification('Unable to retrieve tenants, please reload.', 0);
+    return notification('Unable to retrieve clients, please reload.', 0);
   }
 
   // Fetch properties

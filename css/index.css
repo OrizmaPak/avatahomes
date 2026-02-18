@@ -9,13 +9,13 @@
 
 *,
 ::before,
-::after { 
+::after {
   box-sizing: border-box;
   /* 1 */
   border-width: 0;
   /* 2 */
   border-style: solid;
-  /* 2 */
+  /* 2 */ 
   border-color: #e5e7eb;
   /* 2 */
 }
@@ -2026,20 +2026,20 @@ button:disabled {
 }
 
 .dashboard-theme .table-content table thead tr {
-  background-color: #d1ab45;
+  background-color: #9b6f12; 
 }
 
 .dashboard-theme .table-content table thead tr th {
-  color: #fffdf7;
+  color: #ffffff;
 }
 
 .dashboard-theme .table-content table tbody tr {
-  border-bottom: 1px solid #f3e7c9;
+  border-bottom: 1px solid #f3e7c9; 
   background-color: #fffefb;
 }
 
 .dashboard-theme .table-content table tbody tr:hover {
-  background-color: #fff7df;
+  background-color: #fff7df; 
 }
 
 .dashboard-theme .table-content table tbody tr td {

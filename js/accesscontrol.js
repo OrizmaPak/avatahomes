@@ -16,7 +16,7 @@ const tenancy_rental = [
 
 const transaction_user = [
     "OTHER PAYMENTS",
-    "PAYMENT HISTORY",
+    "PAYMENT HISTORY", 
     "EXPENSES",
     "VIEW EXPENSES",
     "NET TRANSACTIONS"
@@ -31,10 +31,18 @@ const settings_user = [
 const access_array = [
                         ['accessctrl_user', 'USER', accessctrl_user], 
                         ['property_user', 'PROPERTY', property_user], 
-                        ['tenancy_rental', 'TENANCY/RENTAL', tenancy_rental],
+                        ['tenancy_rental', 'CLIENTS/RENTAL', tenancy_rental],
                         ['transaction_user', 'OTHER TRANSACTION', transaction_user],
                         ['settings_user', 'SETTINGS', settings_user],
                     ]
+
+function permissionDisplayName(permission) {
+    const map = {
+        "REGISTER TENANT": "REGISTER CLIENT",
+        "VIEW TENANTS": "VIEW CLIENTS"
+    };
+    return map[permission] || permission;
+}
 
 async function accesscontrolActive() {
     const form = document.querySelector('#accesscontrolsform')
@@ -94,7 +102,7 @@ function accessappendboard(res){
         document.getElementById(`${access_array[i][0]}`).innerHTML += access_array[i][2].map(data=>`<label class="bg-[#1d68e305] p-2 pl-1 mb-[1px] relative inline-flex items-center cursor-pointer">
                                           <input type="checkbox" name="${data}" ${res.permissions.split('||').includes(data) ? 'checked' : ''} class="sr-only peer accesscontroller">
                                           <div class="scale-[0.8] w-11 h-6 bg-gray-400 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                          <span class="ms-2 text-xs font-medium text-blue-900">${data}</span>
+                                          <span class="ms-2 text-xs font-medium text-blue-900">${permissionDisplayName(data)}</span>
                                         </label>`).join('')
     }
     

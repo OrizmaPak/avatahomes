@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeRent | Register    </title>
+    <title>Avatar Homes | Inquiry</title>
 
-    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/index.css"> 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -16,15 +16,15 @@
     <style>
         :root {
             --white: #ffffff;
-            --white-soft: #f8fbff;
-            --line: #d8e4f5;
-            --ink: #10233f;
-            --ink-soft: #5f738f;
-            --blue: #1e4f91;
-            --blue-soft: #e9f1ff; 
-            --red: #d8142d;
-            --red-soft: #ffedf1;
-            --shadow: 0 16px 34px rgba(12, 33, 66, 0.1);
+            --white-soft: #fffdf7;
+            --line: #eadcb7;
+            --ink: #3f2f15;
+            --ink-soft: #7a6640; 
+            --blue: #b88a1c;
+            --blue-soft: #fff5dc;
+            --red: #a97a16;
+            --red-soft: #fff2d4;
+            --shadow: 0 16px 34px rgba(116, 83, 13, 0.14);
         } 
 
         html,
@@ -37,8 +37,8 @@
             font-family: Manrope, sans-serif;
             color: var(--ink);
             background:
-                radial-gradient(circle at 90% 5%, rgba(30, 79, 145, 0.08), transparent 33%),
-                radial-gradient(circle at 4% 10%, rgba(216, 20, 45, 0.08), transparent 30%),
+                radial-gradient(circle at 90% 5%, rgba(184, 138, 28, 0.12), transparent 33%),
+                radial-gradient(circle at 4% 10%, rgba(169, 122, 22, 0.1), transparent 30%),
                 var(--white-soft);
             overflow: auto !important;
         }
@@ -58,7 +58,7 @@
             align-items: center;
             justify-content: flex-start;
             gap: 0.7rem;
-            box-shadow: 0 8px 20px rgba(18, 53, 104, 0.06);
+            box-shadow: 0 8px 20px rgba(116, 83, 13, 0.1);
         }
 
         .brand {
@@ -71,13 +71,13 @@
             width: 56px;
             height: 56px;
             border-radius: 12px;
-            background: linear-gradient(140deg, #11325f, #1e4f91);
-            border: 1px solid #214f8e;
+            background: linear-gradient(140deg, #e2be63, #b88a1c);
+            border: 1px solid #b88a1c;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 18px rgba(21, 60, 116, 0.28);
+            box-shadow: 0 10px 18px rgba(116, 83, 13, 0.28);
         }
 
         .logo-panel img {
@@ -90,7 +90,7 @@
             font-size: 1.06rem;
             font-weight: 700;
             letter-spacing: 0.01em;
-            color: #0f2f58;
+            color: #7a560e;
         }
 
         .brand-text small {
@@ -109,14 +109,14 @@
             align-items: center;
             gap: 0.6rem;
             font-size: 0.75rem;
-            color: #6b7f9b;
+            color: #8a7242;
         }
 
         .topbar-meta span {
             padding: 0.25rem 0.6rem;
             border-radius: 999px;
-            border: 1px solid #d6e2f5;
-            background: #f5f9ff;
+            border: 1px solid #ecdcb4;
+            background: #fff8e6;
         }
 
         .layout {
@@ -152,7 +152,7 @@
             font-size: 0.68rem;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: #c0142c;
+            color: #8e630e;
             font-family: Syne, sans-serif;
         }
 
@@ -161,7 +161,7 @@
             width: 24px;
             height: 2px;
             border-radius: 99px;
-            background: linear-gradient(to right, var(--red), transparent);
+            background: linear-gradient(to right, #b88a1c, transparent);
         }
 
         .hero h1 {
@@ -170,7 +170,7 @@
             font-size: clamp(1.5rem, 2.6vw, 2.35rem);
             line-height: 1.08;
             letter-spacing: -0.02em;
-            color: #0f315c;
+            color: #5f430f;
         }
 
         .hero p {
@@ -200,9 +200,9 @@
         }
 
         .btn-primary {
-            background: linear-gradient(110deg, #d8142d, #f02f49);
+            background: linear-gradient(110deg, #d7b255, #b88a1c);
             color: #fff;
-            box-shadow: 0 11px 20px rgba(216, 20, 45, 0.26);
+            box-shadow: 0 11px 20px rgba(116, 83, 13, 0.26);
         }
 
         .btn-primary:hover {
@@ -210,17 +210,17 @@
         }
 
         .btn-secondary {
-            background: #eff5ff;
-            color: #184278;
-            border-color: #c8d9f3;
+            background: #fff6de;
+            color: #6e4f12;
+            border-color: #e8d3a1;
         }
 
         .btn-secondary:hover {
-            background: #e6f0ff;
+            background: #fff1cf;
         }
 
         .hero-visual {
-            border: 1px solid #d4e1f4;
+            border: 1px solid #e6d5a8;
             border-radius: 14px;
             overflow: hidden;
             min-height: 230px;
@@ -241,7 +241,7 @@
             margin: 0;
             font-family: Syne, sans-serif;
             font-size: 1rem;
-            color: #123a6b;
+            color: #6a4b0f;
             letter-spacing: -0.01em;
         }
 
@@ -259,19 +259,19 @@
         }
 
         .stats-item {
-            border: 1px solid #d6e2f4;
+            border: 1px solid #eadcb7;
             border-radius: 10px;
             background: #fbfdff;
             padding: 0.62rem 0.68rem;
             font-size: 0.76rem;
-            color: #4f6480;
+            color: #7a6640;
         }
 
         .stats-item strong {
             display: block;
             font-family: Syne, sans-serif;
             font-size: 1rem;
-            color: #102f59;
+            color: #5f430f;
             margin-bottom: 0.15rem;
         }
 
@@ -283,19 +283,19 @@
         }
 
         .service {
-            border: 1px solid #d9e5f7;
+            border: 1px solid #eadcb7;
             border-radius: 10px;
             background: #ffffff;
             padding: 0.67rem 0.72rem;
             font-size: 0.8rem;
-            color: #4c6281;
+            color: #7a6640;
         }
 
         .service strong {
             display: block;
             font-family: Syne, sans-serif;
             font-size: 0.9rem;
-            color: #123a6d;
+            color: #6a4b0f;
             margin-bottom: 0.14rem;
         }
 
@@ -307,7 +307,7 @@
         }
 
         .gallery-item {
-            border: 1px solid #d7e4f6;
+            border: 1px solid #eadcb7;
             border-radius: 11px;
             overflow: hidden;
             background: #fff;
@@ -330,7 +330,7 @@
         .showcase-card {
             display: grid;
             gap: 0.5rem;
-            border: 1px solid #d7e3f6;
+            border: 1px solid #eadcb7;
             border-radius: 12px;
             background: #ffffff;
             overflow: hidden;
@@ -346,14 +346,14 @@
         .showcase-card .copy {
             padding: 0.6rem 0.7rem 0.75rem;
             font-size: 0.78rem;
-            color: #536a88;
+            color: #7a6640;
         }
 
         .showcase-card .copy strong {
             display: block;
             font-family: Syne, sans-serif;
             font-size: 0.92rem;
-            color: #123a6d;
+            color: #6a4b0f;
             margin-bottom: 0.2rem;
         }
 
@@ -361,17 +361,17 @@
             margin: 0;
             padding: 0.5rem 0.62rem;
             font-size: 0.74rem;
-            color: #526a88;
+            color: #7a6640;
             background: #fbfdff;
         }
 
         .default-note {
             margin-top: 0.68rem;
-            border: 1px dashed #df6174;
+            border: 1px dashed #c79b33;
             background: var(--red-soft);
             border-radius: 10px;
             padding: 0.62rem 0.68rem;
-            color: #9e1128;
+            color: #7a560e;
             font-size: 0.76rem;
         }
 
@@ -393,14 +393,14 @@
             font-family: Syne, sans-serif;
             font-size: 1.04rem;
             letter-spacing: -0.01em;
-            color: #10345f;
+            color: #6a4b0f;
         }
 
         .form-head span {
             font-size: 0.7rem;
-            color: #be1129;
-            background: #ffeef2;
-            border: 1px solid #f7c8d2;
+            color: #7a560e;
+            background: #fff5dc;
+            border: 1px solid #eadcb7;
             border-radius: 999px;
             padding: 0.2rem 0.55rem;
         }
@@ -434,32 +434,32 @@
             font-size: 0.64rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: #4f6b8f;
+            color: #7a6640;
         }
 
         .control {
             width: 100%;
-            border: 1px solid #cfddf1;
+            border: 1px solid #eadcb7;
             border-radius: 9px;
             background: #fdfefe;
-            color: #12335f;
+            color: #5f430f;
             padding: 0.63rem 0.67rem;
             font-size: 0.83rem;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .control::placeholder {
-            color: #8da4c2;
+            color: #b79b66;
         }
 
         .control:focus {
             outline: none;
-            border-color: #d8142d;
-            box-shadow: 0 0 0 3px rgba(216, 20, 45, 0.14);
+            border-color: #b88a1c;
+            box-shadow: 0 0 0 3px rgba(184, 138, 28, 0.18);
         }
 
         select.control option {
-            color: #10233f;
+            color: #3f2f15;
         }
 
         .submit-btn {
@@ -467,7 +467,7 @@
             margin-top: 0.7rem;
             border: 0;
             border-radius: 10px;
-            background: linear-gradient(110deg, #d8142d, #f02f49);
+            background: linear-gradient(110deg, #d7b255, #b88a1c);
             color: #fff;
             font-family: Syne, sans-serif;
             font-size: 0.78rem;
@@ -479,7 +479,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.54rem;
-            box-shadow: 0 12px 22px rgba(216, 20, 45, 0.3);
+            box-shadow: 0 12px 22px rgba(116, 83, 13, 0.3);
             transition: 0.22s ease;
         }
 
@@ -491,18 +491,18 @@
             margin-top: 0.52rem;
             text-align: center;
             font-size: 0.73rem;
-            color: #6582a3;
+            color: #8a7242;
         }
 
         .foot-note a {
-            color: #114177;
+            color: #7a560e;
             font-weight: 600;
             text-decoration: underline;
             text-underline-offset: 2px;
         }
 
         .control-error {
-            color: #be1129 !important;
+            color: #8a5f0d !important;
             font-size: 0.71rem;
         }
 
@@ -560,10 +560,10 @@
         <header class="topbar animate__animated animate__fadeInDown">
             <a href="./inquiry.php" class="brand">
                 <div class="logo-panel">
-                    <img src="./images/icon.png" alt="WeRent logo">
+                    <img src="./images/icon.png" alt="Avatar Homes logo">
                 </div>
                 <span class="brand-text">
-                    WERENT
+                    AVATAR HOMES
                     <small>Property Management Software</small>
                 </span>
             </a>
@@ -580,7 +580,7 @@
                         <span class="tag">Real Estate Operations</span>
                         <h1>Smart operations for property sales and management.</h1>
                         <p>
-                            WeRent helps teams manage unit listings, occupancy, tenant tracking, and property
+                            Avatar Homes helps teams manage unit listings, occupancy, client tracking, and property
                             transactions from one modern platform. This public page is your default inquiry channel
                             to start registration.
                         </p>
@@ -597,17 +597,17 @@
                 <article id="details" class="panel details animate__animated animate__fadeInUp">
                     <h2 class="section-title">Built for property teams that need speed and structure</h2>
                     <p class="section-sub">
-                        A clean workflow from inquiry to active tenancy, with practical tools for daily operations.
+                        A clean workflow from inquiry to active client lifecycle, with practical tools for daily operations.
                     </p>
 
                     <div class="stats-grid">
                         <div class="stats-item">
                             <strong>Single Dashboard</strong>
-                            Manage property and tenancy activity in one place.
+                            Manage property and client activity in one place.
                         </div>
                         <div class="stats-item">
                             <strong>Accurate Records</strong>
-                            Keep client, tenant, and dependent profiles organized.
+                            Keep client and dependent profiles organized.
                         </div>
                         <div class="stats-item">
                             <strong>Quicker Follow-Up</strong>
@@ -625,7 +625,7 @@
                             Organize available units and property metadata clearly.
                         </article>
                         <article class="service">
-                            <strong>Tenant and Client Intake</strong>
+                            <strong>Client Intake</strong>
                             Register details with validation and clean records.
                         </article>
                         <article class="service">
@@ -658,7 +658,7 @@
                             <img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80" alt="Modern living room interior">
                             <div class="copy">
                                 <strong>Quality Accommodation</strong>
-                                Showcasing well-managed living spaces with clear tenant onboarding.
+                                Showcasing well-managed living spaces with clear client onboarding.
                             </div>
                         </article>
                         <article class="showcase-card">
@@ -672,7 +672,7 @@
                             <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80" alt="Apartment corridor">
                             <div class="copy">
                                 <strong>Organized Occupancy</strong>
-                                Structured unit assignment and verified tenant records.
+                                Structured unit assignment and verified client records.
                             </div>
                         </article>
                         <article class="showcase-card">
@@ -685,7 +685,7 @@
                     </div>
 
                     <p class="default-note">
-                        Default sign-up point: complete the inquiry form to register interest as a tenant, client, or dependent.
+                        Default sign-up point: complete the inquiry form to register interest as a client or dependent.
                     </p>
                 </article>
             </section>

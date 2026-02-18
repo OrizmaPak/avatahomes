@@ -3,7 +3,7 @@
                             <p class="page-title">
                                 <span>OTHER PAYMENTS</span>
                             </p>
-                            <form id="otherpaymentsform">
+                            <form id="otherpaymentsform"> 
                                 <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">
                                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                         <div class="form-group">
@@ -11,9 +11,9 @@
                                             <input type="text" name="description" id="description" class="form-control otherpaymentsverify">
                                         </div>
                                         <div class="form-group">
-                                            <label for="country" class="control-label">tenant</label>
+                                            <label for="country" class="control-label">client</label>
                                             <select class="form-control otherpaymentsverify" name="ownerid" id="ownerid">
-                                                <option value="">-- Select Tenant --</option>
+                                                <option value="">-- Select Client --</option>
                                             </select>
                                         </div>
                                         <div class="form-group">

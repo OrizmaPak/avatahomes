@@ -5,7 +5,7 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
 	header('Location: login');
 }
 
-?>
+?> 
 
 <!DOCTYPE html>
 <html lang="en"> 
@@ -152,13 +152,13 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
                                         <span class="material-symbols-outlined group-hover:text-primary-g"
                                             style="font-size: 20px;">hotel_class</span>
                                         <span class="group-hover:text-primary-g">
-                                            <span>Tenancy / Rentals</span>
+                                            <span>Clients / Rentals</span>
                                             <span class="material-symbols-outlined" style="font-size: 15px;">chevron_right</span>
                                         </span>
                                     </span>
                                     <ul class="ml-14 gap-y-4 flex flex-col">
-                                        <li class="navitem-child" id="registeratenant">Register Tenant</li>
-                                        <li class="navitem-child" id="viewtenants">View Tenants</li>
+                                        <li class="navitem-child" id="registeratenant">Register Client</li>
+                                        <li class="navitem-child" id="viewtenants">View Clients</li>
                                         <li class="navitem-child" id="rentaproperty">Rent A Property</li>
                                         <li class="navitem-child" id="viewrentaproperty">View Rented Property</li>
                                         <li class="navitem-child" id="duerentals">Due Rentals/Renewals</li>

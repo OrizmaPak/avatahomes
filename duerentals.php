@@ -2,7 +2,7 @@
                             <p class="page-title">
                                 <span>Due Rental / renewals</span>
                             </p> 
-                            <hr class="my-10">
+                            <hr class="my-10"> 
                             <div >
                                 <div class="table-content">
                                     <table>
@@ -18,8 +18,8 @@
                                                 <th>Other Fees Detail</th>
                                                 <th>Property manager</th>
                                                 <th>Unit type</th>
-                                                <th>tenant name</th>
-                                                <th>tenant phone</th>
+                                                <th>client name</th>
+                                                <th>client phone</th>
                                                 <th>Amount Paid</th>
                                                 <th>payment date</th>
                                                 <th>expiration date</th>

@@ -19,7 +19,7 @@ async function fetchviewexpensess(id) {
     let request = await httpRequest2('../controllers/expenseshistory', id ? getparamm() : null, null, 'json')
     if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     if(request.status) {
-        if(!id){
+        if(!id){ 
             if(request.data.length) {
                 datasource = request.data
 document.getElementById('total22').innerHTML = formatNumber(request.data.reduce((acc, curr) => parseInt(acc) + parseInt(curr.debit), 0));
@@ -37,7 +37,7 @@ document.getElementById('total11').innerHTML = formatNumber(request.data.reduce(
 
 async function viewexpensesremove(id) {
     // Ask for confirmation
-    const confirmed = window.confirm("Are you sure you want to remove this tenant?");
+    const confirmed = window.confirm("Are you sure you want to remove this record?");
 
     // If not confirmed, do nothing
     if (!confirmed) {

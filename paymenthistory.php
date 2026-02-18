@@ -4,7 +4,7 @@
 
   <!-- 🔍  Filter form -->
   <form id="paymenthistoryform">
-    <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">
+    <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm"> 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="form-group">
           <label for="startdate" class="control-label">start date</label>
@@ -15,9 +15,9 @@
           <input type="date" name="enddate" id="enddate" class="form-control">
         </div>
         <div class="form-group">
-          <label for="ownerid" class="control-label">tenant</label>
+          <label for="ownerid" class="control-label">client</label>
           <select class="form-control otherpaymentsverify" name="tenantid" id="ownerid">
-            <option value="">-- Select Tenant --</option>
+            <option value="">-- Select Client --</option>
           </select>
         </div>
       </div>
@@ -62,7 +62,7 @@
             <th>Transaction Date</th>
             <th>Reference</th>
             <th>Description</th>
-            <th>Tenant Name</th>
+            <th>Client Name</th>
             <th>Debit (₦)</th>
             <th>Credit (₦)</th>
             <th>Discount (₦)</th>

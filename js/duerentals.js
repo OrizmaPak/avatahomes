@@ -17,7 +17,7 @@ async function fetchduerentalss(id) {
     let request = await httpRequest2('../controllers/fetchproperty', id ? getparamm() : null, null, 'json')
     if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     if(request.status) {
-        if(!id){
+        if(!id){ 
             if(request.data.length) {
                 datasource = request.data
                 resolvePagination(datasource, onduerentalsTableDataSignal)
@@ -33,7 +33,7 @@ async function fetchduerentalss(id) {
 
 async function duerentalsremove(id) {
     // Ask for confirmation
-    const confirmed = window.confirm("Are you sure you want to remove this tenant?");
+    const confirmed = window.confirm("Are you sure you want to remove this client?");
 
     // If not confirmed, do nothing
     if (!confirmed) {
