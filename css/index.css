@@ -9,7 +9,7 @@
 
 *,
 ::before,
-::after {
+::after { 
   box-sizing: border-box;
   /* 1 */
   border-width: 0;
@@ -1937,4 +1937,132 @@ button:disabled {
   .\33xl\:gap-1 {
     gap: 0.25rem;
   }
+}
+
+/* White + gold theme overrides for sign-in and dashboard */
+.login-theme {
+  background: linear-gradient(180deg, #fffef9 0%, #fff8e8 100%);
+}
+
+.login-theme .login-brand {
+  color: #b8860b;
+  letter-spacing: 0.06em;
+}
+
+.login-theme .login-brand > span {
+  color: #6b7280;
+}
+
+.login-theme .login-card {
+  border-color: #f3e2b6;
+  box-shadow: 0 12px 28px rgba(152, 123, 33, 0.12);
+}
+
+.login-theme .login-input-row {
+  background-color: #fffdf7 !important;
+}
+
+.login-theme .btnlogin {
+  background-image: linear-gradient(135deg, #e4c265, #c89a2b);
+}
+
+.login-theme .login-secondary-btn {
+  border: 1px solid #e7d4a3;
+}
+
+.login-theme .decoration-primary-g {
+  text-decoration-color: #c89a2b;
+}
+
+.login-theme .accent-emerald-700 {
+  accent-color: #c89a2b;
+}
+
+.dashboard-theme main {
+  background: #fffdf7;
+}
+
+.dashboard-theme .dashboard-header {
+  border-bottom-color: #efe1bc;
+  background-color: #fffefb;
+}
+
+.dashboard-theme .dashboard-brand {
+  color: #b8860b;
+}
+
+.dashboard-theme .dashboard-brand > span {
+  color: #6b7280;
+}
+
+.dashboard-theme .dashboard-nav {
+  border-right-color: #efe1bc;
+  background-color: #fffefb;
+}
+
+.dashboard-theme .active {
+  border-right-color: #c89a2b !important;
+  background-color: #fff8e5 !important;
+  color: #b8860b !important;
+}
+
+.dashboard-theme .navitem-title:hover {
+  border-right-color: #c89a2b;
+  background-color: #fff8e5;
+}
+
+.dashboard-theme .group:hover .navitem-title > span:nth-child(2) {
+  color: #b8860b;
+}
+
+.dashboard-theme .navitem-child-active {
+  color: #b8860b;
+}
+
+.dashboard-theme .table-content {
+  border: 1px solid #efe1bc;
+  border-radius: 8px;
+  background-color: #fffefb;
+}
+
+.dashboard-theme .table-content table thead tr {
+  background-color: #d1ab45;
+}
+
+.dashboard-theme .table-content table thead tr th {
+  color: #fffdf7;
+}
+
+.dashboard-theme .table-content table tbody tr {
+  border-bottom: 1px solid #f3e7c9;
+  background-color: #fffefb;
+}
+
+.dashboard-theme .table-content table tbody tr:hover {
+  background-color: #fff7df;
+}
+
+.dashboard-theme .table-content table tbody tr td {
+  color: #5f4b2a;
+}
+
+.dashboard-theme .pagination > button {
+  border-color: #ead8aa;
+  background-color: #fffefb;
+  color: #7a6332;
+}
+
+.dashboard-theme .pagination #pagination-numbers button {
+  border-right-color: #ead8aa;
+  background-color: #fff9ea;
+  color: #7a6332;
+}
+
+.dashboard-theme .pagination #pagination-numbers button:hover {
+  background-color: #f7e7bb;
+}
+
+.dashboard-theme .pagination-number.active {
+  background-color: #c89a2b !important;
+  color: #fffef9 !important;
 }

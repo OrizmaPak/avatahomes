@@ -8,14 +8,14 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeRent</title>
+    <title>Avatar Homes Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./css/css_vanilla.css">
@@ -29,7 +29,7 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
 
 
 
-  <meta name="theme-color" content="#317EFB">
+  <meta name="theme-color" content="#c9a227">
   <link rel="icon" href="./images/icon.png">
 
   <!-- JavaScript Files -->
@@ -64,17 +64,16 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
 </script>
 </head>
 
-<body>
+<body class="dashboard-theme">
 
     <main class="h-screen bg-primary/10">
         <div class="h-full">
 
             <!-- header -->
             <header> 
-                <div class="flex items-center bg-white border-b border-gray-200/50">
+                <div class="dashboard-header flex items-center bg-white border-b border-gray-200/50">
                     <span
-                        class="xl:w-[250px] font-bold text-base block py-3 pl-5 selection:bg-white capitalize font-heebo text-primary-g">We<span
-                            class="text-gray-400">Rent</span></span>
+                        class="xl:w-[250px] font-bold text-base block py-3 pl-5 selection:bg-white capitalize font-heebo dashboard-brand">Avatar <span>Homes</span></span>
                     <div class="flex-1 flex items-center justify-end xl:justify-between">
                         <button id="toggler"
                             class="flex items-center justify-center h-7 w-7 rounded hover:bg-primary transition ease-linear duration-300 text-gray-400">
@@ -110,7 +109,7 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
             <section>
                 <div class="xl:flex h-screen relative">
                     <!-- navigation -->
-                    <nav id="navigation" class="fixed top-0 left-0 z-40 lg:relative lg:z-0 w-4/5 xl:w-[250px] h-full bg-white border-r border-gray-200/50 pb-14">
+                    <nav id="navigation" class="dashboard-nav fixed top-0 left-0 z-40 lg:relative lg:z-0 w-4/5 xl:w-[250px] h-full bg-white border-r border-gray-200/50 pb-14">
                         <div class="overflow-y-auto overflow-x-hidden h-full">
                             <ul class="font-poppins mt-5">
                                   <li class="nav-item">
