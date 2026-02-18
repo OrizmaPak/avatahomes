@@ -21,7 +21,7 @@ const routerTree = {
         template: 'banner',
         startingFunction: 'bannerRouteActive',
         scriptName: './js/banner.js'
-    },
+    }, 
     otherinfo: {
         template: 'otherinfo',
         startingFunction: 'otherinfoRouteActive',
@@ -136,6 +136,46 @@ const routerTree = {
         template: 'paymenthistory',
         startingFunction: 'paymenthistoryActive',
         scriptName:  './js/paymenthistory.js'
+    },
+    addglaccount: {
+        template: 'addglaccount',
+        startingFunction: 'addglaccountActive',
+        scriptName: './js/addglaccount.js'
+    },
+    viewglaccount: {
+        template: 'viewglaccount',
+        startingFunction: 'viewglaccountActive',
+        scriptName: './js/viewglaccount.js'
+    },
+    addgltransaction: {
+        template: 'addgltransaction',
+        startingFunction: 'addgltransactionActive',
+        scriptName: './js/addgltransaction.js'
+    },
+    gltransactionhistory: {
+        template: 'gltransactionhistory',
+        startingFunction: 'gltransactionhistoryActive',
+        scriptName: './js/gltransactionhistory.js'
+    },
+    trialbalance: {
+        template: 'trialbalance',
+        startingFunction: 'trialbalanceActive',
+        scriptName: './js/trialbalance.js'
+    },
+    incomestatement: {
+        template: 'incomestatement',
+        startingFunction: 'incomestatementActive',
+        scriptName: './js/incomestatement.js'
+    },
+    balancesheet: {
+        template: 'balancesheet',
+        startingFunction: 'balancesheetActive',
+        scriptName: './js/balancesheet.js'
+    },
+    generalaccountreport: {
+        template: 'generalaccountreport',
+        startingFunction: 'generalaccountreportActive',
+        scriptName: './js/generalaccountreport.js'
     },
     morefees: {
         template: 'morefees',

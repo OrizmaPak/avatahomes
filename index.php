@@ -7,7 +7,7 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
 
 ?> 
 
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en"> 
 
 
@@ -181,6 +181,26 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
                                         <li class="navitem-child" id="viewexpenses">view expenses</li>
                                         <li class="navitem-child" id="net">Net Transactions</li>
                                         <!-- <li class="navitem-child" id="viewmorefees">View More Fees</li> -->
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <span class="navitem-title group">
+                                        <span class="material-symbols-outlined group-hover:text-primary-g"
+                                            style="font-size: 20px;">account_balance</span>
+                                        <span class="group-hover:text-primary-g">
+                                            <span>accounts</span>
+                                            <span class="material-symbols-outlined" style="font-size: 15px;">chevron_right</span>
+                                        </span>
+                                    </span>
+                                    <ul class="ml-14 gap-y-4 flex flex-col">
+                                        <li class="navitem-child" id="addglaccount">Add GL Account</li>
+                                        <li class="navitem-child" id="viewglaccount">View GL Accounts</li>
+                                        <li class="navitem-child" id="addgltransaction">Add GL Transaction</li>
+                                        <li class="navitem-child" id="gltransactionhistory">GL Transaction History</li>
+                                        <li class="navitem-child" id="trialbalance">Trial Balance</li>
+                                        <li class="navitem-child" id="incomestatement">Income Statement</li>
+                                        <li class="navitem-child" id="balancesheet">Balance Sheet</li>
+                                        <li class="navitem-child" id="generalaccountreport">General Account Report</li>
                                     </ul>
                                 </li>
                                 <li class="nav-item">
