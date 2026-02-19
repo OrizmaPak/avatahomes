@@ -7,9 +7,9 @@ const property_user = ["REGISTER PROPERTY", "VIEW PROPERTY"]
 const tenancy_rental = [ 
     "REGISTER TENANT",
     "VIEW TENANTS",
-    "RENT A PROPERTY",
-    "VIEW RENTED PROPERTY",
-    "DUE RENTALS/RENEWALS",
+    "PROPERTY SALES",
+    "VIEW PROPERTY SALES",
+    "DUE PROPERTY PAYMENTS",
     "MORE DOCUMENTS"
   ]
   
@@ -27,7 +27,7 @@ const accounts_user = [
     "VIEW GL ACCOUNTS", 
     "ADD GL TRANSACTION",
     "GL TRANSACTION HISTORY",
-    "TRIAL BALANCE",
+    "TRIAL BALANCE", 
     "INCOME STATEMENT",
     "BALANCE SHEET"
   ]
@@ -41,7 +41,7 @@ const settings_user = [
 const access_array = [
                         ['accessctrl_user', 'USER', accessctrl_user], 
                         ['property_user', 'PROPERTY', property_user], 
-                        ['tenancy_rental', 'CLIENTS/RENTAL', tenancy_rental],
+                        ['tenancy_rental', 'CLIENTS/SALES', tenancy_rental],
                         ['transaction_user', 'OTHER TRANSACTION', transaction_user],
                         ['accounts_user', 'ACCOUNTS', accounts_user],
                         ['settings_user', 'SETTINGS', settings_user],
@@ -53,6 +53,26 @@ function permissionDisplayName(permission) {
         "VIEW TENANTS": "VIEW CLIENTS"
     };
     return map[permission] || permission;
+}
+
+function permissionMatches(savedPermissions, permissionName) {
+    const aliases = {
+        "REGISTER CLIENT": ["REGISTER TENANT"],
+        "REGISTER TENANT": ["REGISTER CLIENT"],
+        "VIEW CLIENTS": ["VIEW TENANTS"],
+        "VIEW TENANTS": ["VIEW CLIENTS"],
+        "PROPERTY SALES": ["RENT A PROPERTY"],
+        "RENT A PROPERTY": ["PROPERTY SALES"],
+        "VIEW PROPERTY SALES": ["VIEW RENTED PROPERTY"],
+        "VIEW RENTED PROPERTY": ["VIEW PROPERTY SALES"],
+        "DUE PROPERTY PAYMENTS": ["DUE RENTALS/RENEWALS"],
+        "DUE RENTALS/RENEWALS": ["DUE PROPERTY PAYMENTS"]
+    };
+    const values = (savedPermissions || '').split('||').map(item => item.trim().toUpperCase()).filter(Boolean);
+    const target = permissionName.toUpperCase();
+    if (values.includes(target)) return true;
+    const variants = aliases[target] || [];
+    return variants.some(variant => values.includes(variant));
 }
 
 async function accesscontrolActive() {
@@ -111,7 +131,7 @@ function accessappendboard(res){
                                 <span>${access_array[i][1]}</span>
                             </p>`;
         document.getElementById(`${access_array[i][0]}`).innerHTML += access_array[i][2].map(data=>`<label class="bg-[#1d68e305] p-2 pl-1 mb-[1px] relative inline-flex items-center cursor-pointer">
-                                          <input type="checkbox" name="${data}" ${res.permissions.split('||').includes(data) ? 'checked' : ''} class="sr-only peer accesscontroller">
+                                          <input type="checkbox" name="${data}" ${permissionMatches(res.permissions, data) ? 'checked' : ''} class="sr-only peer accesscontroller">
                                           <div class="scale-[0.8] w-11 h-6 bg-gray-400 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                                           <span class="ms-2 text-xs font-medium text-blue-900">${permissionDisplayName(data)}</span>
                                         </label>`).join('')

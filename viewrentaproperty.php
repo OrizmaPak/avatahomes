@@ -1,6 +1,6 @@
                     <section class="animate__animated animate__fadeIn">
                             <p class="page-title">
-                                <span>view Property Rented</span>
+                                <span>View Property Sales</span>
                             </p>
                             <form id="viewrentapropertysform">
                                 <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">
@@ -34,7 +34,7 @@
                         
                                 </div>
                             </form>
-                            <hr class="my-10">
+                            <hr class="my-10"> 
                             <div >
                                 <div class="flex justify-end gap-2">
                                        
@@ -67,7 +67,7 @@
             <th>Expiry Date</th>
             <th>Payment Date</th>
             <th>Reference</th>
-            <th>Rental Fees</th>
+            <th>Sales Fees</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -141,7 +141,7 @@
 <div id="receiptTemplate" class="d-none">
   <div class="receipt-container p-4 bg-white" style="max-width: 800px;">
     <div class="header text-center mb-4">
-      <h2 class="text-2xl font-bold">RENTAL PAYMENT RECEIPT</h2>
+      <h2 class="text-2xl font-bold">PROPERTY SALES PAYMENT RECEIPT</h2>
       <p class="text-sm text-gray-500">Official Payment Confirmation</p>
     </div>
     
@@ -167,7 +167,7 @@
       </thead>
       <tbody>
         <tr>
-          <td>Rent</td>
+          <td>Sales Amount</td>
           <td id="rcptAnnualRent"></td>
         </tr>
         <tr>

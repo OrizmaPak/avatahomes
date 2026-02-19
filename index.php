@@ -152,20 +152,20 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
                                         <span class="material-symbols-outlined group-hover:text-primary-g"
                                             style="font-size: 20px;">hotel_class</span>
                                         <span class="group-hover:text-primary-g">
-                                            <span>Clients / Rentals</span>
+                                            <span>Clients/Sales</span>
                                             <span class="material-symbols-outlined" style="font-size: 15px;">chevron_right</span>
                                         </span>
                                     </span>
                                     <ul class="ml-14 gap-y-4 flex flex-col">
                                         <li class="navitem-child" id="registeratenant">Register Client</li>
                                         <li class="navitem-child" id="viewtenants">View Clients</li>
-                                        <li class="navitem-child" id="rentaproperty">Rent A Property</li>
-                                        <li class="navitem-child" id="viewrentaproperty">View Rented Property</li>
-                                        <li class="navitem-child" id="duerentals">Due Rentals/Renewals</li>
+                                        <li class="navitem-child" id="rentaproperty">Property Sales</li>
+                                        <li class="navitem-child" id="viewrentaproperty">View Property Sales</li>
+                                        <li class="navitem-child" id="duerentals">Due Property Payments</li>
                                         <li class="navitem-child" id="moredocuments">more documents</li>
                                     </ul>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item"> 
                                     <span class="navitem-title group">
                                         <span class="material-symbols-outlined group-hover:text-primary-g"
                                             style="font-size: 20px;">point_of_sale</span>

@@ -143,7 +143,7 @@ async function onduerentalsTableDataSignal() {
         <td>${item.rent}</td>
         <td>${item.rentstatus}</td>
         <td class="flex items-center gap-3">
-            <button title="Edit row entry" onclick="duerentalpay(${item.unitid})" class="bg-[green]-g h-8 w-fit text-white drop-shadow-md text-sm px-4 rounded-md" style="background: green;font-size: 18px;padding-left: 14px;padding-right: 14px;border-radius: 6px;font-size: small">Pay/Renew</button>
+            <button title="Edit row entry" onclick="duerentalpay(${item.unitid})" class="bg-[green]-g h-8 w-fit text-white drop-shadow-md text-sm px-4 rounded-md" style="background: green;font-size: 18px;padding-left: 14px;padding-right: 14px;border-radius: 6px;font-size: small">Record Payment</button>
             <button title="Delete row entry"s onclick="duerentalsvacate('${item.unitid}')" class="bg-red-600 h-8 w-fit text-white drop-shadow-md text-sm px-4 rounded-md" style="font-size: 18px;padding-left: 14px;padding-right: 14px;border-radius: 6px;font-size: small">Vacate</button>
         </td>
     </tr>`
@@ -155,7 +155,7 @@ async function onduerentalsTableDataSignal() {
 function formatOtherFeesDetail(details){
     if(!details || !details.length) return 'None';
     return details.map(fee => `${fee.feename}: ${formatNumber(fee.amount)}`).join('<br>');
-}
+} 
 
 async function duerentalsFormSubmitHandler(payloadd='') {
     // if(payloadd)if(!validateForm('duerentalssform', [`searchtext`])) return

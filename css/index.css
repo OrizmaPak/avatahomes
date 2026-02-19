@@ -2019,6 +2019,26 @@ button:disabled {
   color: #b8860b;
 }
 
+.dashboard-theme .navitem-title > span:nth-child(2) {
+  font-size: 12px;
+} 
+
+.dashboard-theme .navitem-child {
+  font-size: 12px;
+}
+
+.dashboard-theme .page-title {
+  font-size: 13px;
+}
+
+.dashboard-theme .control-label {
+  font-size: 12px;
+}
+
+.dashboard-theme .form-control {
+  font-size: 13px;
+}
+
 .dashboard-theme .table-content {
   border: 1px solid #efe1bc;
   border-radius: 8px;
@@ -2031,6 +2051,7 @@ button:disabled {
 
 .dashboard-theme .table-content table thead tr th {
   color: #ffffff;
+  font-size: 12px;
 }
 
 .dashboard-theme .table-content table tbody tr {
@@ -2044,6 +2065,7 @@ button:disabled {
 
 .dashboard-theme .table-content table tbody tr td {
   color: #5f4b2a;
+  font-size: 12px;
 }
 
 .dashboard-theme .pagination > button {

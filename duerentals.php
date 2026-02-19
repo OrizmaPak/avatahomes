@@ -1,6 +1,6 @@
                     <section class="animate__animated animate__fadeIn">
                             <p class="page-title">
-                                <span>Due Rental / renewals</span>
+                                <span>Due Property Payments</span>
                             </p> 
                             <hr class="my-10"> 
                             <div >
@@ -13,8 +13,8 @@
                                                 <th>property</th>
                                                 <th>Unit Name</th>
                                                 <th>location</th>
-                                                <th>Rent</th>
-                                                <th>Other Renewable Fees</th>
+                                                <th>Sale Amount</th>
+                                                <th>Other Sales Fees</th>
                                                 <th>Other Fees Detail</th>
                                                 <th>Property manager</th>
                                                 <th>Unit type</th>
@@ -22,9 +22,9 @@
                                                 <th>client phone</th>
                                                 <th>Amount Paid</th>
                                                 <th>payment date</th>
-                                                <th>expiration date</th>
+                                                <th>expiration date</th> 
                                                 <th>payable due</th>
-                                                <th>rent status</th>
+                                                <th>payment status</th>
                                                 <th>action</th>
                                             </tr>
                                         </thead>

@@ -1,7 +1,7 @@
 <section class="animate__animated animate__fadeIn">
     <input type="hidden" id="id">
     <p class="page-title">
-        <span>Rent A Property</span>
+        <span>Property Sales</span>
     </p>
     <form id="rentapropertyform">
         <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">
@@ -27,7 +27,7 @@
                                 <input type="text" name="othernames" id="othernames"
                                     class="form-control registeratenantverify">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group"> 
                                 <label for="country" class="control-label">office address</label>
                                 <input type="text" name="officeaddress" id="officeaddress"
                                     class="form-control registeratenantverify">
@@ -253,7 +253,7 @@
                                 <th>Fee Name</th>
                                 <th>Mode</th> 
                                  <th>Amount</th>
-                                <th class="hidden">rental period (months)</th>   
+                                <th class="hidden">payment period (months)</th>   
                                 <th>Deposit</th>
                                 <th>Discount</th>
                                 <th>Apply % to</th>

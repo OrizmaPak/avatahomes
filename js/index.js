@@ -100,15 +100,15 @@ async function checkfornotifications() {
             let notifications = request.data
             notifications.map(data=>notificationarray.push({
                 location:'duerentals',
-                header: 'Due Rentals/Renewals',
-                description: data.unitname+' in '+data.propertydata.propertyname+' is due for rentals/renewals',
+                header: 'Due Property Payments',
+                description: data.unitname+' in '+data.propertydata.propertyname+' has a due property payment',
             }))
             // badge.classList.remove('hidden')
         }else{
             // badge.classList.add('hidden')   
         }
     }
-}
+} 
 
 function notificationpanel() {
     const panel = document.getElementById('notificationpanel');
@@ -190,7 +190,13 @@ async function runPermissions(){
                 'REGISTER CLIENT': ['REGISTER TENANT'],
                 'VIEW CLIENTS': ['VIEW TENANTS'],
                 'REGISTER TENANT': ['REGISTER CLIENT'],
-                'VIEW TENANTS': ['VIEW CLIENTS'] 
+                'VIEW TENANTS': ['VIEW CLIENTS'],
+                'PROPERTY SALES': ['RENT A PROPERTY'],
+                'RENT A PROPERTY': ['PROPERTY SALES'],
+                'VIEW PROPERTY SALES': ['VIEW RENTED PROPERTY'],
+                'VIEW RENTED PROPERTY': ['VIEW PROPERTY SALES'],
+                'DUE PROPERTY PAYMENTS': ['DUE RENTALS/RENEWALS'],
+                'DUE RENTALS/RENEWALS': ['DUE PROPERTY PAYMENTS']
             };
             const permissionList = userpermission
                 ? (userpermission.includes('|') ? userpermission.split('|') : [userpermission])
