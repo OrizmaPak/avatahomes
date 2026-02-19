@@ -361,9 +361,122 @@ function injectPaginatatedTable(rows) {
 function logoff() {
     let request = httpRequest('')
     location.href = './login'
-}
+} 
 
 
 function elementWithId(element){
     if(document.getElementById(element)) return document.getElementById(element)
+}
+
+if (typeof window.did !== 'function') {
+    window.did = function (id) {
+        return document.getElementById(id);
+    };
+}
+
+if (typeof window.getIdFromCls !== 'function') {
+    window.getIdFromCls = function (cls, scope = null) {
+        let root = scope;
+        if (typeof scope === 'string') root = document.getElementById(scope);
+        if (!root) root = document;
+        const ids = [];
+        const elements = root.getElementsByClassName(cls);
+        for (let i = 0; i < elements.length; i++) ids.push(elements[i].id);
+        return ids;
+    };
+}
+
+if (typeof window.genID !== 'function') {
+    window.genID = function () {
+        const timestamp = new Date().getTime();
+        const randomPart = Math.floor(Math.random() * 1000);
+        return `${timestamp}${randomPart}`;
+    };
+}
+
+if (typeof window.checkdatalist !== 'function') {
+    window.checkdatalist = function () { return true; };
+}
+ 
+if (typeof window.formatCurrency !== 'function') {
+    window.formatCurrency = function (amount) {
+        const formatter = new Intl.NumberFormat('en-NG', {
+            style: 'currency',
+            currency: 'NGN',
+            minimumFractionDigits: 0,
+        }); 
+        return formatter.format(amount || 0);
+    };
+}
+
+if (typeof window.getFormData2 !== 'function') {
+    window.getFormData2 = function (form = null, additional = []) {
+        const formdata = new FormData(form);
+        if (additional && Array.isArray(additional)) {
+            for (let i = 0; i < additional.length; i++) {
+                formdata.set(`${additional[i][0]}`, additional[i][1]);
+            }
+        }
+        return formdata;
+    };
+}
+
+if (typeof window.validateForm !== 'function') {
+    window.validateForm = function (formId, ids = null) {
+        const form = document.getElementById(formId);
+        if (!form) return false;
+        const errorElements = form.querySelectorAll('.control-error');
+        const controls = [];
+        if (ids && Array.isArray(ids)) {
+            for (let i = 0; i < ids.length; i++) {
+                const el = form.querySelector(`#${ids[i]}`);
+                if (!el) continue;
+                if (el.disabled || el.offsetParent === null) continue;
+                if (controlHasValue(form, `#${ids[i]}`)) {
+                    const label = el.previousElementSibling?.textContent || ids[i];
+                    controls.push([el, `${label} is required`]);
+                }
+            }
+        }
+        return mapValidationErrors(errorElements, controls);
+    };
+}
+
+if (typeof window.populateData !== 'function') {
+    window.populateData = function (data, img = [], locate = [], form = '') {
+        if (!data || typeof data !== 'object') return;
+        const keys = Object.keys(data);
+        keys.forEach((key) => {
+            const value = data[key];
+            let inputElement = null;
+            if (form) {
+                const formElement = document.getElementById(form);
+                inputElement = formElement ? formElement.querySelector(`[name="${key}"]`) : null;
+            } else {
+                inputElement = document.getElementsByName(key)?.[0] || document.getElementById(key);
+            }
+            if (!inputElement) return;
+            if (inputElement.getAttribute('type') !== 'file') {
+                inputElement.value = value ?? '';
+            }
+        });
+    };
+}
+
+if (typeof window.getallid !== 'function') {
+    window.getallid = function (cls) {
+        const ids = [];
+        const elements = document.getElementsByClassName(cls);
+        for (let i = 0; i < elements.length; i++) {
+            ids.push(elements[i].id);
+        }
+        return ids;
+    };
+}
+
+if (typeof window.randomId !== 'function') {
+    window.randomId = function () {
+        const timestamp = new Date().getTime();
+        return Math.floor(timestamp % Number.MAX_SAFE_INTEGER);
+    };
 }

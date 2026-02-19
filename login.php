@@ -21,13 +21,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100;200;300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <!-- PWA Manifest -->
-    <link rel="manifest" href="/werent/view/manifest.json">
-    <link rel="manifest" href="/werent/manifest.webmanifest">
+    <link rel="manifest" href="./manifest.json"> 
   <meta name="theme-color" content="#c9a227">
   <link rel="icon" href="./images/icon.png">
 
   <!-- JavaScript Files -->
-  <script src="./js/main.js" defer></script>
+  <script src="./js/main.js" defer></script> 
   <script src="./js/push.js" defer></script>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />

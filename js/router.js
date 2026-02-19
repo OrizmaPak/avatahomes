@@ -71,7 +71,7 @@ const routerTree = {
         template: 'trendingflightdeals',
         startingFunction: 'trendingFlightActive',
         scriptName: './js/trendingflightdeals.js'
-    }, 
+    },  
     popular_hotels: {
         template: 'popularhotels',
         startingFunction: 'popularHotelsActive',
@@ -140,37 +140,37 @@ const routerTree = {
     addglaccount: {
         template: 'addglaccount',
         startingFunction: 'addglaccountActive',
-        scriptName: './js/addglaccount.js'
+        scriptName: './js/addglaccount.js?v=20260219b'
     },
     viewglaccount: {
         template: 'viewglaccount',
         startingFunction: 'viewglaccountActive',
-        scriptName: './js/viewglaccount.js'
+        scriptName: './js/viewglaccount.js?v=20260219b'
     },
     addgltransaction: {
         template: 'addgltransaction',
         startingFunction: 'addgltransactionActive',
-        scriptName: './js/addgltransaction.js'
+        scriptName: './js/addgltransaction.js?v=20260219b'
     },
     gltransactionhistory: {
         template: 'gltransactionhistory',
         startingFunction: 'gltransactionhistoryActive',
-        scriptName: './js/gltransactionhistory.js'
+        scriptName: './js/gltransactionhistory.js?v=20260219b'
     },
     trialbalance: {
         template: 'trialbalance',
         startingFunction: 'trialbalanceActive',
-        scriptName: './js/trialbalance.js'
+        scriptName: './js/trialbalance.js?v=20260219b'
     },
     incomestatement: {
         template: 'incomestatement',
         startingFunction: 'incomestatementActive',
-        scriptName: './js/incomestatement.js'
+        scriptName: './js/incomestatement.js?v=20260219b'
     },
     balancesheet: {
         template: 'balancesheet',
         startingFunction: 'balancesheetActive',
-        scriptName: './js/balancesheet.js'
+        scriptName: './js/balancesheet.js?v=20260219b'
     },
     morefees: {
         template: 'morefees',

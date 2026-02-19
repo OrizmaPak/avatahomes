@@ -12,7 +12,7 @@ async function fetchbalancesheet(id) {
         let paramstr = new FormData()
         paramstr.append('id', id)
         return paramstr
-    }
+    } 
     let request = await httpRequest2('../controllers/fetchbalancesheet', id ? getparamm() : null, null, 'json')
     if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     if(request.status) {
@@ -71,11 +71,11 @@ async function onbalancesheetTableDataSignal() {
 }
 
 async function balancesheetFormSubmitHandler() {
-    if(!validateForm('balancesheetform', [`currentdate`])) return
+    if(!window.validateForm('balancesheetform', [`currentdate`])) return
     
     let payload
 
-    payload = getFormData2(document.querySelector('#balancesheetform'), balancesheetid ? [['id', balancesheetid]] : null)
+    payload = window.getFormData2(document.querySelector('#balancesheetform'), balancesheetid ? [['id', balancesheetid]] : null)
     let result = await httpRequest2('../controllers/balancesheet', payload, document.querySelector('#balancesheetform #submit'))
     if(result.status) {
           if(document.getElementById('tabledata'))document.getElementById('tabledata').innerHTML = Object.keys(result.data).map((dat, index)=>{

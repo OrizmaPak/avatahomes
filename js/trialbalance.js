@@ -50,7 +50,7 @@ async function removetrialbalance(id) {
     fetchtrialbalance()
     return notification(request.message);
     
-}
+} 
 
 
 async function ontrialbalanceTableDataSignal() {
@@ -71,11 +71,11 @@ async function ontrialbalanceTableDataSignal() {
 }
 
 async function trialbalanceFormSubmitHandler() {
-    if(!validateForm('trialbalanceform', [`currentdate`])) return
+    if(!window.validateForm('trialbalanceform', [`currentdate`])) return
     
     let payload
 
-    payload = getFormData2(document.querySelector('#trialbalanceform'), trialbalanceid ? [['id', trialbalanceid]] : null)
+    payload = window.getFormData2(document.querySelector('#trialbalanceform'), trialbalanceid ? [['id', trialbalanceid]] : null)
     let result = await httpRequest2('../controllers/trialbalance', payload, document.querySelector('#trialbalanceform #submit'))
     if(result.status) {
                 if(document.getElementById('tabledata'))document.getElementById('tabledata').innerHTML = Object.keys(result.data).map((dat, index)=>{

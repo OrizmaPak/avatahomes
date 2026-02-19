@@ -1,5 +1,5 @@
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/werent/view/service-worker.js')
+    navigator.serviceWorker.register('./service-worker.js')
       .then(reg => console.log('SW Registered', reg))
       .catch(err => console.error('SW Registration Failed', err));
   }
@@ -11,7 +11,7 @@ if ('serviceWorker' in navigator) {
     deferredPrompt = e;
     document.getElementById('installBtn').style.display = 'block';
   });
-  
+   
   document.getElementById('installBtn').addEventListener('click', async () => {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
@@ -21,3 +21,4 @@ if ('serviceWorker' in navigator) {
     document.getElementById('installBtn').style.display = 'none';
   });
   
+ 

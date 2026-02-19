@@ -1,6 +1,6 @@
 <?php
 session_start();
-if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
+if(!isset($_SESSION["wuseremail"]))
 {
 	header('Location: login');
 }
@@ -31,7 +31,7 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
                     </tr>
                 </tbody>
             </table>
-        </div>
+        </div> 
         <div class="table-status"></div>
     </div>
 

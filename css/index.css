@@ -2009,7 +2009,7 @@ button:disabled {
 .dashboard-theme .navitem-title:hover {
   border-right-color: #c89a2b;
   background-color: #fff8e5;
-}
+} 
 
 .dashboard-theme .group:hover .navitem-title > span:nth-child(2) {
   color: #b8860b;
@@ -2020,23 +2020,48 @@ button:disabled {
 }
 
 .dashboard-theme .navitem-title > span:nth-child(2) {
-  font-size: 12px;
-} 
-
-.dashboard-theme .navitem-child {
-  font-size: 12px;
+  font-size: 13px;
 }
 
-.dashboard-theme .page-title {
+.dashboard-theme .navitem-child {
   font-size: 13px;
+}
+
+.dashboard-theme .page-title { 
+  font-size: 14px; 
 }
 
 .dashboard-theme .control-label {
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .dashboard-theme .form-control {
-  font-size: 13px;
+  font-size: 14px;
+  border-color: #eadcb7;
+  border-radius: 8px;
+  background-color: #fffefb;
+}
+
+.dashboard-theme #workspace .bg-white\/90 {
+  background-color: #fffefb;
+  border: 1px solid #efe1bc;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(116, 83, 13, 0.08);
+}
+
+.dashboard-theme #workspace hr {
+  border-color: #efdba3;
+}
+
+.dashboard-theme #workspace .btn {
+  border-radius: 10px;
+  background-image: linear-gradient(135deg, #e4c265, #c89a2b);
+  box-shadow: 0 8px 18px rgba(116, 83, 13, 0.2);
+}
+
+.dashboard-theme #workspace .btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 .dashboard-theme .table-content {
@@ -2051,7 +2076,7 @@ button:disabled {
 
 .dashboard-theme .table-content table thead tr th {
   color: #ffffff;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .dashboard-theme .table-content table tbody tr {
@@ -2065,7 +2090,7 @@ button:disabled {
 
 .dashboard-theme .table-content table tbody tr td {
   color: #5f4b2a;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .dashboard-theme .pagination > button {

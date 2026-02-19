@@ -19,7 +19,7 @@ async function fetchviewglaccount(id) {
     let request = await httpRequest2('../controllers/fetchglbyaccounttype', id ? getparamm() : null, null, 'json')
     if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     if(request.status) {
-        if(!id){ 
+        if(!id){  
             if(request.data.length) {
                 datasource = request.data
                 resolvePagination(datasource, onviewglaccountTableDataSignal)
@@ -86,7 +86,7 @@ async function viewglaccountFormSubmitHandler() {
     
     let payload
 
-    payload = getFormData2(document.querySelector('#viewglaccountform'))
+    payload = window.getFormData2(document.querySelector('#viewglaccountform'))
     let request = await httpRequest2('../controllers/fetchglbyaccounttype', payload, document.querySelector('#viewglaccountform #submit'))
     if(request.status){
             if(request.data.length) {

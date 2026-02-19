@@ -27,10 +27,12 @@ function setAddRowButtonLoading(isLoading) {
 function isAddRowButtonReady() {
     const button = getAddRowButton()
     return !!(button && button.dataset.ready === '1')
-}
-
+} 
+ 
 async function propertyregistrationActive() {
     const form = document.querySelector('#propertyregistrationform')
+    const idInput = document.getElementById('id')
+    if (!form || !idInput) return
     if (form?.querySelector('#submit')) {
         form.querySelector('#submit').addEventListener('click', propertyregistrationsubmit)
     }
@@ -59,11 +61,11 @@ async function propertyregistrationActive() {
         setAddRowButtonLoading(false)
     }
 
-    document.getElementById('id').value = ''
+    idInput.value = ''
     clearPropertyRegistrationTable()
 
     if (propertyregistrationid) {
-        document.getElementById('id').value = propertyregistrationid
+        idInput.value = propertyregistrationid
         function payloadd() {
             let params = new FormData()
             params.append('id', propertyregistrationid)

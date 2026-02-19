@@ -14,13 +14,13 @@ async function addglaccountActive() {
 
 function addglaccountrunEdit(){ 
     document.querySelector('#addglaccountform #submit').textContent = 'Submit'
-    did('deleteglaccountsubmit').classList.add('hidden')
+    window.did('deleteglaccountsubmit').classList.add('hidden')
     if(!sessionStorage.getItem('viewglaccountedit'))return
     let x = JSON.parse(sessionStorage.getItem('viewglaccountedit'))
     sessionStorage.removeItem('viewglaccountedit')
     populateData(x[0], [], [], 'addglaccountform')
     addglaccountid = x[0].id
-    did('deleteglaccountsubmit').classList.remove('hidden')
+    window.did('deleteglaccountsubmit').classList.remove('hidden')
     document.querySelector('#addglaccountform #submit').textContent = 'Update'
 }
 
@@ -281,18 +281,23 @@ async function onaddglaccountTableDataSignal() {
             <button title="Edit row entry" onclick="fetchaddglaccount('${item.id}')" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
             <button title="Delete row entry"s onclick="removeaddglaccount('${item.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">delete</button>
         </td>
-    </tr>`
+    </tr>` 
     )
     .join('')
     injectPaginatatedTable(rows)
 }
-
+ 
 async function addglaccountFormSubmitHandler() {
-    if(!validateForm('addglaccountform', getIdFromCls('comp'))) return
+    const form = document.getElementById('addglaccountform')
+    if(!form) return
+    const requiredIds = typeof window.getIdFromCls === 'function'
+        ? window.getIdFromCls('comp', form)
+        : Array.from(form.querySelectorAll('.comp')).map(el => el.id).filter(Boolean)
+    if(!window.validateForm('addglaccountform', requiredIds)) return
     
     let payload
 
-    payload = getFormData2(document.querySelector('#addglaccountform'), addglaccountid ? [['id', addglaccountid]] : null)
+    payload = window.getFormData2(document.querySelector('#addglaccountform'), addglaccountid ? [['id', addglaccountid]] : null)
     let request = await httpRequest2('../controllers/glaccountscript', payload, document.querySelector('#addglaccountform #submit'))
     if(request.status) {
         notification('Record saved successfully!', 1);

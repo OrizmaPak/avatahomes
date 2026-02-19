@@ -12,7 +12,7 @@ async function fetchincomestatement(id) {
         let paramstr = new FormData()
         paramstr.append('id', id)
         return paramstr
-    }
+    } 
     let request = await httpRequest2('../controllers/fetchincomestatement', id ? getparamm() : null, null, 'json')
     if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     if(request.status) {
@@ -71,11 +71,11 @@ async function onincomestatementTableDataSignal() {
 }
 
 async function incomestatementFormSubmitHandler() {
-    if(!validateForm('incomestatementform', [`startdate`, 'enddate'])) return
+    if(!window.validateForm('incomestatementform', [`startdate`, 'enddate'])) return
     
     let payload
 
-    payload = getFormData2(document.querySelector('#incomestatementform'), incomestatementid ? [['id', incomestatementid]] : null)
+    payload = window.getFormData2(document.querySelector('#incomestatementform'), incomestatementid ? [['id', incomestatementid]] : null)
     let result = await httpRequest2('../controllers/incomestatement', payload, document.querySelector('#incomestatementform #submit'))
     if(result.status) {
          if(document.getElementById('tabledata'))document.getElementById('tabledata').innerHTML = Object.keys(result.data).map((dat, index)=>{

@@ -167,12 +167,96 @@ const getallid =(cls)=>{
         }
         // console.log(idss)
         return idss
-    }
+    } 
 
 // GENERATE RANDOM NUMBERS
-function randomId() {
+function randomId() { 
   let timestamp = new Date().getTime();
   return Math.floor(timestamp % Number.MAX_SAFE_INTEGER);
+}
+
+function did(element){
+  return document.getElementById(element);
+}
+
+function getIdFromCls(cls, scope = null){
+  let root = scope;
+  if (typeof scope === 'string') root = document.getElementById(scope);
+  if (!root) root = document;
+  const ids = [];
+  const elements = root.getElementsByClassName(cls);
+  for (let i = 0; i < elements.length; i++) ids.push(elements[i].id);
+  return ids;
+}
+
+function genID() {
+  const timestamp = new Date().getTime();
+  const randomPart = Math.floor(Math.random() * 1000);
+  return `${timestamp}${randomPart}`;
+}
+
+function getLabelByValue(id, value) {
+  const selectElement = document.getElementById(id);
+  if (!selectElement) return null;
+  for (const option of selectElement.options) {
+    if (option.value === value) return option.text;
+  }
+  return null;
+}
+
+const checkdatalist = (element, id, dlist = '', clear = true) => {
+  if (!element?.value) return;
+  if (!element.getAttribute('list')) {
+    if (id && document.getElementById(id)) document.getElementById(id).value = element.value;
+    return true;
+  }
+  if (!element.list?.id) return true;
+  const listId = element.list.id;
+  const datalistElement = document.getElementById(listId);
+  if (!datalistElement) return true;
+  const datalistOptions = datalistElement.options;
+  const inputValue = element.value;
+
+  let isMatch = false;
+  for (let i = 0; i < datalistOptions.length; i++) {
+    if (inputValue === datalistOptions[i].value) {
+      isMatch = true;
+      break;
+    }
+  }
+
+  if (isMatch) {
+    if (id && document.getElementById(id)) {
+      document.getElementById(id).value = getLabelByValue(dlist ? dlist : listId, element.value) || element.value;
+    }
+    return true;
+  }
+
+  if (clear) {
+    notification(`${inputValue} is not a valid option`, 0);
+    const initialBorder = element.style.borderColor;
+    element.style.borderColor = 'red';
+    element.style.color = 'red';
+    element.value = '';
+    setTimeout(() => {
+      element.style.borderColor = initialBorder;
+      element.style.color = 'black';
+    }, 3000);
+    if (id && document.getElementById(id)) document.getElementById(id).value = '';
+    return false;
+  }
+
+  if (id && document.getElementById(id)) document.getElementById(id).value = element.value;
+  return false;
+}
+
+function formatCurrency(amount) {
+  const formatter = new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: 0,
+  });
+  return formatter.format(amount || 0);
 }
 
 
@@ -271,54 +355,85 @@ function printTable() {
 
 
 // TO EXPORT TO EXCEL
-function exportToExcel() {
-    // Get the table content
-    const tableContent = document.querySelector('.table-content');
-
-    // Check if the table content exists
-    if (tableContent) {
-        // Clone the table content to avoid modifying the original
-        const clonedContent = tableContent.cloneNode(true);
-
-        // Remove the "action" column from the cloned content
-        const headers = clonedContent.querySelectorAll('thead th');
-        const lastHeader = headers[headers.length - 1];
-
-        if (lastHeader.textContent.trim().toLowerCase() === 'action') {
-            lastHeader.parentNode.removeChild(lastHeader);
-
-            const dataRows = clonedContent.querySelectorAll('tbody tr');
-            dataRows.forEach(row => {
-                const lastCell = row.querySelector('td:last-child');
-                if (lastCell) {
-                    lastCell.parentNode.removeChild(lastCell);
-                }
-            });
-        } else {
-            console.warn('Last column header is not titled "Action". No action taken.');
-        }
-
-        // Create a CSV-formatted string
-        const csvContent = Array.from(clonedContent.querySelectorAll('tr'))
-            .map(row => Array.from(row.children).map(cell => `"${cell.textContent.trim()}"`).join(','))
-            .join('\n');
-
-        // Create a blob from the CSV content
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-
-        // Create a download link
-        const downloadLink = document.createElement('a');
-        downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = 'table-export.csv';
-
-        // Append the link to the document and trigger the download
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-
-        // Remove the link from the document
-        document.body.removeChild(downloadLink);
-    } else {
+function exportToExcel(tableId = null, filename = 'table-export') {
+    let tableElement = null;
+    if (tableId && typeof tableId === 'string') {
+        const maybeTable = document.getElementById(tableId);
+        if (maybeTable) tableElement = maybeTable.tagName?.toLowerCase() === 'table' ? maybeTable : maybeTable.querySelector('table');
+    }
+    if (!tableElement) {
+        tableElement = document.querySelector('.table-content table');
+    }
+    if (!tableElement) {
         console.error('Table content not found.');
+        return;
+    }
+
+    const clonedTable = tableElement.cloneNode(true);
+    const headers = clonedTable.querySelectorAll('thead th');
+    const lastHeader = headers[headers.length - 1];
+    if (lastHeader && lastHeader.textContent.trim().toLowerCase() === 'action') {
+        lastHeader.parentNode.removeChild(lastHeader);
+        const dataRows = clonedTable.querySelectorAll('tbody tr');
+        dataRows.forEach(row => {
+            const lastCell = row.querySelector('td:last-child');
+            if (lastCell) lastCell.parentNode.removeChild(lastCell);
+        });
+    }
+
+    const csvContent = Array.from(clonedTable.querySelectorAll('tr'))
+        .map(row => Array.from(row.children).map(cell => `"${cell.textContent.trim()}"`).join(','))
+        .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.download = `${filename}.csv`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+}
+
+async function exportToPDF(id, vertical = false) {
+    const element = document.getElementById(id);
+    if (!element) return notification('Unable to export PDF. Content not found.', 0);
+
+    if (!window.html2pdf) {
+        await new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js';
+            script.onload = resolve;
+            script.onerror = resolve;
+            document.head.appendChild(script);
+        });
+    }
+    if (!window.html2pdf) return notification('Unable to load PDF helper.', 0);
+
+    const options = {
+        margin: 10,
+        filename: 'report.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: vertical ? 'landscape' : 'portrait' }
+    };
+    window.html2pdf().set(options).from(element).save();
+}
+
+if (typeof window !== 'undefined') {
+    try {
+        if (typeof getFormData2 === 'function') window.getFormData2 = getFormData2;
+        if (typeof validateForm === 'function') window.validateForm = validateForm;
+        if (typeof populateData === 'function') window.populateData = populateData;
+        if (typeof getallid === 'function') window.getallid = getallid;
+        if (typeof did === 'function') window.did = did;
+        if (typeof getIdFromCls === 'function') window.getIdFromCls = getIdFromCls;
+        if (typeof genID === 'function') window.genID = genID;
+        if (typeof checkdatalist === 'function') window.checkdatalist = checkdatalist;
+        if (typeof formatCurrency === 'function') window.formatCurrency = formatCurrency;
+        if (typeof exportToExcel === 'function') window.exportToExcel = exportToExcel;
+        if (typeof exportToPDF === 'function') window.exportToPDF = exportToPDF;
+    } catch (e) {
+        console.log('utility export bridge failed', e);
     }
 }
 

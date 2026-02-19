@@ -1,14 +1,14 @@
-const assetcache = 'v1';
+const assetcache = 'v2-20260219b';
 const assets = [
   'login.php',
   'index.php',
-  '/werent/view/manifest.json',
-  '/werent/view/main.js',
-  '/werent/view/js/index.js',
-  '/werent/view/js/login.js',
-  '/werent/view/js/push.js',
-  '/werent/view/css/index.css',
-  '/werent/view/images/icon.png'
+  './manifest.json',
+  './js/main.js',
+  './js/index.js',
+  './js/login.js',
+  './js/push.js',
+  './css/index.css',
+  './images/icon.png'
 ];
 
 self.addEventListener('install', event => {
@@ -18,7 +18,7 @@ self.addEventListener('install', event => {
       .then(() => self.skipWaiting())
   );
 });
-
+ 
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(names =>
@@ -36,13 +36,13 @@ self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(cached =>
       cached || fetch(event.request)
-    )
+    ) 
   );
 });
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  const url = event.notification.data?.url || '/werent/view/index.php';
+  const url = event.notification.data?.url || './index.php';
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
       for (const client of list) {

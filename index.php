@@ -1,6 +1,6 @@
 <?php
 session_start();
-if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
+if(!isset($_SESSION["wuseremail"]))
 {
 	header('Location: login');
 }
@@ -11,16 +11,16 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
 <html lang="en"> 
 
 
-<head>
+<head> 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avatar Homes Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/index.css"> 
     <link rel="stylesheet" href="./css/css_vanilla.css">
-     <!-- PWA Manifest -->
-  <link rel="manifest" href="/werent/view/manifest.json">
+     <!-- PWA Manifest --> 
+  <link rel="manifest" href="./manifest.json">
       <!-- ios support -->
       <link rel="apple-touch-icon" href="images/16.png" />
     <link rel="apple-touch-icon" href="images/32.png" />
@@ -237,10 +237,10 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
      <div class="j-outer-container" id="jmodal-area">
         <div class="modal-content" id="modal-content"></div>
     </div>
-    <script src="./js/util.js"></script>
-    <script src="./js/router.js"></script>
-    <script src="./js/index.js"></script>
-    <script src="./js/oreutil.js"></script>
+    <script src="./js/util.js?v=20260219b"></script>
+    <script src="./js/router.js?v=20260219b"></script>
+    <script src="./js/index.js?v=20260219b"></script>
+    <script src="./js/oreutil.js?v=20260219b"></script>
 </body>
 
 </html>

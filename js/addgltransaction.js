@@ -13,7 +13,7 @@ async function addgltransactionActive() {
 
 
 function gltaddcreditrow(){ 
-    let id = genID()
+    let id = window.genID()
     let element = document.createElement('div')
     element.classList.add('grid', 'grid-cols-1', 'lg:grid-cols-3', 'gap-6')
     element.setAttribute('id', `creditcontainer_${id}`)
@@ -30,15 +30,15 @@ function gltaddcreditrow(){
                     <div class="mb-3 text-xs text-red-600 w-[0px] overflow-hidden trasition-all duration-[0.3s] h-[3]"><p class="px-1 w-[100px]">Click&nbsp;to&nbsp; Delete</p></div>
                 </div>`
     element.innerHTML = x
-    did('gltcreditcontainer').appendChild(element)
+    window.did('gltcreditcontainer').appendChild(element)
 }
 
 function deletecreditglt(id){
-    did(`creditcontainer_${id}`).remove()
+    window.did(`creditcontainer_${id}`).remove()
 }
 
 function gltadddebitrow(){
-    let id = genID()
+    let id = window.genID()
     let element = document.createElement('div')
     element.classList.add('grid', 'grid-cols-1', 'lg:grid-cols-3', 'gap-6')
     element.setAttribute('id', `debitcontainer_${id}`)
@@ -55,11 +55,11 @@ function gltadddebitrow(){
                     <div class="mb-3 text-xs text-red-600 w-[0px] overflow-hidden trasition-all duration-[0.3s] h-[3]"><p class="px-1 w-[100px]">Click&nbsp;to&nbsp; Delete</p></div>
                 </div>`
     element.innerHTML = x
-    did('gltdebitcontainer').appendChild(element)
+    window.did('gltdebitcontainer').appendChild(element)
 }
 
 function deletedebitglt(id){
-    did(`debitcontainer_${id}`).remove()
+    window.did(`debitcontainer_${id}`).remove()
 }
 	const alldebitamount=()=>{
 	        let count = 0
@@ -68,7 +68,7 @@ function deletedebitglt(id){
 	        count = count + parseInt(document.getElementsByName('gltdebitamount')[i].value ? document.getElementsByName('gltdebitamount')[i].value : 0);
 	   // alert(count)
 	    }
-	        document.getElementById('glttotaldebit').value = formatCurrency(count); 
+	        document.getElementById('glttotaldebit').value = window.formatCurrency(count); 
 	        totaldebitnumber = count 
 	}
 	
@@ -79,7 +79,7 @@ function deletedebitglt(id){
 	        count = count + parseInt(document.getElementsByName('gltcreditamount')[i].value ? document.getElementsByName('gltcreditamount')[i].value : 0);
 	   // alert(count)
 	    }
-	        document.getElementById('glttotalcredit').value = formatCurrency(count);
+	        document.getElementById('glttotalcredit').value = window.formatCurrency(count);
 	        totalcreditnumber = count
 	}
 
@@ -94,7 +94,7 @@ async function fetchaddgltransaction(id='') {
     let request = await httpRequest2('../controllers/fetchglaccounts', id ? getparamm() : null, null, 'json')
     // if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     if(request.status) {
-        did('glaccountlist').innerHTML = request.data.data.map(data=>`<option>${data.description} __${data.accountnumber}</option>`)
+        window.did('glaccountlist').innerHTML = request.data.data.map(data=>`<option>${data.description} __${data.accountnumber}</option>`)
     }
     else return notification('No records retrieved')
 }
@@ -141,16 +141,21 @@ async function onaddgltransactionTableDataSignal() {
 
 function addgltransactionFormResetHandler() {
     document.querySelector('#addgltransactionform').reset();
-    did('gltdebitcontainer').innerHTML = ''
-    did('gltcreditcontainer').innerHTML = ''
+    window.did('gltdebitcontainer').innerHTML = ''
+    window.did('gltcreditcontainer').innerHTML = ''
     totalcreditnumber = 0
     totaldebitnumber = 0
     document.getElementById('glttotalcredit').value = ''
     document.getElementById('glttotaldebit').value = ''
 }
-
+  
 async function addgltransactionFormSubmitHandler() {
-    if(!validateForm('addgltransactionform', getIdFromCls('comp'))) return
+    const form = document.getElementById('addgltransactionform')
+    if(!form) return
+    const requiredIds = typeof window.getIdFromCls === 'function'
+        ? window.getIdFromCls('comp', form)
+        : Array.from(form.querySelectorAll('.comp')).map(el => el.id).filter(Boolean)
+    if(!window.validateForm('addgltransactionform', requiredIds)) return
     if(totaldebitnumber == 0)return notification('Total Debit cannot be Zero', 0)
     if(totalcreditnumber == 0)return notification('Total Credit cannot be Zero', 0)
     if(totaldebitnumber !== totalcreditnumber)return notification('Total Credit and Debit do not balance out', 0)
@@ -179,8 +184,8 @@ async function addgltransactionFormSubmitHandler() {
     if(request.status) {
         notification('Record saved successfully!', 1);
         document.querySelector('#addgltransactionform').reset();
-        did('gltdebitcontainer').innerHTML = ''
-        did('gltcreditcontainer').innerHTML = ''
+        window.did('gltdebitcontainer').innerHTML = ''
+        window.did('gltcreditcontainer').innerHTML = ''
         // fetchaddgltransaction();
         return
     }

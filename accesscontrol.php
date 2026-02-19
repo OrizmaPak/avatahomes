@@ -1,6 +1,6 @@
 <?php
 session_start();
-if(!isset($_SESSION["user_id"]) || !isset($_SESSION["user_id"]))
+if(!isset($_SESSION["wuseremail"]))
 {
 	header('Location: login.php');
 }
@@ -14,7 +14,7 @@ if($_SESSION["role"] !== "SUPERADMIN"){
 
        <section class="animate__animated animate__fadeIn">
                             <p class="page-title">
-                                <span>Access Control</span>
+                                <span>Access Control</span> 
                             </p>
                             <form id="accesscontrolsform">
                                 <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">

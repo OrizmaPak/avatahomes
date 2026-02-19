@@ -17,22 +17,22 @@
     if (permission === 'granted') {
       startPolling();
       // Dummy push to test the notification
-      showNotification('Test Notification', 'This is a test notification.', '/werent/view/index.php');
+      showNotification('Test Notification', 'This is a test notification.', './index.php');
     } else {
       console.warn('Notifications permission not granted:', permission);
-    }
+    } 
   })();
   
   function startPolling() {
     // Immediately check once…
     pollForNotifications();
-    // …then every 30 seconds
+    // …then every 30 seconds 
     setInterval(pollForNotifications, 30000);
   }
   
   async function pollForNotifications() {
     try {
-      const res = await fetch('/werent/controllers/notifyduerents.php', {
+      const res = await fetch('../controllers/notifyduerents.php', {
         credentials: 'include',
         headers: { 'Accept': 'application/json' }
       });
@@ -50,7 +50,7 @@
   function showNotification(title, body, url) {
     const options = {
       body,
-      icon: '/werent/view/images/icon.png',  // adjust path to your icon
+      icon: './images/icon.png',
       data: { url }
     };
   
@@ -70,7 +70,7 @@
   self.addEventListener
     ? self.addEventListener('notificationclick', event => {
         event.notification.close();
-        const target = event.notification.data.url || '/werent/view/index.php';
+        const target = event.notification.data.url || './index.php';
         event.waitUntil(clients.openWindow(target));
       })
     : null; 

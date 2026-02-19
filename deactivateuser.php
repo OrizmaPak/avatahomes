@@ -1,6 +1,6 @@
 <?php
 session_start();
-if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
+if(!isset($_SESSION["wuseremail"]))
 {
 	header('Location: login');
 }
@@ -15,7 +15,7 @@ if(!isset($_SESSION["user_id"]) && !isset($_SESSION["user_id"]))
     <div >
         <div class="table-content">
             <table>
-                <thead>
+                <thead> 
                     <tr>
                         <th>s/n </th>
                         <th>First name</th>
