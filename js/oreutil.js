@@ -83,7 +83,7 @@ const callController =(controller, params, name, validate, funct, silent, e)=>{
             // return(name, pair[0]+ ', ' + pair[1]); 
             }
     }
-    
+      
     request.setRequestHeader('Connection','close');
     request.send(params);
 };
@@ -114,6 +114,18 @@ function previewImage(img="url") {
             reader.readAsDataURL(input.files[0]);
         }
     }
+
+function showFileName(id) {
+    const input = document.getElementById(id);
+    if (!input || !input.files || input.files.length === 0) return '';
+    return input.files[0].name;
+}
+
+function getFile(id) {
+    const input = document.getElementById(id);
+    if (!input || !input.files || input.files.length === 0) return '';
+    return input.files[0];
+}
     
 // TO POPULATE DATA FROM AN ENDPOINT 
 function populateData(data){
@@ -159,15 +171,13 @@ function scrollToTop(id=null) {
 }
 
 // TO GET ALL IDS
-const getallid =(cls)=>{
-        // document.getElementsByClassName(`${cls}`);
-        let idss = []
-        for(i=0; i<document.getElementsByClassName(`${cls}`).length; i++){
-            idss.push(document.getElementsByClassName(`${cls}`)[i].id)
-        }
-        // console.log(idss)
-        return idss
-    } 
+function getallid(cls){
+    let idss = []
+    for(let i=0; i<document.getElementsByClassName(`${cls}`).length; i++){
+        idss.push(document.getElementsByClassName(`${cls}`)[i].id)
+    }
+    return idss
+} 
 
 // GENERATE RANDOM NUMBERS
 function randomId() { 

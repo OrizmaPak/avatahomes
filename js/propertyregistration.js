@@ -135,11 +135,11 @@ function addPropertyRegistrationRow(prefill = {}) {
                 <input type="hidden" id="uid-${id}">
             </div>
         </td>
-        <td>\n            <div class="form-group w-[109px]">
-                <p class="hidden">rentalperiod (months)</p>
-                <input type="number" inputmode="numeric" step="1" min="1" pattern="^[0-9]+$" title="Enter number of days e.g. 30, 60, 90, 120, 180. 30 days represents one month." id="rp-${id}" class="form-control propertyregistrationverify" placeholder="Enter Rental Period (days)">
+        <td>\n            <div class="form-group w-[140px]">
+                <p class="hidden">payment period (months)</p>
+                <input type="number" inputmode="numeric" step="1" min="1" pattern="^[0-9]+$" title="Enter number of months e.g. 1, 3, 6, 12." id="rp-${id}" class="form-control propertyregistrationverify" placeholder="Enter Payment Period (months)">
             </div>
-        </td>
+        </td> 
         <td class="text-center hidden" id="ap-${id}"></td>
         <td>
             <div data-action="remove-row" style="padding: 10px 20px;border-radius: 10px;background: red;width: fit-content; height: fit-content;font-size: larger; color: white;font-weight: bold">-</div>
@@ -180,8 +180,8 @@ function setupRentalPeriodControl(input) {
     input.setAttribute('step', '1')
     input.setAttribute('inputmode', 'numeric')
     input.setAttribute('pattern', '^[0-9]+$')
-    input.setAttribute('title', 'Enter number of days e.g. 30, 60, 90, 120, 180. 30 days represents one month.')
-    input.setAttribute('placeholder', 'Enter Rental Period (days)')
+    input.setAttribute('title', 'Enter number of months e.g. 1, 3, 6, 12.')
+    input.setAttribute('placeholder', 'Enter Payment Period (months)')
     if (!input.dataset.numericFilterAttached) {
         input.addEventListener('input', () => {
             input.value = input.value.replace(/[^\d]/g, '')
@@ -420,7 +420,7 @@ async function propertyregistrationsubmit() {
     for (let i = 0; i < table.children.length; i++) {
         let id = table.children[i].id
         const rpCtrl = document.getElementById(`rp-${id}`)
-        const rpVal = (rpCtrl?.value || '').trim()
+        const rpVal = (rpCtrl?.value || '').trim() 
         if (!/^\d+$/.test(rpVal) || parseInt(rpVal, 10) < 1) {
             return notification('Rental period must be a whole number in days and cannot be zero. Examples: 30, 60, 90, 120, 180. 30 days represents one month.', 0)
         }

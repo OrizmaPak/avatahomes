@@ -71,7 +71,7 @@ async function morefeessubmit(){
         fetchmorefees()
         return
     }
-    document.querySelector('#morefeesform').reset();
+    document.querySelector('#morefeesform').reset(); 
     return notification(request.message, 0);
 
 }

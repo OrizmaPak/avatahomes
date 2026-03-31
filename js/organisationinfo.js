@@ -1,4 +1,78 @@
 let settingsid
+let pendingSettingsSelectValues = {}
+
+const settingsFieldAliases = {
+    companyname: 'companyName',
+    default_taxaccount: 'default_vattaxaccount'
+}
+ 
+function findSettingsField(key) {
+    const selector = [
+        `#${key}`, 
+        `[name="${key}"]`,
+        settingsFieldAliases[key] ? `#${settingsFieldAliases[key]}` : null,
+        settingsFieldAliases[key] ? `[name="${settingsFieldAliases[key]}"]` : null
+    ].filter(Boolean).join(', ');
+    return document.querySelector(selector);
+}
+ 
+function applySelectValue(field, value) {
+    const normalizedValue = `${value}`.trim();
+    if (!normalizedValue || normalizedValue === '-') {
+        field.value = '';
+        return true;
+    }
+
+    const options = Array.from(field.options || []);
+    const exactOption = options.find(option => `${option.value}`.trim() === normalizedValue);
+    if (exactOption) {
+        field.value = exactOption.value;
+        return true;
+    }
+
+    const textMatch = options.find(option => {
+        const optionText = `${option.text}`.trim();
+        return optionText === normalizedValue || optionText.startsWith(`${normalizedValue} `) || optionText.includes(`| ${normalizedValue}`);
+    });
+    if (textMatch) {
+        field.value = textMatch.value;
+        return true;
+    }
+
+    return false;
+}
+
+function applyPendingSettingsSelectValues() {
+    Object.entries(pendingSettingsSelectValues).forEach(([key, value]) => {
+        const field = findSettingsField(key);
+        if (!field || field.tagName !== 'SELECT') return;
+        if (applySelectValue(field, value)) delete pendingSettingsSelectValues[key];
+    });
+}
+
+function setSettingsFieldValue(key, value) {
+    if (value === undefined || value === null) return;
+    const normalizedValue = `${value}`;
+    const field = findSettingsField(key);
+    if (!field) return;
+    if (field.tagName === 'SELECT') {
+        if (!applySelectValue(field, normalizedValue)) pendingSettingsSelectValues[key] = normalizedValue;
+        return;
+    }
+    field.value = normalizedValue === '-' ? '' : normalizedValue;
+}
+
+function populateSettingsForm(data) {
+    if (!data || typeof data !== 'object') return;
+
+    Object.entries(data).forEach(([key, value]) => {
+        if (value && typeof value === 'object' && !Array.isArray(value)) {
+            populateSettingsForm(value);
+            return;
+        }
+        setSettingsFieldValue(key, value);
+    });
+}
 
 async function organisationinfoActive() {
     return settingsActive();
@@ -62,9 +136,12 @@ async function fetchsettings(id) {
     let request = await httpRequest2('../controllers/fetchorganisationscript', id ? getparamm() : null, null, 'json')
     // if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     if(request.status) {
-            populateData(request.data.data[0])
-            if(request.data.data[0].logo != '-')did('displayimg').src = `../images/${request.data.data[0].logo}`;
-            did('company_id').value = request.data.data[0].company_id 
+            const record = request?.data?.data?.[0] || request?.data?.[0] || request?.data || {};
+            pendingSettingsSelectValues = {}
+            populateSettingsForm(record)
+            applyPendingSettingsSelectValues()
+            if(record.logo && record.logo != '-') did('displayimg').src = `../images/${record.logo}`;
+            if(record.company_id !== undefined && record.company_id !== null) did('company_id').value = record.company_id
     }
     else return notification('No records retrieved')
 }
@@ -82,6 +159,7 @@ async function populatesettingsselects(id='') {
         for(let i=0;i<document.getElementsByClassName('populateaccounts').length;i++){
             document.getElementsByClassName('populateaccounts')[i].innerHTML += request.data.map(item=>`<option value="${item.accountnumber}">${item.description}</option>`).join('')
         }
+        applyPendingSettingsSelectValues()
         fetchsettings()
     }
     else return notification('No records retrieved')

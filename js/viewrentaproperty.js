@@ -82,7 +82,7 @@ async function onviewrentapropertyTableDataSignal() {
                     <tr style="background:#64748b !important; color: white !important;">
                         <th>Fee Name</th>
                         <th>Amount</th>
-                        <th>Renewable</th>
+                        <th>Instalment</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,7 +94,7 @@ async function onviewrentapropertyTableDataSignal() {
                         </tr>
                     `).join('')}
                 </tbody>
-            </table>
+            </table> 
             </div>
         </td>
         <td class="d-flex align-items-center gap-3">

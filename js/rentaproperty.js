@@ -279,7 +279,7 @@ async function checkrentapropertyunit(el, prefillFees) {
   tbody.innerHTML = '';
   updateRentTotalDeposit();
 
-  const feesContainer = document.getElementById('otherfeesview');
+  const feesContainer = document.getElementById('otherfeesview'); 
   if (feesContainer) {
     feesContainer.classList.add('hidden');
   }
@@ -304,24 +304,40 @@ async function checkrentapropertyunit(el, prefillFees) {
     feesContainer.classList.remove('hidden'); 
   }
 
-  const rows = Array.isArray(prefillFees) ? prefillFees : [];
+  const apiRows = normalizeUnitFeeRows(response.data);
+  const rows = Array.isArray(prefillFees) && prefillFees.length ? prefillFees : apiRows;
   if (rows.length) {
     rows.forEach((item, index) => {
-      const feeId = item.feenameid ? String(item.feenameid) : '';
+      const feeId =
+        item.feenameid ?? item.feeid ?? item.morefeesid ?? item.id ?? item.feename_id ?? '';
       addRentFeeRow({
-        feeId,
-        amount: item.amount ?? '',
-        deposit: item.deposit ?? '',
+        feeId: feeId ? String(feeId) : '',
+        amount: item.amount ?? item.feeamount ?? item.rent ?? '',
+        deposit: item.deposit ?? item.amountpaid ?? '',
         discount: item.discount ?? '',
-        renewable: (item.renewable ?? 'NO').toString().toUpperCase() === 'YES' ? 'YES' : 'NO',
-        rentalPeriod: item.rentalperiodmonths ?? item.rentalperiod ?? '',
+        renewable: (item.renewable ?? item.instalment ?? 'NO').toString().toUpperCase() === 'YES' ? 'YES' : 'NO',
+        rentalPeriod: item.rentalperiodmonths ?? item.rentalperiod ?? item.paymentperiod ?? '',
         autoSelectSource: index === 0
       });
     });
-    ensureRentDefaultFlatSelection();
-    recalculateRentPercentageRows();
-    updateRentTotalDeposit();
+  } else {
+    // Keep the section usable when API returns no seeded rows
+    addRentFeeRow();
   }
+  ensureRentDefaultFlatSelection();
+  recalculateRentPercentageRows();
+  updateRentTotalDeposit();
+}
+
+function normalizeUnitFeeRows(data) {
+  if (!data) return [];
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.data)) return data.data;
+  if (Array.isArray(data.rows)) return data.rows;
+  if (Array.isArray(data.fees)) return data.fees;
+  if (Array.isArray(data.otherfees)) return data.otherfees;
+  if (Array.isArray(data.unitfees)) return data.unitfees;
+  return [];
 }
 
 function addRentFeeRow(prefill = {}) {
@@ -336,10 +352,10 @@ function addRentFeeRow(prefill = {}) {
   const tr = document.createElement('tr');
   tr.id = id;
   tr.dataset.feeMode = ''; 
-  tr.dataset.percentageRate = '';  
+  tr.dataset.percentageRate = '';   
   tr.innerHTML = `
     <td>
-      <div class="form-group w-[210px]">
+      <div class="form-group min-w-[150px]">
         <select id="fe-${id}" class="form-control feename-select"></select>
       </div>
     </td> 
@@ -347,20 +363,20 @@ function addRentFeeRow(prefill = {}) {
       <span id="mo-${id}" class="font-semibold uppercase"></span>
     </td>
     <td>
-      <div class="form-group w-[200px]">        <input type="number" id="ra-${id}" class="form-control amount-input" placeholder="Enter Amount">
+      <div class="form-group min-w-[130px]">        <input type="number" id="ra-${id}" class="form-control amount-input" placeholder="Enter Amount">
       </div>
     </td>
     <td class="hidden">     <div class="form-group w-[90px]">
-        <input type="number" id="rp-${id}" class="form-control rental-period-input" placeholder="Enter Rental Period (months)">
+        <input type="number" id="rp-${id}" class="form-control rental-period-input" placeholder="Enter Payment Period (months)">
       </div>
     </td>
     <td>
-      <div class="form-group w-[150px]">
+      <div class="form-group min-w-[115px]">
         <input type="number" id="de-${id}" class="form-control deposit-input" placeholder="0">
       </div>
     </td>
     <td>
-      <div class="form-group w-[150px]">
+      <div class="form-group min-w-[115px]">
         <input type="number" id="di-${id}" class="form-control discount-input" placeholder="0">
       </div>
     </td>
@@ -450,7 +466,7 @@ function setupRentRentalPeriodControl(input) {
   input.setAttribute('inputmode', 'numeric');
   input.setAttribute('pattern', '^[0-9]+$');
   input.setAttribute('title', 'Enter number of months, e.g. 1, 6, 12');
-  input.setAttribute('placeholder', 'Enter Rental Period (months)');
+  input.setAttribute('placeholder', 'Enter Payment Period (months)');
   if (!input.dataset.numericFilterAttached) {
     input.addEventListener('input', () => {
       input.value = input.value.replace(/[^\d]/g, '');
@@ -619,6 +635,7 @@ function recalculateRentPercentageRows() {
       }
     }
   });
+  updateRentTotalDeposit();
 }
 
 function removeRentFeeRow(rowId) {
@@ -653,14 +670,24 @@ function handleRentDepositDiscountChange(rowId, field) {
 }
 
 function updateRentTotalDeposit() {
-  const inputs = document.querySelectorAll('#rentapropertytable .deposit-input');
-  let sum = 0;
-  inputs.forEach((input) => {
-    sum += parseFloat(input.value) || 0;
+  const rows = [...document.querySelectorAll('#rentapropertytable tr')];
+  let depositSum = 0;
+  let payableSum = 0;
+  let hasAnyDeposit = false;
+
+  rows.forEach((row) => {
+    const amount = parseFloat(row.querySelector('.amount-input')?.value) || 0;
+    const deposit = parseFloat(row.querySelector('.deposit-input')?.value) || 0;
+    const discount = parseFloat(row.querySelector('.discount-input')?.value) || 0;
+    depositSum += deposit;
+    payableSum += Math.max(amount - discount, 0);
+    if (deposit > 0) hasAnyDeposit = true;
   });
+
   const amountPaid = document.getElementById('amountpaid');
   if (amountPaid) {
-    amountPaid.value = sum ? sum.toString() : '';
+    const value = hasAnyDeposit ? depositSum : payableSum;
+    amountPaid.value = value ? value.toString() : '';
   }
 }
 

@@ -61,7 +61,7 @@
                                                         <th>Fee Name</th> 
                                                         <th>Mode</th>  
                                                         <th>Amount</th> 
-                                                        <th title="Enter number of days e.g. 12, 30, 60, 90, 120, 180. 30 month.">rental period (months)</th>
+                                                        <th title="Enter number of months e.g. 1, 3, 6, 12.">payment period</th>
                                                         <th class="hidden">Apply % to</th> 
                                                         <th>
                                                             <div id="propertyregistrationaddrow" style="padding: 10px 20px;border-radius: 10px;background: white;border: 2px solid green;width: fit-content; height: fit-content;font-size: larger; color: green;font-weight: bold;">+</div>
@@ -71,7 +71,7 @@
                                                 <tbody id="propertyregistrationtable"></tbody>
                                             </table>
                                         </div>
-                                    </div>
+                                    </div> 
                         
                                 </div>
                                 <div class="flex justify-end mt-5">

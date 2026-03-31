@@ -17,10 +17,10 @@ if(!isset($_SESSION["wuseremail"]))
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avatar Homes Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./css/index.css"> 
-    <link rel="stylesheet" href="./css/css_vanilla.css">
+    <link rel="stylesheet" href="./css/index.css?v=20260219c">
+    <link rel="stylesheet" href="./css/css_vanilla.css?v=20260219c">
      <!-- PWA Manifest --> 
-  <link rel="manifest" href="./manifest.json">
+  <link rel="manifest" href="./manifest.json"> 
       <!-- ios support -->
       <link rel="apple-touch-icon" href="images/16.png" />
     <link rel="apple-touch-icon" href="images/32.png" />
@@ -59,12 +59,9 @@ if(!isset($_SESSION["wuseremail"]))
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   />
-  <script>
-    const did=(id)=> document.getElementById(id);
-</script>
 </head>
 
-<body class="dashboard-theme">
+<body class="dashboard-theme"> 
 
     <main class="h-screen bg-primary/10">
         <div class="h-full">
@@ -237,13 +234,13 @@ if(!isset($_SESSION["wuseremail"]))
      <div class="j-outer-container" id="jmodal-area">
         <div class="modal-content" id="modal-content"></div>
     </div>
-    <script src="./js/util.js?v=20260219b"></script>
-    <script src="./js/router.js?v=20260219b"></script>
-    <script src="./js/index.js?v=20260219b"></script>
-    <script src="./js/oreutil.js?v=20260219b"></script>
+    <script src="./js/util.js?v=20260220a"></script>
+    <script src="./js/router.js?v=20260220a"></script>
+    <script src="./js/index.js?v=20260220a"></script>
+    <script src="./js/oreutil.js?v=20260220a"></script>
 </body>
 
-</html>
+</html> 
 
 
 

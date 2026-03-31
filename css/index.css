@@ -2110,6 +2110,22 @@ button:disabled {
 }
 
 .dashboard-theme .pagination-number.active {
-  background-color: #c89a2b !important;
+  background-color: #c89a2b !important; 
   color: #fffef9 !important;
+}
+ 
+/* Keep wide data grids usable after larger font scaling */
+.dashboard-theme .table-content {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.dashboard-theme .table-content table {
+  min-width: 100%;
+}
+
+@media screen and (max-width: 1279px) {
+  .dashboard-theme .table-content table {
+    min-width: 960px;
+  }
 }

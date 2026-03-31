@@ -257,7 +257,7 @@
                                 <th>Deposit</th>
                                 <th>Discount</th>
                                 <th>Apply % to</th>
-                                <th>Renewable</th>
+                                <th>Instalment</th>
                                 <th>
                                      <div id="rentapropertyaddrow" style="padding: 10px 20px;border-radius: 10px;background: white;border: 2px solid green;width: fit-content; height: fit-content;font-size: larger; color: green;font-weight: bold;">+</div>
                                 </th>
@@ -267,7 +267,7 @@
                     </table>
                 </div>
             </div>
-
+ 
             <hr class="my-10">
 
         </div>

@@ -40,7 +40,7 @@ async function registeratenantsubmit(){
     deps.forEach((r, i) => {
         const idx = i + 1, cells = r.cells;
         const raw = cells[0].innerText.replace('account_circle', '').trim();
-        formData.append(`fullname${idx}`, raw);
+        formData.append(`fullname${idx}`, raw); 
         formData.append(`phone${idx}`, cells[1].innerText.trim());
         formData.append(`occupation${idx}`, cells[2].innerText.trim());
         const b = cells[3].querySelector('span');

@@ -1,4 +1,4 @@
-const assetcache = 'v2-20260219b';
+const assetcache = 'v2-20260220a';
 const assets = [
   'login.php',
   'index.php',
@@ -25,10 +25,10 @@ self.addEventListener('activate', event => {
       Promise.all(
         names
           .filter(name => name !== assetcache)
-          .map(name => caches.delete(name))
+          .map(name => caches.delete(name)) 
       )
-    )
-  );
+    ) 
+  ); 
   self.clients.claim();
 });
 

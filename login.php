@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In | Avatar Homes</title>
 
-    <link rel="stylesheet" href="./css/index.css"> 
+    <link rel="stylesheet" href="./css/index.css?v=20260219c"> 
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,7 @@
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100;200;300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
-    <!-- PWA Manifest -->
+    <!-- PWA Manifest --> 
     <link rel="manifest" href="./manifest.json"> 
   <meta name="theme-color" content="#c9a227">
   <link rel="icon" href="./images/icon.png">

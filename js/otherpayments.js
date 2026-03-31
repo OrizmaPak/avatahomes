@@ -56,7 +56,7 @@ async function otherpaymentssubmitss(){
     //     if(document.getElementById('id').value)params.append('id', document.getElementById('id').value)
     //     params.append('propertyname', document.getElementById('propertyname').value)
     //     params.append('address', document.getElementById('address').value)
-    //     params.append('city', document.getElementById('city').value)
+    //     params.append('city', document.getElementById('city').value) 
     //     params.append('state', document.getElementById('state').value)
     //     params.append('numberofunits', document.getElementById('numberofunits').value)
     //     params.append('typeofunits', document.getElementById('typeofunits').value)
