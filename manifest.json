@@ -1,0 +1,20 @@
+{
+    "name": "Trecadero",
+    "short_name": "Trecadero",
+    "start_url": "./login.php",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#317EFB",
+    "icons": [
+                { "src": "./images/16.png", "sizes": "16x16", "type": "image/png" },
+                { "src": "./images/32.png", "sizes": "32x32", "type": "image/png" },
+                { "src": "./images/icon.png", "sizes": "40x40", "type": "image/png" },
+                { "src": "./images/128.png", "sizes": "128x128", "type": "image/png" },
+                { "src": "./images/196.png", "sizes": "192x192", "type": "image/png" },
+                { "src": "./images/512.png", "sizes": "512x512", "type": "image/png" }
+
+                ]
+
+  } 
+  
+ 
