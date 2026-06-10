@@ -742,7 +742,7 @@
                         <span class="btnloader" style="display:none;"></span>
                         <span>Submit Inquiry</span>
                     </button>
-                    <p class="foot-note">Internal users can <a href="./login">sign in here</a>.</p>
+                    <p class="foot-note">Internal users can <a href="./login.php">sign in here</a>.</p>
                 </form>
             </aside>
         </main>
