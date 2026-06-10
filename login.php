@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In | Avatar Homes</title>
+    <title>Sign In | Avata Homes</title>
 
     <link rel="stylesheet" href="./css/index.css?v=20260219c"> 
 
@@ -36,7 +36,7 @@
 
     <section>
         <div class="font-heebo font-bold text-base uppercase md:w-2/3 xl:w-1/3 3xl:w-1/5 mx-auto text-center my-10 login-brand"> 
-            Avatar <span>Homes</span>
+            Avata <span>Homes</span>
         </div> 
         <div class="login-card xl:bg-white xl:border w-full md:w-2/3 xl:w-1/3 3xl:w-1/5 mx-auto rounded py-14 px-12 drop-shadow-sm">
             <h1 class="font-bold text-2xl text-center">Welcome back &#128519;</h1>
