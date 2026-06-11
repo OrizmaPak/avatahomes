@@ -156,6 +156,7 @@ if(!isset($_SESSION["wuseremail"]))
                                     <ul class="ml-14 gap-y-4 flex flex-col">
                                         <li class="navitem-child" id="registeratenant">Register Client</li>
                                         <li class="navitem-child" id="viewtenants">View Clients</li>
+                                        <li class="navitem-child" id="viewenquires">View enquires</li>
                                         <li class="navitem-child" id="rentaproperty">Property Sales</li>
                                         <li class="navitem-child" id="viewrentaproperty">View Property Sales</li>
                                         <li class="navitem-child" id="duerentals">Due Property Payments</li>

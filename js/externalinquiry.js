@@ -23,7 +23,7 @@ async function submitExternalInquiry() {
     payload.set('role', 'STAFF')
 
     const submitButton = form.querySelector('button#submit')
-    const result = await httpRequest('../controllers/userscript', payload, submitButton)
+    const result = await httpRequest('./controllers/addinquiry.php', payload, submitButton)
 
     if(result && result.status && Number(result.code) === 200) {
         notification('Inquiry registration submitted successfully.', 1)

@@ -117,6 +117,11 @@ const routerTree = {
         startingFunction: 'viewtenantsActive', 
         scriptName:  './js/viewtenants.js'
     },
+    viewenquires: {
+        template: 'viewenquires',
+        startingFunction: 'viewenquiresActive',
+        scriptName: './js/viewenquires.js'
+    },
     viewrentaproperty: {
         template: 'viewrentaproperty',
         startingFunction: 'viewrentapropertyActive',
