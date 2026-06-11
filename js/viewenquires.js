@@ -38,7 +38,7 @@ function formatInquiryType(value, label = '') {
 
 async function fetchSingleEnquire(id) {
     const payload = viewenquiresPayload([['id', id]]);
-    return httpRequest2('../controllers/fetchinquires.php', payload, null, 'json');
+    return httpRequest2('../controllers/fetchinquiries.php', payload, null, 'json');
 }
 
 async function showEnquireDetails(id) {
@@ -92,7 +92,7 @@ async function viewenquiresFormSubmitHandler(flag = '') {
 
     const button = flag ? document.querySelector('#viewenquiresform #submit') : null;
     const payload = flag ? viewenquiresPayload() : null;
-    const request = await httpRequest2('../controllers/fetchinquires.php', payload, button, 'json');
+    const request = await httpRequest2('../controllers/fetchinquiries.php', payload, button, 'json');
 
     if (request && request.status === true) {
         if (request.data.length) {
