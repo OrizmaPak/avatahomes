@@ -1,5 +1,47 @@
 window.addEventListener('DOMContentLoaded', initializeExternalInquiryForm, false)
 
+let inquiryNotifier
+
+function getInquiryNotifier() {
+    if (inquiryNotifier) return inquiryNotifier
+    if (typeof Notyf === 'undefined') return null
+
+    inquiryNotifier = new Notyf({
+        duration: 4500,
+        position: {
+            x: 'right',
+            y: 'top'
+        },
+        types: [
+            {
+                type: 'success',
+                background: '#2f8f3d',
+                icon: false
+            },
+            {
+                type: 'error',
+                background: '#c35a1b',
+                icon: false
+            }
+        ]
+    })
+
+    return inquiryNotifier
+}
+
+function notifyInquiry(message, type = 'error') {
+    const notifier = getInquiryNotifier()
+    if (!notifier) {
+        notification(message, type === 'success' ? 1 : 0)
+        return
+    }
+
+    notifier.open({
+        type,
+        message
+    })
+}
+
 function initializeExternalInquiryForm() {
     const form = document.getElementById('external-inquiry-form')
     if(!form) return
@@ -26,17 +68,17 @@ async function submitExternalInquiry() {
     const result = await httpRequest('../controllers/addinquiry.php', payload, submitButton)
 
     if(result && result.status && Number(result.code) === 200) {
-        notification('Inquiry registration submitted successfully.', 1)
+        notifyInquiry('Inquiry registration submitted successfully.', 'success')
         form.reset()
         return
     }
 
     if(result && result.message) {
-        notification(result.message, 0)
+        notifyInquiry(result.message, 'error')
         return
     }
 
-    notification('Unable to submit inquiry at this time. Please try again.', 0)
+    notifyInquiry('Unable to submit inquiry at this time. Please try again.', 'error')
 }
 
 function runExternalInquiryValidations(form) {
