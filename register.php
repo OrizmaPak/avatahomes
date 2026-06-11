@@ -558,7 +558,7 @@
 <body>
     <div class="page">
         <header class="topbar animate__animated animate__fadeInDown">
-            <a href="./register.php" class="brand">
+            <a href="./register" class="brand">
                 <div class="logo-panel">
                     <img src="./images/icon.png" alt="WeRent logo">
                 </div>
@@ -742,7 +742,7 @@
                         <span class="btnloader" style="display:none;"></span>
                         <span>Submit Registration</span>
                     </button>
-                    <p class="foot-note">Internal users can <a href="./login.php">sign in here</a>.</p>
+                    <p class="foot-note">Internal users can <a href="./login">sign in here</a>.</p>
                 </form>
             </aside>
         </main>

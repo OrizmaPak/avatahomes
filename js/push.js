@@ -17,7 +17,7 @@
     if (permission === 'granted') {
       startPolling();
       // Dummy push to test the notification
-      showNotification('Test Notification', 'This is a test notification.', './index.php');
+      showNotification('Test Notification', 'This is a test notification.', './index');
     } else {
       console.warn('Notifications permission not granted:', permission);
     } 
@@ -70,7 +70,7 @@
   self.addEventListener
     ? self.addEventListener('notificationclick', event => {
         event.notification.close();
-        const target = event.notification.data.url || './index.php';
+        const target = event.notification.data.url || './index';
         event.waitUntil(clients.openWindow(target));
       })
     : null; 

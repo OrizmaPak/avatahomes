@@ -17,7 +17,7 @@ window.onload = function() {
      if(result.status) {
          notification('Login Successful', 1)
          localStorage.setItem('user', JSON.stringify(result.data))
-         setTimeout(() => window.location = './index.php', 1000)
+         setTimeout(() => window.location = './index', 1000)
      }
      else { 
          if(result.code == 204) return notification('Incorrect email or password', 0)

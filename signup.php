@@ -89,7 +89,7 @@
                             <div class="btnloader" style="display: none;" ></div>
                             <span>Signup</span>
                         </button>
-                        <a href="./login.php" class="w-full md:w-max rounded-full text-gray-600 text-sm capitalize bg-white px-6  py-3 lg:py-2 shadow-sm font-medium hover:opacity-75 transition duration-300 ease-in-out flex items-center justify-center gap-3">
+                        <a href="./login" class="w-full md:w-max rounded-full text-gray-600 text-sm capitalize bg-white px-6  py-3 lg:py-2 shadow-sm font-medium hover:opacity-75 transition duration-300 ease-in-out flex items-center justify-center gap-3">
                             <span>Login account</span>
                         </a>
                     </div>
