@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avatar Homes | Inquiry</title>
+    <title>Avata Homes | Inquiry</title>
 
     <link rel="stylesheet" href="./css/index.css"> 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -686,7 +686,7 @@
         <header class="topbar animate__animated animate__fadeInDown">
             <a href="./index.php" class="brand">
                 <div class="logo-panel">
-                    <img src="./images/icon.png" alt="Avatar Homes logo">
+                    <img src="./images/icon.png" alt="Avata Homes logo">
                 </div>
                 <span class="brand-text">
                     AVATAR HOMES
@@ -706,7 +706,7 @@
                         <span class="tag">Real Estate Operations</span>
                         <h1>Smart operations for property sales and management.</h1>
                         <p>
-                            Avatar Homes helps teams manage unit listings, occupancy, client tracking, and property
+                            Avata Homes helps teams manage unit listings, occupancy, client tracking, and property
                             transactions from one modern platform. This public page is your default inquiry channel
                             to start registration.
                         </p>

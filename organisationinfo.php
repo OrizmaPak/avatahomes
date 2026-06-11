@@ -77,7 +77,7 @@
         <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="updateImage(event)">
     </div>
                             <!--<span class="rounded-full text-white text-3xs font-bold capitalize bg-blue-500 my-3 px-2 py-0.5 text-center">Organisation</span>-->
-            <h1 class="font-bold text-2xl text-center"><span class="text-blue-500">Avatar</span> Homes</h1>
+            <h1 class="font-bold text-2xl text-center"><span class="text-blue-500">Avata</span> Homes</h1>
                             
 
                         </div>

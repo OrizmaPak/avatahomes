@@ -15,7 +15,7 @@ if(!isset($_SESSION["wuseremail"]))
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avatar Homes Dashboard</title>
+    <title>Avata Homes Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/index.css?v=20260219c">
     <link rel="stylesheet" href="./css/css_vanilla.css?v=20260219c">
@@ -70,7 +70,7 @@ if(!isset($_SESSION["wuseremail"]))
             <header> 
                 <div class="dashboard-header flex items-center bg-white border-b border-gray-200/50">
                     <span
-                        class="xl:w-[250px] font-bold text-base block py-3 pl-5 selection:bg-white capitalize font-heebo dashboard-brand">Avatar <span>Homes</span></span>
+                        class="xl:w-[250px] font-bold text-base block py-3 pl-5 selection:bg-white capitalize font-heebo dashboard-brand">Avata <span>Homes</span></span>
                     <div class="flex-1 flex items-center justify-end xl:justify-between">
                         <button id="toggler"
                             class="flex items-center justify-center h-7 w-7 rounded hover:bg-primary transition ease-linear duration-300 text-gray-400">

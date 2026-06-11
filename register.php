@@ -580,7 +580,7 @@
                         <span class="tag">Real Estate Operations</span>
                         <h1>Smart operations for property sales and management.</h1>
                         <p>
-                            Avatar Homes helps teams manage unit listings, occupancy, client tracking, and property
+                            Avata Homes helps teams manage unit listings, occupancy, client tracking, and property
                             transactions from one modern platform. This public page is your default inquiry channel
                             to start registration.
                         </p>
