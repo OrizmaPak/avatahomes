@@ -376,9 +376,42 @@
         }
 
         .form-card {
-            padding: 1.06rem;
+            padding: 0;
             align-self: start;
             position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(255, 248, 230, 0.92), rgba(255, 255, 255, 0.98)),
+                #fff;
+        }
+
+        .form-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 5px;
+            background: linear-gradient(90deg, #d7b255, #b88a1c, #8f6510);
+        }
+
+        .form-shell {
+            padding: 1.15rem;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .form-card *,
+        .form-card *::before,
+        .form-card *::after {
+            box-sizing: border-box;
+        }
+
+        .form-highlight {
+            display: grid;
+            gap: 0.75rem;
+            padding: 0.9rem 0.95rem;
+            border: 1px solid #ecdcb4;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(255, 246, 222, 0.96), rgba(255, 255, 255, 0.98));
         }
 
         .form-head {
@@ -412,17 +445,81 @@
             line-height: 1.55;
         }
 
+        .form-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+        }
+
+        .form-badges span {
+            padding: 0.32rem 0.6rem;
+            border-radius: 999px;
+            border: 1px solid #e8d3a1;
+            background: rgba(255, 255, 255, 0.9);
+            color: #7a560e;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .form-note {
+            margin: 0;
+            font-size: 0.77rem;
+            line-height: 1.65;
+            color: #7a6640;
+        }
+
+        .form-panel {
+            display: grid;
+            gap: 0.85rem;
+            padding: 0.95rem;
+            border: 1px solid #eadcb7;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .form-section {
+            display: grid;
+            gap: 0.7rem;
+        }
+
+        .form-section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.6rem;
+            padding-bottom: 0.55rem;
+            border-bottom: 1px solid rgba(234, 220, 183, 0.85);
+        }
+
+        .form-section-title strong {
+            font-family: Syne, sans-serif;
+            font-size: 0.86rem;
+            color: #6a4b0f;
+            letter-spacing: -0.01em;
+        }
+
+        .form-section-title span {
+            font-size: 0.68rem;
+            color: #8a7242;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
         .form-grid {
-            margin-top: 0.76rem;
             display: grid;
             grid-template-columns: repeat(1, minmax(0, 1fr));
-            gap: 0.56rem;
+            gap: 0.72rem;
+            align-items: start;
         }
 
         .field {
             display: flex;
             flex-direction: column;
-            gap: 0.24rem;
+            gap: 0.34rem;
+            width: 100%;
+            min-width: 0;
         }
 
         .span-2 {
@@ -438,14 +535,39 @@
         }
 
         .control {
+            display: block;
             width: 100%;
+            min-width: 0;
             border: 1px solid #eadcb7;
-            border-radius: 9px;
-            background: #fdfefe;
+            border-radius: 11px;
+            background: #fffef9;
             color: #5f430f;
-            padding: 0.63rem 0.67rem;
+            padding: 0.78rem 0.8rem;
+            min-height: 48px;
             font-size: 0.83rem;
+            line-height: 1.35;
+            -webkit-appearance: none;
+            appearance: none;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input.control,
+        select.control {
+            height: 48px;
+        }
+
+        select.control {
+            padding-right: 2.35rem;
+            background-image: linear-gradient(45deg, transparent 50%, #8f6510 50%), linear-gradient(135deg, #8f6510 50%, transparent 50%);
+            background-position: calc(100% - 16px) calc(50% - 3px), calc(100% - 11px) calc(50% - 3px);
+            background-size: 5px 5px, 5px 5px;
+            background-repeat: no-repeat;
+        }
+
+        textarea.control {
+            min-height: 120px;
+            height: auto;
+            resize: vertical;
         }
 
         .control::placeholder {
@@ -464,9 +586,9 @@
 
         .submit-btn {
             width: 100%;
-            margin-top: 0.7rem;
+            margin-top: 0.15rem;
             border: 0;
-            border-radius: 10px;
+            border-radius: 12px;
             background: linear-gradient(110deg, #d7b255, #b88a1c);
             color: #fff;
             font-family: Syne, sans-serif;
@@ -474,7 +596,7 @@
             letter-spacing: 0.05em;
             text-transform: uppercase;
             font-weight: 700;
-            padding: 0.73rem 0.9rem;
+            padding: 0.9rem 1rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -488,7 +610,7 @@
         }
 
         .foot-note {
-            margin-top: 0.52rem;
+            margin-top: 0.1rem;
             text-align: center;
             font-size: 0.73rem;
             color: #8a7242;
@@ -541,6 +663,10 @@
                 position: sticky;
                 top: 0.95rem;
             }
+
+            .form-shell {
+                padding: 1.2rem;
+            }
         }
 
         @media (max-width: 580px) {
@@ -558,7 +684,7 @@
 <body>
     <div class="page">
         <header class="topbar animate__animated animate__fadeInDown">
-            <a href="./inquiry.php" class="brand">
+            <a href="./index.php" class="brand">
                 <div class="logo-panel">
                     <img src="./images/icon.png" alt="Avatar Homes logo">
                 </div>
@@ -691,59 +817,87 @@
             </section>
 
             <aside id="signup-form" class="panel form-card animate__animated animate__fadeInRight">
-                <div class="form-head">
-                    <h2>Inquiry Sign Up</h2>
-                    <span>Public Form</span>
-                </div>
-                <p class="form-sub">Submit your details and our property team will follow up.</p>
-
-                <form id="external-inquiry-form" autocomplete="off">
-                    <div class="form-grid">
-                        <div class="field">
-                            <label for="firstname">First Name</label>
-                            <input type="text" name="firstname" id="firstname" class="control" maxlength="60" placeholder="Ada">
+                <div class="form-shell">
+                    <div class="form-highlight">
+                        <div class="form-head">
+                            <h2>Inquiry Sign Up</h2>
+                            <span>Public Form</span>
                         </div>
-                        <div class="field">
-                            <label for="lastname">Last Name</label>
-                            <input type="text" name="lastname" id="lastname" class="control" maxlength="60" placeholder="Okafor">
+                        <p class="form-sub">Submit your details and our property team will follow up.</p>
+                        <div class="form-badges">
+                            <span>Fast Review</span>
+                            <span>Client Intake</span>
+                            <span>Property Follow-Up</span>
                         </div>
-                        <div class="field span-2">
-                            <label for="othernames">Other Names</label>
-                            <input type="text" name="othernames" id="othernames" class="control" maxlength="80" placeholder="Middle name(s)">
-                        </div>
-                        <div class="field">
-                            <label for="email">Email</label>
-                            <input type="email" name="email" id="email" class="control" maxlength="120" placeholder="name@example.com">
-                        </div>
-                        <div class="field">
-                            <label for="phone">Phone</label>
-                            <input type="tel" name="phone" id="phone" class="control" maxlength="20" placeholder="+234 801 234 5678">
-                        </div>
-                        <div class="field span-2">
-                            <label for="address">Address</label>
-                            <input type="text" name="address" id="address" class="control" maxlength="200" placeholder="Street, city, state">
-                        </div>
-                        <div class="field span-2">
-                            <label for="inquirytype">Your Request</label>
-                            <select name="inquirytype" id="inquirytype" class="control">
-                                <option value="">Select request</option> 
-                                <option value="BUY_PROPERTY">I am interested in buying a property</option>
-                                <option value="GENERAL_INQUIRY">I am just making an inquiry</option>
-                            </select>
-                        </div>
-                        <div class="field span-2">
-                            <label for="moredetails">More Details</label>
-                            <textarea name="moredetails" id="moredetails" class="control" rows="3" placeholder="Share any details about the property, location, or budget."></textarea>
-                        </div>
+                        <p class="form-note">
+                            Complete the form once with accurate contact details. We use this information to route your
+                            inquiry and match you with the right property response.
+                        </p>
                     </div>
 
-                    <input type="hidden" name="role" value="STAFF">
-                    <button type="button" id="submit" class="submit-btn">
-                        <span class="btnloader" style="display:none;"></span>
-                        <span>Submit Inquiry</span>
-                    </button>
-                    <p class="foot-note">Internal users can <a href="./login.php">sign in here</a>.</p>
-                </form>
+                    <form id="external-inquiry-form" class="form-panel" autocomplete="off">
+                        <section class="form-section">
+                            <div class="form-section-title">
+                                <strong>Personal Information</strong>
+                                <span>Required</span>
+                            </div>
+                            <div class="form-grid">
+                                <div class="field">
+                                    <label for="firstname">First Name</label>
+                                    <input type="text" name="firstname" id="firstname" class="control" maxlength="60" placeholder="Ada">
+                                </div>
+                                <div class="field">
+                                    <label for="lastname">Last Name</label>
+                                    <input type="text" name="lastname" id="lastname" class="control" maxlength="60" placeholder="Okafor">
+                                </div>
+                                <div class="field span-2">
+                                    <label for="othernames">Other Names</label>
+                                    <input type="text" name="othernames" id="othernames" class="control" maxlength="80" placeholder="Middle name(s)">
+                                </div>
+                                <div class="field">
+                                    <label for="email">Email</label>
+                                    <input type="email" name="email" id="email" class="control" maxlength="120" placeholder="name@example.com">
+                                </div>
+                                <div class="field">
+                                    <label for="phone">Phone</label>
+                                    <input type="tel" name="phone" id="phone" class="control" maxlength="20" placeholder="+234 801 234 5678">
+                                </div>
+                                <div class="field span-2">
+                                    <label for="address">Address</label>
+                                    <input type="text" name="address" id="address" class="control" maxlength="200" placeholder="Street, city, state">
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="form-section">
+                            <div class="form-section-title">
+                                <strong>Inquiry Details</strong>
+                                <span>Tell Us More</span>
+                            </div>
+                            <div class="form-grid">
+                                <div class="field span-2">
+                                    <label for="inquirytype">Your Request</label>
+                                    <select name="inquirytype" id="inquirytype" class="control">
+                                        <option value="">Select request</option> 
+                                        <option value="BUY_PROPERTY">I am interested in buying a property</option>
+                                        <option value="GENERAL_INQUIRY">I am just making an inquiry</option>
+                                    </select>
+                                </div>
+                                <div class="field span-2">
+                                    <label for="moredetails">More Details</label>
+                                    <textarea name="moredetails" id="moredetails" class="control" rows="5" placeholder="Share any details about the property, location, budget, preferred house type, or timeline."></textarea>
+                                </div>
+                            </div>
+                        </section>
+
+                        <input type="hidden" name="role" value="STAFF">
+                        <button type="button" id="submit" class="submit-btn">
+                            <span class="btnloader" style="display:none;"></span>
+                            <span>Submit Inquiry</span>
+                        </button>
+                        <p class="foot-note">Internal users can <a href="./login">sign in here</a>.</p>
+                    </form>
+                </div>
             </aside>
         </main>
     </div>
