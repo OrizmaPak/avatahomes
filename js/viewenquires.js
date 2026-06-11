@@ -1,11 +1,38 @@
 let viewenquiresid;
 
+function formatDateInputValue(date) {
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function setCurrentWeekDefaults(form) {
+    const startDateInput = form.querySelector('#startdate');
+    const endDateInput = form.querySelector('#enddate');
+    if (!startDateInput || !endDateInput) return;
+
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() + mondayOffset);
+
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+
+    startDateInput.value = formatDateInputValue(weekStart);
+    endDateInput.value = formatDateInputValue(weekEnd);
+}
+
 async function viewenquiresActive() {
     const form = document.querySelector('#viewenquiresform');
     if (!form) return;
 
     const submitButton = form.querySelector('#submit');
     if (submitButton) submitButton.addEventListener('click', () => viewenquiresFormSubmitHandler('payload'));
+    setCurrentWeekDefaults(form);
 
     datasource = [];
     await viewenquiresFormSubmitHandler();
