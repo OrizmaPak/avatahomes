@@ -1,7 +1,7 @@
 let propertyregistrationid
 let propertyfees = []
 const APPLY_PERCENTAGE_GROUP = 'property-registration-apply-percent'
-const NOT_APPLICABLE_DURATION = 'NOT APPLICABLE'
+const PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION = 'NOT APPLICABLE'
 
 function getAddRowButton() {
     return document.getElementById('propertyregistrationaddrow')
@@ -33,7 +33,7 @@ function isAddRowButtonReady() {
 function getPropertyDurationOptionsMarkup(selectedValue = '') {
     const options = [
         { value: '', label: 'Select payment period' },
-        { value: NOT_APPLICABLE_DURATION, label: 'Not Applicable' },
+        { value: PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION, label: 'Not Applicable' },
         { value: '1', label: '1 Month' },
         { value: '2', label: '2 Months' },
         { value: '3', label: '3 Months' },
@@ -436,7 +436,7 @@ async function propertyregistrationsubmit() {
         let id = table.children[i].id
         const rpCtrl = document.getElementById(`rp-${id}`)
         const rpVal = (rpCtrl?.value || '').trim() 
-        if (rpVal !== NOT_APPLICABLE_DURATION && (!/^\d+$/.test(rpVal) || parseInt(rpVal, 10) < 1)) {
+        if (rpVal !== PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION && (!/^\d+$/.test(rpVal) || parseInt(rpVal, 10) < 1)) {
             return notification('Rental period must be a whole number in days and cannot be zero. Examples: 30, 60, 90, 120, 180. 30 days represents one month.', 0)
         }
     }

@@ -2,7 +2,7 @@ let rentapropertyid;
 let rentapropertyresult;
 let rentFeeDefinitions = [];
 const RENT_APPLY_PERCENTAGE_GROUP = 'rentaproperty-apply-percent';
-const NOT_APPLICABLE_DURATION = 'NOT APPLICABLE';
+const RENT_NOT_APPLICABLE_DURATION = 'NOT APPLICABLE';
 
 /* -------- DATE DIFFERENCE UTILITY -------- */
 function differenceInMonths(date1, date2) {
@@ -17,7 +17,7 @@ function differenceInMonths(date1, date2) {
 function getDurationOptionsMarkup(selectedValue = '') {
   const options = [
     { value: '', label: 'Select payment period' },
-    { value: NOT_APPLICABLE_DURATION, label: 'Not Applicable' },
+    { value: RENT_NOT_APPLICABLE_DURATION, label: 'Not Applicable' },
     { value: '1', label: '1 Month' },
     { value: '2', label: '2 Months' },
     { value: '3', label: '3 Months' },
@@ -176,7 +176,7 @@ async function rentapropertyActive() {
             record.rentdata.expirationdate.split(' ')[0]
           );
         } else {
-          durationInput.value = NOT_APPLICABLE_DURATION;
+          durationInput.value = RENT_NOT_APPLICABLE_DURATION;
         }
       }
       const managerInput = document.getElementById('propertymanager');
@@ -714,7 +714,7 @@ function updateRentTotalDeposit() {
 /* -------- FEE TABLE EVENTS & VALIDATION -------- */
 /* -------- DATE CALCULATION -------- */
 function rentapropertydate(months, begin, el) {
-  if (months === NOT_APPLICABLE_DURATION) {
+  if (months === RENT_NOT_APPLICABLE_DURATION) {
     document.getElementById('expirationdate').value = '';
     return;
   }
