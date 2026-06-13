@@ -96,10 +96,31 @@ async function fetchaddgltransaction(id='') {
     let request = await httpRequest2('../controllers/fetchglaccounts', id ? getparamm() : null, null, 'json')
     // if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     if(request.status) {
-        glTransactionAccounts = Array.isArray(request?.data?.data) ? request.data.data : (Array.isArray(request?.data) ? request.data : [])
-        window.did('glaccountlist').innerHTML = glTransactionAccounts.map(data=>`<option>${data.description} __${data.accountnumber}</option>`)
+        glTransactionAccounts = getGlTransactionAccountRows(request)
+        renderGlTransactionAccountList()
     }
     else return notification('No records retrieved')
+}
+
+function getGlTransactionAccountRows(request) {
+    const candidates = [
+        request?.data?.data?.data,
+        request?.data?.data,
+        request?.data
+    ]
+    const rows = candidates.find(item => Array.isArray(item)) || []
+    return rows.filter(account => account?.accountnumber)
+}
+
+function renderGlTransactionAccountList() {
+    const datalist = window.did('glaccountlist')
+    if (!datalist) return
+    datalist.innerHTML = ''
+    glTransactionAccounts.forEach(account => {
+        const option = document.createElement('option')
+        option.value = buildGlAccountLabel(account)
+        datalist.appendChild(option)
+    })
 }
 
 async function removeaddgltransaction(id) {
@@ -158,13 +179,13 @@ function buildAddGlTransactionPayload() {
     paramstr.append('transactiondate',document.getElementById('transactiondate').value);
     
     for(let i=0; i<document.getElementsByName('gltdebitamount').length; i++){
-        paramstr.append(`debitaccount${i}`,document.getElementsByName('gltdebitaccount')[i].value.split('__')[1]);
+        paramstr.append(`debitaccount${i}`,getGlAccountNumberFromValue(document.getElementsByName('gltdebitaccount')[i].value));
         paramstr.append(`debitamount${i}`,document.getElementsByName('gltdebitamount')[i].value);
     }
     paramstr.append('debitgridsize',document.getElementsByName('gltdebitamount').length);
     
     for(let i=0; i<document.getElementsByName('gltcreditamount').length; i++){
-        paramstr.append(`creditaccount${i}`,document.getElementsByName('gltcreditaccount')[i].value.split('__')[1]);
+        paramstr.append(`creditaccount${i}`,getGlAccountNumberFromValue(document.getElementsByName('gltcreditaccount')[i].value));
         paramstr.append(`creditamount${i}`,document.getElementsByName('gltcreditamount')[i].value);
     }
     paramstr.append('creditgridsize',document.getElementsByName('gltcreditamount').length);
@@ -174,9 +195,21 @@ function buildAddGlTransactionPayload() {
     return paramstr
 }
 
+function getGlAccountNumberFromValue(value) {
+    const normalizedValue = `${value || ''}`.trim()
+    if (!normalizedValue.includes('__')) return normalizedValue
+    return normalizedValue.split('__').pop().trim()
+}
+
+function getTodayInputDateValue() {
+    const today = new Date()
+    const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+    return localDate.toISOString().slice(0, 10)
+}
+
 function setBaseGlTransactionFormValues(description, amount, creditAccountLabel, debitAccountLabel) {
     addgltransactionFormResetHandler()
-    document.getElementById('transactiondate').value = new Date().toISOString().split('T')[0]
+    document.getElementById('transactiondate').value = getTodayInputDateValue()
     document.getElementById('description').value = description
     document.getElementById('creditaccount_0').value = creditAccountLabel
     document.getElementById('debitaccount_0').value = debitAccountLabel
@@ -267,7 +300,7 @@ async function autoPostTemporaryGlTransactions() {
                 buildGlAccountLabel(debitAccount)
             )
 
-            const request = await submitAddGlTransaction(triggerButton, false)
+            const request = await submitAddGlTransaction(null, false)
             if (request?.status === true) {
                 successCount += 1
                 await new Promise(resolve => setTimeout(resolve, 250))

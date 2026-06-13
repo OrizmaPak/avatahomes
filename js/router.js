@@ -155,7 +155,7 @@ const routerTree = {
     addgltransaction: {
         template: 'addgltransaction',
         startingFunction: 'addgltransactionActive',
-        scriptName: './js/addgltransaction.js?v=20260219b'
+        scriptName: './js/addgltransaction.js?v=20260613a'
     },
     gltransactionhistory: {
         template: 'gltransactionhistory',
