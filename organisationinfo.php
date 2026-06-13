@@ -46,6 +46,35 @@
     border-color: #c89a2b !important;
     box-shadow: 0 0 0 1px #e4c265;
 }
+
+.org-theme .logo-card {
+    position: relative;
+    width: 180px;
+    min-height: 180px;
+    margin: 2rem auto 1rem;
+    border: 1px solid #e6d6a8;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #fffdf8, #fff6e2);
+    box-shadow: 0 14px 28px rgba(116, 83, 13, 0.12);
+}
+
+.org-theme .logo-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    padding: 1rem;
+    background: #fff;
+}
+
+.org-theme .logo-card .edit-icon {
+    bottom: 12px;
+    right: 12px;
+}
+
+.org-theme .org-hidden-field {
+    display: none !important;
+}
 </style>
         <div class="font-heebo font-bold text-base uppercase md:w-2/3 xl:w-1/3 3xl:w-2/5 mx-auto text-center mt-10 lg:mb-10"> 
             <!--He<span class="text-gray-400">ms</span>-->
@@ -71,8 +100,8 @@
                                 </ul>
                             </div>
                 <div class="flex flex-col w-5/6 lg:w-fit m-auto items-center py-5 sticky top-0 bg-white ">
-                            <div class="relative w-[140px] h-[140px] lg:w-[140px] my-10 rounded-full overflow-hidden">
-        <img id="displayimg" src="./images/default-avatar.png" alt="user Avatar" class="w-full h-full object-center">
+                            <div class="logo-card">
+        <img id="displayimg" src="./images/default-avatar.png" alt="Organisation Logo" onerror="this.src='./images/default-avatar.png'">
         <span class="material-symbols-outlined edit-icon" onclick="document.getElementById('fileInput').click()">edit</span>
         <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="updateImage(event)">
     </div>
@@ -98,7 +127,7 @@
                                     <label for="companyname" class="text-gray-500 font-normal capitalize text-2xs font-heebo">Company Name<span class="text-[red]">*</span></label>
                                     <input name="companyname" id="companyName" type="text" class="font-semibold text-sm focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                 </div>
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="lastname" class="text-gray-500 font-normal capitalize text-2xs font-heebo">SMS Sender ID<span class="text-[red]">*</span></label>
                                     <input name="smssenderid" id="smssenderid" type="text" class="font-semibold text-sm focus:outline-none focus:ring-0 bg-transparent comp border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                 </div>
@@ -223,7 +252,7 @@
                                         <option>20.5</option>
                                     </select>
                                 </div>
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="dateofbirth" class="text-gray-500 font-normal capitalize text-2xs font-heebo">Allow Back-Dated Transaction<span class="text-[red]">*</span></label>
                                     <select id="backdated_transaction" name="backdated_transaction" class="font-semibold text-sm focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                         <option></option>
@@ -233,7 +262,7 @@
                                 </div>
                             </div>
                             <div class="flex flex-col lg:flex-row items-start gap-3 mt-3">
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="role" class="text-gray-500 font-normal capitalize text-2xs font-heebo">Allow Future Transaction<span class="text-[red]">*</span></label>
                                     <select name="future_transaction" id="future_transaction" class="font-semibold text-sm focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                         <option></option>
@@ -241,7 +270,7 @@
                                         <option>NO</option>
                                     </select>
                                 </div>
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="dateofbirth" class="text-gray-500 font-normal capitalize text-2xs font-heebo">Automate SMS Charges<span class="text-[red]">*</span></label>
                                     <select  id="automate_smscharge" name="automate_smscharge" class="font-semibold text-sm focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                         <option></option>
@@ -255,7 +284,7 @@
                                 </div>
                             </div>
                             <div class="flex flex-col lg:flex-row items-start gap-3 mt-3">
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="role" class="text-gray-500 font-normal capitalize text-2xs font-heebo">consumption charge<span class="text-[red]">*</span></label>
                                     <select name="consumptioncharge" id="consumptioncharge" class="font-semibold text-sm focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                         <option value="0">0%</option>
@@ -266,7 +295,7 @@
                                         <option value="15">15%</option>
                                     </select>
                                 </div>
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="role" class="text-gray-500 font-normal capitalize text-2xs font-heebo">service charge<span class="text-[red]">*</span></label>
                                     <select name="servicecharge" id="servicecharge" class="font-semibold text-sm focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                         <option value="0">0%</option>
@@ -309,7 +338,7 @@
                                 <!--        <option value=""> -- SELECT ACCOUNT --</option>-->
                                 <!--    </select>-->
                                 <!--</div>-->
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="dateofbirth" class="text-gray-500 font-normal capitalize text-xs font-heebo">Default GL Wages Account<span class="text-[red]">*</span></label>
                                     <select name="default_glwagesaccount" id="default_glwagesaccount" class="populateaccounts font-semibold text-xs focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                         <option value=""> -- SELECT ACCOUNT --</option>
@@ -323,7 +352,7 @@
                                         <option value=""> -- SELECT ACCOUNT --</option>
                                     </select>
                                 </div>
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="location_name" class="text-gray-500 font-normal capitalize text-xs font-heebo">Default Loan Account<span class="text-[red]">*</span></label>
                                     <select name="default_glloanaccount" id="default_glloanaccount" class="populateaccounts font-semibold text-xs focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                         <option value=""> -- SELECT ACCOUNT --</option>
@@ -343,13 +372,13 @@
                                 <!--        <option value=""> -- SELECT ACCOUNT --</option>-->
                                 <!--    </select>-->
                                 <!--</div>-->
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="location_name" class="text-gray-500 font-normal capitalize text-xs font-heebo">Default Depreciation<span class="text-[red]">*</span></label>
                                     <select name="default_depreciation" id="default_depreciation" class="populateaccounts font-semibold text-xs focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                         <option value=""> -- SELECT ACCOUNT --</option>
                                     </select>
                                 </div>
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="role" class="text-gray-500 font-normal capitalize text-xs font-heebo">Default liability Account<span class="text-[red]">*</span></label>
                                     <select name="default_liabilityaccount" id="default_liabilityaccount" class="populateaccounts font-semibold text-xs focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                         <option value=""> -- SELECT ACCOUNT --</option>
@@ -377,13 +406,13 @@
                                 </div>
                             </div>
                             <div class="flex flex-col lg:flex-row items-start gap-3 mt-3">
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="role" class="text-gray-500 font-normal capitalize text-xs font-heebo">Default Bank Account<span class="text-[red]">*</span></label>
                                     <select name="default_bankaccount" id="default_bankaccount" class="populateaccounts font-semibold text-xs focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                         <option value=""> -- SELECT ACCOUNT --</option>
                                     </select>
                                 </div>
-                                <div class="form-group-auth mt-5">
+                                <div class="form-group-auth mt-5 org-hidden-field">
                                     <label for="location_name" class="text-gray-500 font-normal capitalize text-xs font-heebo">Default Inventory<span class="text-[red]">*</span></label>
                                     <select name="default_inventory" id="default_inventory" class="populateaccounts font-semibold text-xs focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                         <option value=""> -- SELECT ACCOUNT --</option>
