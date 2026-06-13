@@ -196,7 +196,17 @@ async function onaddgltransactionTableDataSignal() {
 }
 
 function addgltransactionFormResetHandler() {
-    document.querySelector('#addgltransactionform').reset();
+    const form = document.querySelector('#addgltransactionform')
+    if (typeof form?.reset === 'function') {
+        form.reset()
+    } else {
+        document.getElementById('transactiondate').value = ''
+        document.getElementById('description').value = ''
+        document.getElementById('creditaccount_0').value = ''
+        document.getElementById('debitaccount_0').value = ''
+        document.getElementById('creditamount_0').value = ''
+        document.getElementById('debitamount_0').value = ''
+    }
     window.did('gltdebitcontainer').innerHTML = ''
     window.did('gltcreditcontainer').innerHTML = ''
     totalcreditnumber = 0

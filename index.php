@@ -236,7 +236,7 @@ if(!isset($_SESSION["wuseremail"]))
         <div class="modal-content" id="modal-content"></div>
     </div>
     <script src="./js/util.js?v=20260220a"></script>
-    <script src="./js/router.js?v=20260613b"></script>
+    <script src="./js/router.js?v=20260613c"></script>
     <script src="./js/index.js?v=20260220a"></script>
     <script src="./js/oreutil.js?v=20260220a"></script>
 </body>
