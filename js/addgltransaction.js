@@ -1,10 +1,12 @@
 let addgltransactionid
 let totalcreditnumber
 let totaldebitnumber
+let glTransactionAccounts = []
 async function addgltransactionActive() {
     const form = document.querySelector('#addgltransactionform')
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', addgltransactionFormSubmitHandler)
     if(form.querySelector('#reset')) form.querySelector('#reset').addEventListener('click', addgltransactionFormResetHandler)
+    if(form.querySelector('#autopost10')) form.querySelector('#autopost10').addEventListener('click', autoPostTemporaryGlTransactions)
     datasource = []
     await fetchaddgltransaction()
     totalcreditnumber = 0
@@ -94,7 +96,8 @@ async function fetchaddgltransaction(id='') {
     let request = await httpRequest2('../controllers/fetchglaccounts', id ? getparamm() : null, null, 'json')
     // if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     if(request.status) {
-        window.did('glaccountlist').innerHTML = request.data.data.map(data=>`<option>${data.description} __${data.accountnumber}</option>`)
+        glTransactionAccounts = Array.isArray(request?.data?.data) ? request.data.data : (Array.isArray(request?.data) ? request.data : [])
+        window.did('glaccountlist').innerHTML = glTransactionAccounts.map(data=>`<option>${data.description} __${data.accountnumber}</option>`)
     }
     else return notification('No records retrieved')
 }
@@ -148,52 +151,138 @@ function addgltransactionFormResetHandler() {
     document.getElementById('glttotalcredit').value = ''
     document.getElementById('glttotaldebit').value = ''
 }
-  
-async function addgltransactionFormSubmitHandler() {
+
+function buildAddGlTransactionPayload() {
+    let paramstr = new FormData()
+    paramstr.append('description',document.getElementById('description').value);
+    paramstr.append('transactiondate',document.getElementById('transactiondate').value);
+    
+    for(let i=0; i<document.getElementsByName('gltdebitamount').length; i++){
+        paramstr.append(`debitaccount${i}`,document.getElementsByName('gltdebitaccount')[i].value.split('__')[1]);
+        paramstr.append(`debitamount${i}`,document.getElementsByName('gltdebitamount')[i].value);
+    }
+    paramstr.append('debitgridsize',document.getElementsByName('gltdebitamount').length);
+    
+    for(let i=0; i<document.getElementsByName('gltcreditamount').length; i++){
+        paramstr.append(`creditaccount${i}`,document.getElementsByName('gltcreditaccount')[i].value.split('__')[1]);
+        paramstr.append(`creditamount${i}`,document.getElementsByName('gltcreditamount')[i].value);
+    }
+    paramstr.append('creditgridsize',document.getElementsByName('gltcreditamount').length);
+    
+    paramstr.append('debittotal',totaldebitnumber);
+    paramstr.append('credittotal',totalcreditnumber);
+    return paramstr
+}
+
+function setBaseGlTransactionFormValues(description, amount, creditAccountLabel, debitAccountLabel) {
+    addgltransactionFormResetHandler()
+    document.getElementById('transactiondate').value = new Date().toISOString().split('T')[0]
+    document.getElementById('description').value = description
+    document.getElementById('creditaccount_0').value = creditAccountLabel
+    document.getElementById('debitaccount_0').value = debitAccountLabel
+    document.getElementById('creditamount_0').value = amount
+    document.getElementById('debitamount_0').value = amount
+    allcreditamount()
+    alldebitamount()
+}
+
+function getRandomGlTransactionAccounts() {
+    if (!Array.isArray(glTransactionAccounts) || glTransactionAccounts.length < 2) return null
+    const firstIndex = Math.floor(Math.random() * glTransactionAccounts.length)
+    let secondIndex = Math.floor(Math.random() * glTransactionAccounts.length)
+    while (secondIndex === firstIndex) {
+        secondIndex = Math.floor(Math.random() * glTransactionAccounts.length)
+    }
+    return [glTransactionAccounts[firstIndex], glTransactionAccounts[secondIndex]]
+}
+
+function buildGlAccountLabel(account) {
+    return `${account.description} __${account.accountnumber}`
+}
+
+function getRandomGlTransactionAmount() {
+    return (Math.floor(Math.random() * 90) + 10) * 100
+}
+
+async function submitAddGlTransaction(button = null, shouldReload = true) {
     const form = document.getElementById('addgltransactionform')
-    if(!form) return
+    if(!form) return { status: false, message: 'Form not found' }
     const requiredIds = typeof window.getIdFromCls === 'function'
         ? window.getIdFromCls('comp', form)
         : Array.from(form.querySelectorAll('.comp')).map(el => el.id).filter(Boolean)
-    if(!window.validateForm('addgltransactionform', requiredIds)) return
-    if(totaldebitnumber == 0)return notification('Total Debit cannot be Zero', 0)
-    if(totalcreditnumber == 0)return notification('Total Credit cannot be Zero', 0)
-    if(totaldebitnumber !== totalcreditnumber)return notification('Total Credit and Debit do not balance out', 0)
-    function payload(){
-        let paramstr = new FormData()
-		paramstr.append('description',document.getElementById('description').value);
-		paramstr.append('transactiondate',document.getElementById('transactiondate').value);
-		
-		for(let i=0; i<document.getElementsByName('gltdebitamount').length; i++){
-		    paramstr.append(`debitaccount${i}`,document.getElementsByName('gltdebitaccount')[i].value.split('__')[1]);
-		    paramstr.append(`debitamount${i}`,document.getElementsByName('gltdebitamount')[i].value);
-		}
-		paramstr.append('debitgridsize',document.getElementsByName('gltdebitamount').length);
-		
-		for(let i=0; i<document.getElementsByName('gltcreditamount').length; i++){
-		    paramstr.append(`creditaccount${i}`,document.getElementsByName('gltcreditaccount')[i].value.split('__')[1]);
-		    paramstr.append(`creditamount${i}`,document.getElementsByName('gltcreditamount')[i].value);
-		}
-		paramstr.append('creditgridsize',document.getElementsByName('gltcreditamount').length);
-		
-		paramstr.append('debittotal',totaldebitnumber);
-		paramstr.append('credittotal',totalcreditnumber);
-        return paramstr
-    }
-    let request = await httpRequest2('../controllers/gltransactionscript', payload(), document.querySelector('#addgltransactionform #submit'))
-    if(request.status) {
+    if(!window.validateForm('addgltransactionform', requiredIds)) return { status: false, message: 'Please fill all required fields' }
+    if(totaldebitnumber == 0) return { status: false, message: 'Total Debit cannot be Zero' }
+    if(totalcreditnumber == 0) return { status: false, message: 'Total Credit cannot be Zero' }
+    if(totaldebitnumber !== totalcreditnumber) return { status: false, message: 'Total Credit and Debit do not balance out' }
+
+    let request = await httpRequest2('../controllers/gltransactionscript', buildAddGlTransactionPayload(), button)
+    if(request?.status) {
         notification('Record saved successfully!', 1);
-        const navigationItem = document.getElementById('addgltransaction')
-        if(navigationItem) {
-            navigationItem.click()
-            return 
+        if(shouldReload) {
+            const navigationItem = document.getElementById('addgltransaction')
+            if(navigationItem) {
+                navigationItem.click()
+                return request
+            }
+            addgltransactionFormResetHandler()
         }
-        addgltransactionFormResetHandler()
-        return
+        return request
     }
-    // document.querySelector('#addgltransactionform').reset();
-    // fetchaddgltransaction();
-    return notification(request.message, 0);
+    notification(request?.message || 'Unable to save record', 0)
+    return request || { status: false, message: 'Unable to save record' }
+}
+  
+async function addgltransactionFormSubmitHandler() {
+    return submitAddGlTransaction(document.querySelector('#addgltransactionform #submit'), true)
+}
+
+async function autoPostTemporaryGlTransactions() {
+    const triggerButton = document.querySelector('#addgltransactionform #autopost10')
+    if (triggerButton) triggerButton.disabled = true
+
+    try {
+        if (!Array.isArray(glTransactionAccounts) || glTransactionAccounts.length < 2) {
+            await fetchaddgltransaction()
+        }
+        if (!Array.isArray(glTransactionAccounts) || glTransactionAccounts.length < 2) {
+            notification('At least two GL accounts are required for auto posting', 0)
+            return
+        }
+
+        let successCount = 0
+        for (let attempt = 0; attempt < 10; attempt++) {
+            const selectedAccounts = getRandomGlTransactionAccounts()
+            if (!selectedAccounts) {
+                notification('Unable to select GL accounts for auto posting', 0)
+                break
+            }
+            const [creditAccount, debitAccount] = selectedAccounts
+            const amount = getRandomGlTransactionAmount()
+            const description = `TEMP AUTO GL POST ${attempt + 1}`
+
+            setBaseGlTransactionFormValues(
+                description,
+                amount,
+                buildGlAccountLabel(creditAccount),
+                buildGlAccountLabel(debitAccount)
+            )
+
+            const request = await submitAddGlTransaction(triggerButton, false)
+            if (request?.status === true) {
+                successCount += 1
+                await new Promise(resolve => setTimeout(resolve, 250))
+                continue
+            }
+
+            notification(request?.message || `Auto posting stopped at run ${attempt + 1}`, 0)
+            break
+        }
+
+        addgltransactionFormResetHandler()
+        notification(`Temporary auto posting completed: ${successCount}/10`, successCount === 10 ? 1 : 0)
+    } finally {
+        if (triggerButton) triggerButton.disabled = false
+    }
 }
 
 

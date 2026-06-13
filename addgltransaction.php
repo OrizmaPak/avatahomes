@@ -105,6 +105,10 @@
                                         <div></div>
                                         
                                         <div class="flex justify-end gap-3 mt-5">
+                                            <button id="autopost10" type="button" class="btn flex items-center gap-2">
+                                                <span class="material-symbols-outlined" style="font-size: 18px;">smart_toy</span>
+                                                <span>Auto Post 10</span>
+                                            </button>
                                             <button id="reset" type="button" class="btn flex items-center gap-2">
                                                 <span class="material-symbols-outlined" style="font-size: 18px;">refresh</span>
                                                 <span>Reset</span>
