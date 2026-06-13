@@ -125,7 +125,6 @@ if(!isset($_SESSION["wuseremail"]))
                                         <li class="navitem-child" id="user/deactivate">Deactivate User</li>
 
                                         <li class="navitem-child" id="password">Change Password</li>
-                                        <li class="navitem-child" id="organisationinfo">Organisation Info</li>
                                     </ul>
                                 </li>
                                 <li class="nav-item">
@@ -210,6 +209,7 @@ if(!isset($_SESSION["wuseremail"]))
                                         </span>
                                     </span>
                                     <ul class="ml-14 gap-y-4 flex flex-col">
+                                        <li class="navitem-child" id="organisationinfo">Organisation Info</li>
                                         <li class="navitem-child" id="morefees">More Fees</li>
                                         <!-- <li class="navitem-child" id="viewmorefees">View More Fees</li> -->
                                     </ul>
