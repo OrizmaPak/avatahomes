@@ -150,7 +150,7 @@
                         onchange="rentapropertydate(this.value, document.getElementById('begindate').value, this)"
                         id="duration" name="duration">
                         <option value="">-- Select Duration --</option>
-                        <option class="uppercase" value="NOT APPLICABLE">Not Applicable</option>
+                        <option class="uppercase" value="NOT APPLICABLE" selected>Not Applicable</option>
                         <option class="uppercase" value="1">One Month</option>
                         <option class="uppercase" value="2">Two Months</option>
                         <option class="uppercase" value="3">Three Months</option>

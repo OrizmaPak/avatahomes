@@ -31,6 +31,7 @@ function isAddRowButtonReady() {
 } 
 
 function getPropertyDurationOptionsMarkup(selectedValue = '') {
+    const defaultValue = selectedValue === '' ? PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION : selectedValue
     const options = [
         { value: '', label: 'Select payment period' },
         { value: PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION, label: 'Not Applicable' },
@@ -53,7 +54,7 @@ function getPropertyDurationOptionsMarkup(selectedValue = '') {
         { value: '48', label: '48 Months' },
         { value: '60', label: '60 Months' }
     ]
-    return options.map(option => `<option value="${option.value}" ${String(selectedValue) === option.value ? 'selected' : ''}>${option.label}</option>`).join('')
+    return options.map(option => `<option value="${option.value}" ${String(defaultValue) === option.value ? 'selected' : ''}>${option.label}</option>`).join('')
 }
  
 async function propertyregistrationActive() {

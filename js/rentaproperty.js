@@ -15,6 +15,7 @@ function differenceInMonths(date1, date2) {
 }
 
 function getDurationOptionsMarkup(selectedValue = '') {
+  const defaultValue = selectedValue === '' ? RENT_NOT_APPLICABLE_DURATION : selectedValue;
   const options = [
     { value: '', label: 'Select payment period' },
     { value: RENT_NOT_APPLICABLE_DURATION, label: 'Not Applicable' },
@@ -37,7 +38,7 @@ function getDurationOptionsMarkup(selectedValue = '') {
     { value: '48', label: '48 Months' },
     { value: '60', label: '60 Months' }
   ];
-  return options.map(option => `<option value="${option.value}" ${String(selectedValue) === option.value ? 'selected' : ''}>${option.label}</option>`).join('');
+  return options.map(option => `<option value="${option.value}" ${String(defaultValue) === option.value ? 'selected' : ''}>${option.label}</option>`).join('');
 }
 
 function getRentAddRowButton() {
