@@ -101,7 +101,7 @@
                             </div>
                 <div class="flex flex-col w-5/6 lg:w-fit m-auto items-center py-5 sticky top-0 bg-white ">
                             <div class="logo-card">
-        <img id="displayimg" src="./images/default-avatar.png" alt="Organisation Logo" onerror="this.src='./images/default-avatar.png'">
+        <img id="displayimg" src="./images/default-avatar.png" alt="Organisation Logo">
         <span class="material-symbols-outlined edit-icon" onclick="document.getElementById('fileInput').click()">edit</span>
         <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="updateImage(event)">
     </div>

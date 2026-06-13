@@ -105,6 +105,7 @@ function getOrganisationLogoCandidates(logo) {
 function assignOrganisationLogo(displayImg, candidates, fallbackSrc) {
     if (!displayImg) return;
     if (!candidates.length) {
+        displayImg.onerror = null;
         displayImg.src = fallbackSrc;
         return;
     }
