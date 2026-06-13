@@ -51,8 +51,8 @@ async function ongltransactionhistoryTableDataSignal() {
          <td> ${index+1} </td>
          <td> ${data.accountnumber} </td>
          <td> ${data.accountname} </td>
-        <td> ${data.credittotal} </td>
-        <td> ${data.debittotal} </td>
+        <td> ${data.credit} </td>
+        <td> ${data.debit} </td>
         <td> ${data.description} </td>
         <td> ${data.paymentmethod} </td>
         <td> ${data.reference} </td>
@@ -79,13 +79,10 @@ async function gltransactionhistoryFormSubmitHandler() {
          if(request.data.length) {
                 datasource = request.data
                 resolvePagination(datasource, ongltransactionhistoryTableDataSignal)
+                return
             }
-        document.querySelector('#gltransactionhistoryform').reset();
-        fetchgltransactionhistory();
-        return
+        return notification('No records retrieved', 0)
     }
-    document.querySelector('#gltransactionhistoryform').reset();
-    fetchgltransactionhistory();
     return notification(request.message, 0);
 }
 
