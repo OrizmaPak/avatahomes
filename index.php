@@ -224,7 +224,7 @@ if(!isset($_SESSION["wuseremail"]))
                             <div class="xl:w-5/6 3xl:w-3/5 w-full mx-auto mt-5 p-5 xl:p-0" id="workspace"></div>
                         </div>
                         <footer class="mt-5 p-5 xl:p-0">
-                            <p class="xl:w-5/6 3xl:w-3/5 mx-auto py-1 border-t border-gray-200 text-xs text-gray-400"> &copy; 2023 Trecadero.com.ng
+                            <p class="xl:w-5/6 3xl:w-3/5 mx-auto py-1 border-t border-gray-200 text-xs text-gray-400"> &copy; <?php echo date('Y'); ?> avatahomes.com.ng
                             </p>
                         </footer>
                     </section>
