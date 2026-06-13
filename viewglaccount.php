@@ -27,7 +27,13 @@
                             <hr class="my-10">
                             
                             
-                             <div >
+                             <div>
+                                <div class="flex justify-end mb-4">
+                                    <div class="w-full md:w-[320px]">
+                                        <label for="viewglaccountsearch" class="control-label">Search Table</label>
+                                        <input type="text" id="viewglaccountsearch" class="form-control" placeholder="Search account number, description, type...">
+                                    </div>
+                                </div>
                                 <div class="table-content">
                                     <table>
                                         <thead>

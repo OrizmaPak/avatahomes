@@ -1,9 +1,13 @@
 let viewglaccountid
+let viewGlAccountRows = []
+let viewGlAccountFilteredRows = []
+
 async function viewglaccountActive() {
     // const form = document.querySelector('#viewglaccountform')
     // if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', viewglaccountFormSubmitHandler)
     document.getElementById('accounttype').addEventListener('keyup', e=>viewglaccountFormSubmitHandler())
     document.getElementById('accounttype').addEventListener('change', e=>viewglaccountFormSubmitHandler())
+    document.getElementById('viewglaccountsearch')?.addEventListener('input', applyViewGlAccountFilters)
     datasource = []
     await fetchviewglaccount()
     wireViewGlAccountExports()
@@ -21,9 +25,11 @@ async function fetchviewglaccount(id) {
     if(request.status) {
         if(!id){  
             if(request.data.length) {
-                datasource = request.data
-                resolvePagination(datasource, onviewglaccountTableDataSignal)
-                buildViewGlAccountExport(datasource)
+                viewGlAccountRows = request.data
+                applyViewGlAccountFilters()
+            } else {
+                viewGlAccountRows = []
+                applyViewGlAccountFilters()
             }
         }else{
              viewglaccountid = request.data[0].id
@@ -77,7 +83,7 @@ async function onviewglaccountTableDataSignal() {
 }
 
 function fetchviewglaccountedit(id){
-    let x = datasource.filter(data=>data.id == id)
+    let x = viewGlAccountRows.filter(data=>data.id == id)
     sessionStorage.setItem('viewglaccountedit', JSON.stringify(x))
     document.getElementById('addglaccount').click()
 }
@@ -90,10 +96,32 @@ async function viewglaccountFormSubmitHandler() {
     let request = await httpRequest2('../controllers/fetchglbyaccounttype', payload, document.querySelector('#viewglaccountform #submit'))
     if(request.status){
             if(request.data.length) {
-                datasource = request.data
-                resolvePagination(datasource, onviewglaccountTableDataSignal)
-                buildViewGlAccountExport(datasource)
+                viewGlAccountRows = request.data
+                applyViewGlAccountFilters()
+            } else {
+                viewGlAccountRows = []
+                applyViewGlAccountFilters()
             }}else return notification(request.message, 0);
+}
+
+function applyViewGlAccountFilters(){
+    const searchValue = document.getElementById('viewglaccountsearch')?.value?.trim().toLowerCase() || ''
+    viewGlAccountFilteredRows = !searchValue
+        ? [...viewGlAccountRows]
+        : viewGlAccountRows.filter(item => {
+            const haystack = [
+                item.accountnumber,
+                item.description,
+                item.accounttype,
+                item.subgroup,
+                item.groupname
+            ].map(value => `${value || ''}`.toLowerCase()).join(' ')
+            return haystack.includes(searchValue)
+        })
+
+    datasource = viewGlAccountFilteredRows
+    resolvePagination(datasource, onviewglaccountTableDataSignal)
+    buildViewGlAccountExport(datasource)
 }
 
 function wireViewGlAccountExports(){
@@ -123,14 +151,14 @@ function buildViewGlAccountExport(data){
 }
 
 function exportViewGlAccountExcel(){
-    if(!datasource || !datasource.length) return notification('No data to export', 0)
-    buildViewGlAccountExport(datasource)
+    if(!viewGlAccountFilteredRows || !viewGlAccountFilteredRows.length) return notification('No data to export', 0)
+    buildViewGlAccountExport(viewGlAccountFilteredRows)
     return exportToExcel('viewGlAccountExportTable', 'GL Accounts')
 }
 
 function exportViewGlAccountPDF(){
-    if(!datasource || !datasource.length) return notification('No data to export', 0)
-    buildViewGlAccountExport(datasource)
+    if(!viewGlAccountFilteredRows || !viewGlAccountFilteredRows.length) return notification('No data to export', 0)
+    buildViewGlAccountExport(viewGlAccountFilteredRows)
     return exportToPDF('viewGlAccountExportWrap', true)
 }
 
