@@ -1,4 +1,4 @@
-const assetcache = 'v2-20260613c';
+const assetcache = 'v2-20260613d';
 const assets = [
   'login.php',
   'index.php',
