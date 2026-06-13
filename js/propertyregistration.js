@@ -1,6 +1,7 @@
 let propertyregistrationid
 let propertyfees = []
 const APPLY_PERCENTAGE_GROUP = 'property-registration-apply-percent'
+const NOT_APPLICABLE_DURATION = 'NOT APPLICABLE'
 
 function getAddRowButton() {
     return document.getElementById('propertyregistrationaddrow')
@@ -28,6 +29,32 @@ function isAddRowButtonReady() {
     const button = getAddRowButton()
     return !!(button && button.dataset.ready === '1')
 } 
+
+function getPropertyDurationOptionsMarkup(selectedValue = '') {
+    const options = [
+        { value: '', label: 'Select payment period' },
+        { value: NOT_APPLICABLE_DURATION, label: 'Not Applicable' },
+        { value: '1', label: '1 Month' },
+        { value: '2', label: '2 Months' },
+        { value: '3', label: '3 Months' },
+        { value: '4', label: '4 Months' },
+        { value: '5', label: '5 Months' },
+        { value: '6', label: '6 Months' },
+        { value: '7', label: '7 Months' },
+        { value: '8', label: '8 Months' },
+        { value: '9', label: '9 Months' },
+        { value: '10', label: '10 Months' },
+        { value: '11', label: '11 Months' },
+        { value: '12', label: '12 Months' },
+        { value: '18', label: '18 Months' },
+        { value: '24', label: '24 Months' },
+        { value: '30', label: '30 Months' },
+        { value: '36', label: '36 Months' },
+        { value: '48', label: '48 Months' },
+        { value: '60', label: '60 Months' }
+    ]
+    return options.map(option => `<option value="${option.value}" ${String(selectedValue) === option.value ? 'selected' : ''}>${option.label}</option>`).join('')
+}
  
 async function propertyregistrationActive() {
     const form = document.querySelector('#propertyregistrationform')
@@ -137,7 +164,7 @@ function addPropertyRegistrationRow(prefill = {}) {
         </td>
         <td>\n            <div class="form-group w-[140px]">
                 <p class="hidden">payment period (months)</p>
-                <input type="number" inputmode="numeric" step="1" min="1" pattern="^[0-9]+$" title="Enter number of months e.g. 1, 3, 6, 12." id="rp-${id}" class="form-control propertyregistrationverify" placeholder="Enter Payment Period (months)">
+                <select title="Select payment period in months or Not Applicable" id="rp-${id}" class="form-control propertyregistrationverify">${getPropertyDurationOptionsMarkup(prefill.rentalPeriod ?? '')}</select>
             </div>
         </td> 
         <td class="text-center hidden" id="ap-${id}"></td>
@@ -176,18 +203,7 @@ function addPropertyRegistrationRow(prefill = {}) {
 
 function setupRentalPeriodControl(input) {
     if (!input) return
-    input.setAttribute('min', '1')
-    input.setAttribute('step', '1')
-    input.setAttribute('inputmode', 'numeric')
-    input.setAttribute('pattern', '^[0-9]+$')
-    input.setAttribute('title', 'Enter number of months e.g. 1, 3, 6, 12.')
-    input.setAttribute('placeholder', 'Enter Payment Period (months)')
-    if (!input.dataset.numericFilterAttached) {
-        input.addEventListener('input', () => {
-            input.value = input.value.replace(/[^\d]/g, '')
-        })
-        input.dataset.numericFilterAttached = '1'
-    }
+    input.setAttribute('title', 'Select payment period in months or Not Applicable')
 }
 
 function populateFeeSelect(select, selectedValue = '') {
@@ -420,7 +436,7 @@ async function propertyregistrationsubmit() {
         let id = table.children[i].id
         const rpCtrl = document.getElementById(`rp-${id}`)
         const rpVal = (rpCtrl?.value || '').trim() 
-        if (!/^\d+$/.test(rpVal) || parseInt(rpVal, 10) < 1) {
+        if (rpVal !== NOT_APPLICABLE_DURATION && (!/^\d+$/.test(rpVal) || parseInt(rpVal, 10) < 1)) {
             return notification('Rental period must be a whole number in days and cannot be zero. Examples: 30, 60, 90, 120, 180. 30 days represents one month.', 0)
         }
     }
