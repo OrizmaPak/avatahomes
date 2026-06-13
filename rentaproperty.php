@@ -141,7 +141,7 @@
                 <div id="begin" class="form-group remain hidden">
                     <label for="country" class="control-label">begin date</label>
                     <input type="date" name="begindate" id="begindate"
-                        onchange="document.getElementById('duration').value = '';document.getElementById('expirationdate').value = ''"
+                        onchange="document.getElementById('duration').value = 'NOT APPLICABLE';document.getElementById('expirationdate').value = ''"
                         class="form-control rentapropertyverify">
                 </div>
                 <div class="form-group remain hidden">
@@ -179,7 +179,7 @@
                 <div class="form-group remain hidden">
                     <label for="country" class="control-label">expiration date</label>
                     <input type="text" readonly name="expirationdate" id="expirationdate"
-                        class="form-control rentapropertyverify">
+                        class="form-control">
                 </div>
                 <div class="form-group remain hidden">
                     <label for="country" class="control-label">paymentdate</label>
