@@ -273,6 +273,9 @@ async function settingsFormSubmitHandler() {
     let payload
 
     payload = getFormData2(document.querySelector('#settingsform'), [['photofilename', showFileName('fileInput')],['userphotoname', getFile('fileInput')]])
+    const companyId = did('company_id')?.value?.trim() || ''
+    if (payload?.has('company_id')) payload.set('company_id', companyId)
+    else payload?.append('company_id', companyId)
     let request = await httpRequest2('../controllers/organisationinfoscript', payload, document.querySelector('#settingsform #submit'))
 
     const isSuccessful = request?.status === true && Number(request?.code || 200) === 200;
