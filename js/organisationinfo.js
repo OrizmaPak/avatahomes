@@ -74,6 +74,30 @@ function populateSettingsForm(data) {
     });
 }
 
+function getOrganisationRecordFromResponse(request) {
+    const candidates = [
+        request?.data?.data?.data?.[0],
+        request?.data?.data?.[0],
+        request?.data?.[0],
+        request?.data?.data,
+        request?.data
+    ];
+
+    return candidates.find(item => item && typeof item === 'object' && !Array.isArray(item)) || {};
+}
+
+function setOrganisationLogo(logo) {
+    const displayImg = did('displayimg');
+    if (!displayImg) return;
+
+    if (!logo || `${logo}`.trim() === '-' || `${logo}`.trim() === '') {
+        displayImg.src = './images/default-avatar.png';
+        return;
+    }
+
+    displayImg.src = `./images/${logo}`;
+}
+
 function syncHiddenOrganisationInfoValidation() {
     document.querySelectorAll('.org-hidden-field .comp').forEach(field => {
         field.classList.remove('comp');
@@ -144,11 +168,11 @@ async function fetchsettings(id) {
     let request = await httpRequest2('../controllers/fetchorganisationscript', id ? getparamm() : null, null, 'json')
     // if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     if(request.status) {
-            const record = request?.data?.data?.[0] || request?.data?.[0] || request?.data || {};
+            const record = getOrganisationRecordFromResponse(request);
             pendingSettingsSelectValues = {}
             populateSettingsForm(record)
             applyPendingSettingsSelectValues()
-            if(record.logo && record.logo != '-') did('displayimg').src = `../images/${record.logo}`;
+            setOrganisationLogo(record.logo)
             if(record.company_id !== undefined && record.company_id !== null) did('company_id').value = record.company_id
     }
     else return notification('No records retrieved')
