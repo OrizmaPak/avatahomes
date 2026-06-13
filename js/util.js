@@ -360,7 +360,7 @@ function injectPaginatatedTable(rows) {
 
 function logoff() {
     let request = httpRequest('')
-    location.href = './login'
+    location.href = './login.php'
 } 
 
 

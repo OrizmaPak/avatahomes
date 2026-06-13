@@ -67,14 +67,14 @@
                             <input type="checkbox" checked class="accent-emerald-700">
                             <span>Remember me</span>
                         </span>
-                        <a href="./password" class="hover:underline decoration-primary-g">Forgot Password?</a>
+                        <a href="./password.php" class="hover:underline decoration-primary-g">Forgot Password?</a>
                    </div>
                     <div class="flex gap-3 3xl:gap-1 flex-col md:flex-row items-center mt-10">
                         <button id="submit" type="button" class="w-full md:w-max !rounded-full text-white text-sm capitalize btnlogin px-8 py-3 lg:py-2 shadow-md font-medium hover:opacity-75 transition duration-300 ease-in-out flex items-center justify-center gap-3">
                             <div class="btnloader" style="display: none;"></div>
                             <span>Login</span>
                         </button>
-                        <a href="./signup" class="login-secondary-btn w-full md:w-max rounded-full text-gray-600 text-sm capitalize bg-white px-6 py-3 lg:py-2 shadow-sm font-medium hover:opacity-75 transition duration-300 ease-in-out flex items-center justify-center gap-3">
+                        <a href="./signup.php" class="login-secondary-btn w-full md:w-max rounded-full text-gray-600 text-sm capitalize bg-white px-6 py-3 lg:py-2 shadow-sm font-medium hover:opacity-75 transition duration-300 ease-in-out flex items-center justify-center gap-3">
                             <span>Create account</span>
                         </a>
                     </div>

@@ -685,7 +685,7 @@
 <body>
     <div class="page">
         <header class="topbar animate__animated animate__fadeInDown">
-            <a href="./index" class="brand">
+            <a href="./index.php" class="brand">
                 <div class="logo-panel">
                     <img src="./images/icon.png" alt="Avata Homes logo">
                 </div>
