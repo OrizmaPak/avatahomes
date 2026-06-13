@@ -74,11 +74,19 @@ function populateSettingsForm(data) {
     });
 }
 
+function syncHiddenOrganisationInfoValidation() {
+    document.querySelectorAll('.org-hidden-field .comp').forEach(field => {
+        field.classList.remove('comp');
+        field.removeAttribute('required');
+    });
+}
+
 async function organisationinfoActive() {
     return settingsActive();
 }
 async function settingsActive() {
     const form = document.querySelector('#settingsform')
+    syncHiddenOrganisationInfoValidation()
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', settingsFormSubmitHandler)
     if(document.getElementById('settings_basicinfo'))document.getElementById('settings_basicinfo').addEventListener('click', e=>tabsettings('settings_basicinfo'))
     if(document.getElementById('settings_defaultaccounts'))document.getElementById('settings_defaultaccounts').addEventListener('click', e=>tabsettings('settings_defaultaccounts'))
