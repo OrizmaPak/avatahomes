@@ -274,15 +274,17 @@ async function settingsFormSubmitHandler() {
 
     payload = getFormData2(document.querySelector('#settingsform'), [['photofilename', showFileName('fileInput')],['userphotoname', getFile('fileInput')]])
     let request = await httpRequest2('../controllers/organisationinfoscript', payload, document.querySelector('#settingsform #submit'))
-    if(request.status) {
+
+    const isSuccessful = request?.status === true && Number(request?.code || 200) === 200;
+
+    if(isSuccessful) {
         notification('Record saved successfully!', 1);
         document.querySelector('#settingsform').reset();
         fetchsettings();
         return
     }
-    document.querySelector('#settingsform').reset();
-    fetchsettings();
-    return notification(request.message, 0);
+
+    return notification(request?.message || request?.result || 'Unable to save record', 0);
 }
 
 
