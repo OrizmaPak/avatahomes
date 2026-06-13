@@ -32,18 +32,14 @@ async function otherpaymentsActive() {
 }
 
 async function fetchmorefeesa() {
-    
-        let request = await httpRequest('../controllers/fetchmorefees')
-        request = JSON.parse(request)
-        if(request.status) {
-            if(request.data.length) {
-                document.getElementById('feenameid').innerHTML = `<option value="">-- Select Fee Name --</option>`
-                request.data.map(data=>`<option value="${data.id}">${data.feename}</option>`).join('')
-                document.getElementById('feenameid').innerHTML += request.data.map(data=>`<option value="${data.id}">${data.feename}</option>`).join('');
-            }
+    let request = await fetchEnsuredMoreFees()
+    if(request.status) {
+        if(request.data.length) {
+            document.getElementById('feenameid').innerHTML = `<option value="">-- Select Fee Name --</option>`
+            document.getElementById('feenameid').innerHTML += request.data.map(data=>`<option value="${data.id}">${data.feename}</option>`).join('');
         }
-        else return notification('No records retrieved')
-    
+    }
+    else return notification(request.message || 'No records retrieved')
 }
 
 async function otherpaymentssubmitss(){

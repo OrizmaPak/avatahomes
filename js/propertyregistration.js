@@ -395,8 +395,7 @@ function removePropertyRegistrationRow(rowId) {
 }
 
 async function fetchpropertyfees() {
-    let request = await httpRequest('../controllers/fetchmorefees')
-    request = JSON.parse(request)
+    let request = await fetchEnsuredMoreFees()
     if (request.status) {
         if (request.data.length) {
             return request.data

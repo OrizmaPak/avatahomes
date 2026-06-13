@@ -95,7 +95,7 @@ const routerTree = {
     propertyregistration: {
         template: 'propertyregistration',
         startingFunction: 'propertyregistrationActive',
-        scriptName:  './js/propertyregistration.js'
+        scriptName:  './js/propertyregistration.js?v=20260613a'
     },
     viewpropertyregistration: {
         template: 'viewpropertyregistration',
@@ -110,7 +110,7 @@ const routerTree = {
     rentaproperty: {
         template: 'rentaproperty',
         startingFunction: 'rentapropertyActive',
-        scriptName:  './js/rentaproperty.js?v=20260220a'
+        scriptName:  './js/rentaproperty.js?v=20260613a'
     },
     viewtenants: {
         template: 'viewtenants',
@@ -135,7 +135,7 @@ const routerTree = {
     otherpayments: {
         template: 'otherpayments',
         startingFunction: 'otherpaymentsActive',
-        scriptName:  './js/otherpayments.js'
+        scriptName:  './js/otherpayments.js?v=20260613a'
     },
     paymenthistory: {
         template: 'paymenthistory',
@@ -180,7 +180,7 @@ const routerTree = {
     morefees: {
         template: 'morefees',
         startingFunction: 'morefeesActive',
-        scriptName:  './js/morefees.js?v=20260219d'
+        scriptName:  './js/morefees.js?v=20260613a'
     },
     expenses: {
         template: 'expenses',

@@ -117,6 +117,55 @@ function notification(message, type=undefined, timeout=5000) {
     setTimeout(() => document.getElementById('toast')?.remove(), timeout)
 }
 
+const PROPERTY_SALES_FEE_NAME = 'PROPERTY SALES'
+let propertySalesFeeEnsurePromise = null
+
+function normalizeMoreFeesResponseRows(response) {
+    if (Array.isArray(response?.data?.data)) return response.data.data
+    if (Array.isArray(response?.data)) return response.data
+    return []
+}
+
+async function fetchEnsuredMoreFees() {
+    if (propertySalesFeeEnsurePromise) return propertySalesFeeEnsurePromise
+
+    propertySalesFeeEnsurePromise = (async () => {
+        const response = await httpRequest2('../controllers/fetchmorefees', null, null, 'json')
+        if (!response?.status) {
+            propertySalesFeeEnsurePromise = null
+            return response
+        }
+
+        let fees = normalizeMoreFeesResponseRows(response)
+        const hasPropertySales = fees.some(fee => `${fee?.feename || ''}`.trim().toUpperCase() === PROPERTY_SALES_FEE_NAME)
+        if (!hasPropertySales) {
+            const payload = new FormData()
+            payload.append('feename', PROPERTY_SALES_FEE_NAME)
+            payload.append('mode', 'FLAT')
+            payload.append('amount', '0')
+            const createResponse = await httpRequest2('../controllers/addmorefees', payload, null, 'json')
+            if (!createResponse?.status) {
+                propertySalesFeeEnsurePromise = null
+                return createResponse
+            }
+
+            const refreshedResponse = await httpRequest2('../controllers/fetchmorefees', null, null, 'json')
+            if (!refreshedResponse?.status) {
+                propertySalesFeeEnsurePromise = null
+                return refreshedResponse
+            }
+            fees = normalizeMoreFeesResponseRows(refreshedResponse)
+            propertySalesFeeEnsurePromise = null
+            return { status: true, data: fees }
+        }
+
+        propertySalesFeeEnsurePromise = null
+        return { status: true, data: fees }
+    })()
+
+    return propertySalesFeeEnsurePromise
+}
+
 function openJModal(content) {
     let modal = document.querySelector('.modal-content')
     if(modal) {

@@ -42,7 +42,7 @@ function isRentAddRowButtonReady() {
 
 async function ensureRentFeeDefinitions(force = false) {
   if (!force && rentFeeDefinitions.length) return rentFeeDefinitions;
-  const response = await httpRequest2('../controllers/fetchmorefees', null, null, 'json');
+  const response = await fetchEnsuredMoreFees();
   if (response.status && Array.isArray(response.data)) {
     rentFeeDefinitions = response.data;
   } else {

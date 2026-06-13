@@ -29,8 +29,7 @@ async function fetchmorefees(event,id) {
          }
          
     }else{
-        let request = await httpRequest('../controllers/fetchmorefees')
-        request = JSON.parse(request)
+        let request = await fetchEnsuredMoreFees()
         if(request.status) {
             if(request.data.length) {
                 datasource = morefees = request.data
