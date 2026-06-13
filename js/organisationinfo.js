@@ -86,16 +86,46 @@ function getOrganisationRecordFromResponse(request) {
     return candidates.find(item => item && typeof item === 'object' && !Array.isArray(item)) || {};
 }
 
-function setOrganisationLogo(logo) {
-    const displayImg = did('displayimg');
-    if (!displayImg) return;
+function getOrganisationLogoCandidates(logo) {
+    const normalizedLogo = `${logo}`.trim().replace(/^\/+/, '');
+    const currentPath = window.location.pathname;
+    const currentDirectory = currentPath.endsWith('/')
+        ? currentPath
+        : currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+    const parentDirectory = currentDirectory.replace(/[^/]+\/$/, '');
 
-    if (!logo || `${logo}`.trim() === '-' || `${logo}`.trim() === '') {
-        displayImg.src = './images/default-avatar.png';
+    return [
+        `./images/${normalizedLogo}`,
+        `../images/${normalizedLogo}`,
+        `${currentDirectory}images/${normalizedLogo}`,
+        `${parentDirectory}images/${normalizedLogo}`
+    ].filter((value, index, array) => value && array.indexOf(value) === index);
+}
+
+function assignOrganisationLogo(displayImg, candidates, fallbackSrc) {
+    if (!displayImg) return;
+    if (!candidates.length) {
+        displayImg.src = fallbackSrc;
         return;
     }
 
-    displayImg.src = `./images/${logo}`;
+    const [nextCandidate, ...remainingCandidates] = candidates;
+    displayImg.onerror = () => assignOrganisationLogo(displayImg, remainingCandidates, fallbackSrc);
+    displayImg.src = nextCandidate;
+}
+
+function setOrganisationLogo(logo) {
+    const displayImg = did('displayimg');
+    if (!displayImg) return;
+    const fallbackSrc = './images/default-avatar.png';
+
+    if (!logo || `${logo}`.trim() === '-' || `${logo}`.trim() === '') {
+        displayImg.onerror = null;
+        displayImg.src = fallbackSrc;
+        return;
+    }
+
+    assignOrganisationLogo(displayImg, getOrganisationLogoCandidates(logo), fallbackSrc);
 }
 
 function syncHiddenOrganisationInfoValidation() {
