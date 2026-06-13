@@ -2,6 +2,38 @@ let addgltransactionid
 let totalcreditnumber
 let totaldebitnumber
 let glTransactionAccounts = []
+const temporaryGlAutoPostAccounts = [
+    { accountnumber: '99348346', description: 'ABM GLOBAL GROUP LIMITED ( A.B.M)' },
+    { accountnumber: '99500307', description: 'ABSENT & LATENESS (CONTROL)' },
+    { accountnumber: '99241072', description: 'ACCOMODATION' },
+    { accountnumber: '99459491', description: 'ADMINISTRATIVE EXPENSES' },
+    { accountnumber: '99360093', description: 'ADVERTISEMENT EXPENSES' },
+    { accountnumber: '99485450', description: 'APEXX BIZZ TECH' },
+    { accountnumber: '99506083', description: 'AUDITING FEES' },
+    { accountnumber: '99786677', description: 'BANK CHARGE & COMMISSION' },
+    { accountnumber: '99385988', description: 'BANK TRANSFER (FCMB)' },
+    { accountnumber: '99707217', description: 'BANK TRANSFER (MONIEPOINT)' },
+    { accountnumber: '99912850', description: 'BANK TRANSFER (PROVIDUS BANK)' },
+    { accountnumber: '99569880', description: 'BANK TRANSFER MOREMONEE' },
+    { accountnumber: '99488127', description: 'BEVERAGE - COST OF SALES' },
+    { accountnumber: '99739293', description: 'BEVERAGE STOCK' },
+    { accountnumber: '99907004', description: 'BOARD MANAGEMENT COMMITTE FEE' },
+    { accountnumber: '99399207', description: 'BOOKING COMMISSION PAYABLES' },
+    { accountnumber: '99694660', description: 'CAR HIRE / AIRPORT TAXI' },
+    { accountnumber: '99979225', description: 'CARITIAS NIGERIA' },
+    { accountnumber: '99777501', description: 'CATHOLIC RELIEF SERVICES 2024' },
+    { accountnumber: '99874501', description: 'CHAIRMAN (PAYABLES)' },
+    { accountnumber: '99744628', description: 'CHAIRMAN CURRENT A/C2' },
+    { accountnumber: '99580565', description: 'CHAIRMAN CURRENT AC' },
+    { accountnumber: '99716612', description: 'CHAIRMAN GRAVITY' },
+    { accountnumber: '99410313', description: 'CHIAWUOTU & SONS FARM' },
+    { accountnumber: '99244204', description: 'CLEANING EXPENSES' },
+    { accountnumber: '99587514', description: 'CLEARNING MATERIAL STOCK' },
+    { accountnumber: '99562108', description: 'CLON SERVICES NIG.' },
+    { accountnumber: '99917350', description: 'COCKTAIL BAR FOOD REVENUE' },
+    { accountnumber: '99508074', description: 'COMMISION INCOME' },
+    { accountnumber: '99541582', description: 'COMP EQUIP ACCUMULATED DEP.' }
+]
 async function addgltransactionActive() {
     const form = document.querySelector('#addgltransactionform')
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', addgltransactionFormSubmitHandler)
@@ -237,6 +269,61 @@ function getRandomGlTransactionAmount() {
     return (Math.floor(Math.random() * 90) + 10) * 100
 }
 
+function getTemporaryGlAutoPostPool() {
+    return temporaryGlAutoPostAccounts.filter(account => account.accountnumber)
+}
+
+function shuffleGlAccounts(accounts) {
+    const shuffledAccounts = [...accounts]
+    for (let i = shuffledAccounts.length - 1; i > 0; i--) {
+        const randomIndex = Math.floor(Math.random() * (i + 1))
+        const currentAccount = shuffledAccounts[i]
+        shuffledAccounts[i] = shuffledAccounts[randomIndex]
+        shuffledAccounts[randomIndex] = currentAccount
+    }
+    return shuffledAccounts
+}
+
+function buildTemporaryGlAutoPostRuns(count = 10) {
+    const accountPool = shuffleGlAccounts(getTemporaryGlAutoPostPool())
+    const runs = []
+
+    for (let i = 0; i < count; i++) {
+        const debitAccount = accountPool[(i * 2) % accountPool.length]
+        let creditAccount = accountPool[(i * 2 + 1) % accountPool.length]
+        if (creditAccount.accountnumber === debitAccount.accountnumber) {
+            creditAccount = accountPool[(i * 2 + 2) % accountPool.length]
+        }
+        runs.push({
+            debitAccount,
+            creditAccount,
+            amount: getRandomGlTransactionAmount(),
+            description: `TEMP AUTO GL POST ${i + 1}`
+        })
+    }
+
+    return runs
+}
+
+function buildTemporaryGlAutoPostPayload(run) {
+    const payload = new FormData()
+    payload.append('description', run.description)
+    payload.append('transactiondate', getTodayInputDateValue())
+    payload.append('debitaccount0', run.debitAccount.accountnumber)
+    payload.append('debitamount0', run.amount)
+    payload.append('debitgridsize', 1)
+    payload.append('creditaccount0', run.creditAccount.accountnumber)
+    payload.append('creditamount0', run.amount)
+    payload.append('creditgridsize', 1)
+    payload.append('debittotal', run.amount)
+    payload.append('credittotal', run.amount)
+    return payload
+}
+
+function isSuccessfulGlTransactionResponse(request) {
+    return request?.status === true && Number(request?.code || 200) === 200
+}
+
 async function submitAddGlTransaction(button = null, shouldReload = true) {
     const form = document.getElementById('addgltransactionform')
     if(!form) return { status: false, message: 'Form not found' }
@@ -274,34 +361,25 @@ async function autoPostTemporaryGlTransactions() {
     if (triggerButton) triggerButton.disabled = true
 
     try {
-        if (!Array.isArray(glTransactionAccounts) || glTransactionAccounts.length < 2) {
-            await fetchaddgltransaction()
-        }
-        if (!Array.isArray(glTransactionAccounts) || glTransactionAccounts.length < 2) {
+        const accountPool = getTemporaryGlAutoPostPool()
+        if (accountPool.length < 2) {
             notification('At least two GL accounts are required for auto posting', 0)
             return
         }
 
+        const runs = buildTemporaryGlAutoPostRuns(10)
         let successCount = 0
-        for (let attempt = 0; attempt < 10; attempt++) {
-            const selectedAccounts = getRandomGlTransactionAccounts()
-            if (!selectedAccounts) {
-                notification('Unable to select GL accounts for auto posting', 0)
-                break
-            }
-            const [creditAccount, debitAccount] = selectedAccounts
-            const amount = getRandomGlTransactionAmount()
-            const description = `TEMP AUTO GL POST ${attempt + 1}`
-
+        for (let attempt = 0; attempt < runs.length; attempt++) {
+            const run = runs[attempt]
             setBaseGlTransactionFormValues(
-                description,
-                amount,
-                buildGlAccountLabel(creditAccount),
-                buildGlAccountLabel(debitAccount)
+                run.description,
+                run.amount,
+                buildGlAccountLabel(run.creditAccount),
+                buildGlAccountLabel(run.debitAccount)
             )
 
-            const request = await submitAddGlTransaction(null, false)
-            if (request?.status === true) {
+            const request = await httpRequest2('../controllers/gltransactionscript', buildTemporaryGlAutoPostPayload(run), null)
+            if (isSuccessfulGlTransactionResponse(request)) {
                 successCount += 1
                 await new Promise(resolve => setTimeout(resolve, 250))
                 continue
