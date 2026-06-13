@@ -1,5 +1,18 @@
 let viewrentapropertyid
-organizationData = null;
+let organizationData = null;
+
+async function fetchOrganization() {
+    try {
+        const response = await fetch('../controllers/fetchorganisation');
+        const data = await response.json();
+        if (data?.status) {
+            organizationData = Array.isArray(data.data) ? data.data[0] : data.data;
+        }
+    } catch (error) {
+        console.error('Org fetch error', error);
+    }
+}
+
 async function viewrentapropertyActive() {
     const form = document.querySelector('#viewrentapropertysform')
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', e=>viewrentapropertyFormSubmitHandler('payload'))
