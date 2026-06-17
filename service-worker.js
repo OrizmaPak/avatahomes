@@ -1,7 +1,5 @@
-const assetcache = 'v2-20260613i';
+const assetcache = 'v2-20260617a';
 const assets = [
-  'login.php',
-  'index.php',
   './manifest.json',
   './js/main.js',
   './js/index.js',
@@ -33,6 +31,16 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  const requestUrl = new URL(event.request.url);
+  const isSameOrigin = requestUrl.origin === self.location.origin;
+  const isPageRequest = event.request.mode === 'navigate' || requestUrl.pathname.endsWith('.php');
+  const isControllerRequest = requestUrl.pathname.includes('/controllers/');
+
+  if (!isSameOrigin || isPageRequest || isControllerRequest) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(cached =>
       cached || fetch(event.request)

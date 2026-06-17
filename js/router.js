@@ -238,9 +238,9 @@ const routerTree = {
 const ext = '.php'
 
 function routerEvent(route) {
-    if(route) {
+    if(route && routerTree[route]) {
         let queryParams = `?r=${route}`
-        window.history.pushState(queryParams, undefined, `${window.origin.concat(window.location.pathname, queryParams)}`)
+        window.history.pushState(queryParams, undefined, `${window.location.origin.concat(window.location.pathname, queryParams)}`)
         resolveUrlPage()
         if(!isDeviceMobile()) toggleNavigation()
     }
@@ -249,14 +249,15 @@ function routerEvent(route) {
 
 function resolveUrlPage() {
     let searchParams = new URLSearchParams(window.location.search)
-    if(searchParams.has('r')) {
-        let page = routerTree[searchParams.get('r').trim()].template
+    const requestedRoute = searchParams.get('r')?.trim()
+    if(requestedRoute && routerTree[requestedRoute]) {
+        let page = routerTree[requestedRoute].template
         openRoute(page+ext)
     }
     else {
         // open home default page
         let queryParams = `?r=propertyregistration`
-        window.history.pushState(queryParams, undefined, `${window.origin.concat(window.location.pathname, queryParams)}`)
+        window.history.pushState(queryParams, undefined, `${window.location.origin.concat(window.location.pathname, queryParams)}`)
         openRoute('propertyregistration'+ext)
     }
     showActiveRoute()
@@ -267,6 +268,7 @@ function showActiveRoute() {
     let searchParams = new URLSearchParams(window.location.search)
     let page = searchParams.get('r')
     let menu = document.getElementById(page)
+    if(!menu) return
     document.querySelectorAll('#navigation .active').forEach( item => item.classList.remove('active'))
     document.querySelectorAll('#navigation .navitem-child-active').forEach( item => item.classList.remove('navitem-child-active'))
     if(menu.classList.contains('navitem-child')) {
@@ -297,7 +299,9 @@ let timer;
 
 function intializePageJavascript() {
     let searchParams = new URLSearchParams(window.location.search)
-    let startingFunction = routerTree[searchParams.get('r').trim()].startingFunction
+    const requestedRoute = searchParams.get('r')?.trim()
+    if(!requestedRoute || !routerTree[requestedRoute]) return
+    let startingFunction = routerTree[requestedRoute].startingFunction
     try {
         clearInterval(timer)
         timer = null;
