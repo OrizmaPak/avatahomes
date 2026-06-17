@@ -34,7 +34,7 @@ if(!isset($_SESSION["wuseremail"]))
 
   <!-- JavaScript Files -->
   <!-- <script src="./js/web-push/src/index.js"></script> -->
-  <script src="./js/main.js" defer></script>
+  <script src="./js/main.js?v=20260617a" defer></script>
   <script src="./js/push.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">

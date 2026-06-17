@@ -26,7 +26,7 @@
   <link rel="icon" href="./images/icon.png">
 
   <!-- JavaScript Files -->
-  <script src="./js/main.js" defer></script> 
+  <script src="./js/main.js?v=20260617a" defer></script> 
   <script src="./js/push.js" defer></script>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />

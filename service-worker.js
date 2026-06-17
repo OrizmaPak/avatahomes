@@ -1,51 +1,19 @@
-const assetcache = 'v2-20260617a';
-const assets = [
-  './manifest.json',
-  './js/main.js',
-  './js/index.js',
-  './js/login.js',
-  './js/push.js',
-  './css/index.css',
-  './images/icon.png'
-];
-
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(assetcache)
-      .then(cache => cache.addAll(assets))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil(self.skipWaiting());
 });
  
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(names =>
-      Promise.all(
-        names
-          .filter(name => name !== assetcache)
-          .map(name => caches.delete(name)) 
-      )
-    ) 
+    caches.keys()
+      .then(names => Promise.all(names.map(name => caches.delete(name))))
+      .then(() => self.registration.unregister())
+      .then(() => self.clients.matchAll({ type: 'window' }))
+      .then(clients => Promise.all(clients.map(client => client.navigate(client.url))))
   ); 
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
-  const requestUrl = new URL(event.request.url);
-  const isSameOrigin = requestUrl.origin === self.location.origin;
-  const isPageRequest = event.request.mode === 'navigate' || requestUrl.pathname.endsWith('.php');
-  const isControllerRequest = requestUrl.pathname.includes('/controllers/');
-
-  if (!isSameOrigin || isPageRequest || isControllerRequest) {
-    event.respondWith(fetch(event.request));
-    return;
-  }
-
-  event.respondWith(
-    caches.match(event.request).then(cached =>
-      cached || fetch(event.request)
-    ) 
-  );
+  event.respondWith(fetch(event.request));
 });
 
 self.addEventListener('notificationclick', event => {
