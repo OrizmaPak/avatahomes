@@ -140,7 +140,7 @@ const routerTree = {
     paymenthistory: {
         template: 'paymenthistory',
         startingFunction: 'paymenthistoryActive',
-        scriptName:  './js/paymenthistory.js'
+        scriptName:  './js/paymenthistory.js?v=20260618a'
     },
     addglaccount: {
         template: 'addglaccount',
@@ -195,7 +195,7 @@ const routerTree = {
     moredocuments: {
         template: 'moredocuments',
         startingFunction: 'moredocumentsActive',
-        scriptName:  './js/moredocuments.js'
+        scriptName:  './js/moredocuments.js?v=20260618a'
     },
     access_control: {
         template: 'accesscontrol',

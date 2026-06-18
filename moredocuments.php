@@ -7,9 +7,9 @@
                                 <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">
                                     <div class="grid grid-cols-1 lg:grid-cols-1 gap-6">
                                         <div class="form-group">
-                                            <label for="country" class="control-label">property</label>
+                                            <label for="country" class="control-label">client</label>
                                             <select class="form-control moredocumentsverify" name="tenantid" id="tenantid">
-                                                <option value="">-- Select Property --</option>
+                                                <option value="">-- Select Client --</option>
                                             </select>
                                         </div>
                                         <div class="form-group">

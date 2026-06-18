@@ -1,4 +1,4 @@
-let organizationData = null;   // org info for receipts
+let paymentHistoryOrganizationData = null;   // org info for receipts
 let paymenthistoryid;
 
 /* -------- INITIALISE -------- */
@@ -18,7 +18,7 @@ async function paymenthistoryActive() {
   try {
     const res = await fetch('../controllers/fetchorganisation');
     const data = await res.json();
-    if (data.status) organizationData = data.data[0];
+    if (data.status) paymentHistoryOrganizationData = data.data[0];
   } catch (err) { console.error('Org fetch error', err); } 
 }
 
@@ -260,12 +260,12 @@ function generateReceiptHTML(item) {
           <div class="receipt-container">
             <header>
               <div class="org-info">
-                <h1>${organizationData.organisationname}</h1>
-                <p>${organizationData.address}</p>
-                <p>${organizationData.phone} | ${organizationData.email}</p>
+                <h1>${paymentHistoryOrganizationData.organisationname}</h1>
+                <p>${paymentHistoryOrganizationData.address}</p>
+                <p>${paymentHistoryOrganizationData.phone} | ${paymentHistoryOrganizationData.email}</p>
               </div>
-              ${organizationData.logo
-                ? `<img class="logo" src="https://nglohitech.com/werentv2/assets/media/${organizationData.logo}" alt="Logo">`
+              ${paymentHistoryOrganizationData.logo
+                ? `<img class="logo" src="https://nglohitech.com/werentv2/assets/media/${paymentHistoryOrganizationData.logo}" alt="Logo">`
                 : ''
               }
             </header>
