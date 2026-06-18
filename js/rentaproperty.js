@@ -3,6 +3,7 @@ let rentapropertyresult;
 let rentFeeDefinitions = [];
 const RENT_APPLY_PERCENTAGE_GROUP = 'rentaproperty-apply-percent';
 const RENT_NOT_APPLICABLE_DURATION = 'NOT APPLICABLE';
+const RENT_ALLOWED_UNIT_FEES = ['RENT', 'PROPERTY SALES'];
 
 /* -------- DATE DIFFERENCE UTILITY -------- */
 function differenceInMonths(date1, date2) {
@@ -43,6 +44,47 @@ function getDurationOptionsMarkup(selectedValue = '') {
 
 function getRentAddRowButton() {
   return document.getElementById('rentapropertyaddrow');
+}
+
+function normalizeUnitFeeName(unit) {
+  return `${unit?.feename ?? unit?.fee_name ?? ''}`.trim().toUpperCase();
+}
+
+function normalizeUnitAmount(unit) {
+  const value = unit?.rent ?? unit?.amount ?? unit?.feeamount ?? 0;
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue : 0;
+}
+
+function isRentPropertyUnitEligible(unit) {
+  const feeName = normalizeUnitFeeName(unit);
+  const rentedValue = `${unit?.rented ?? unit?.isrented ?? ''}`.trim().toUpperCase();
+  return RENT_ALLOWED_UNIT_FEES.includes(feeName) && rentedValue !== 'YES';
+}
+
+function findSelectedPropertyData(propertyId) {
+  if (!Array.isArray(rentapropertyresult)) return null;
+  return rentapropertyresult.find(item => `${item?.property?.id ?? item?.id ?? ''}` === `${propertyId}`);
+}
+
+function mergePropertySalesUnits(propertyId, renewableUnits = []) {
+  const propertyData = findSelectedPropertyData(propertyId);
+  const propertyUnits = Array.isArray(propertyData?.propertyunits) ? propertyData.propertyunits : [];
+  const seenUnitIds = new Set(renewableUnits.map(unit => `${unit?.id ?? ''}`));
+  const mergedUnits = [...renewableUnits];
+
+  propertyUnits.forEach(unit => {
+    if (!isRentPropertyUnitEligible(unit)) return;
+    const unitId = `${unit?.id ?? ''}`;
+    if (seenUnitIds.has(unitId)) return;
+    seenUnitIds.add(unitId);
+    mergedUnits.push({
+      ...unit,
+      rent: normalizeUnitAmount(unit)
+    });
+  });
+
+  return mergedUnits;
 }
 
 function setRentAddRowButtonLoading(isLoading) {
@@ -289,16 +331,20 @@ async function checkrentapropertyproperty(el) {
   const payload = new FormData();
   payload.append('id', pid);
   const r = await httpRequest2('../controllers/fetchrenewableunits', payload, null, 'json');
-  if (!r.status || !r.data.length) {
+  const units = mergePropertySalesUnits(pid, Array.isArray(r?.data) ? r.data : []);
+  if ((!r?.status && !units.length) || !units.length) {
     notification(r.message||'No units found', 0);
     document.getElementById('unitt').classList.add('hidden');
     return;
   }
   document.getElementById('unitt').classList.remove('hidden');
-  rentapropertyresult = r.data;
+  const propertyData = findSelectedPropertyData(pid);
+  if (propertyData) {
+    propertyData.renewableunits = units;
+  }
   document.getElementById('unitid').innerHTML =
     `<option value="">-- Select Property Unit --</option>` +
-    r.data.map(d =>
+    units.map(d =>
       `<option value="${d.id}">${d.unitname} ₦${Number(d.rent).toLocaleString()}</option>`
     ).join('');
 }
