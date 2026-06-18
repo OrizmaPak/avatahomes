@@ -1,12 +1,42 @@
 let accesscontrolid
 
-const accessctrl_user = ["CHANGE PASSWORD", "DEACTIVATE USER", "ORGANISATION INFO", "PROFILE"]
+const admin_user = [
+    "ACCESS CONTROL",
+    "CHANGE PASSWORD",
+    "DEACTIVATE USER",
+    "PROFILE",
+    "SELECT USER"
+]
 
-const property_user = ["REGISTER PROPERTY", "VIEW PROPERTY"]
+const content_user = [
+    "LOGO",
+    "NAVIGATION",
+    "BANNER",
+    "OTHER INFO",
+    "COPYRIGHT",
+    "PARTNERS",
+    "SEAT CATEGORY",
+    "SOCIAL MEDIA LINKS",
+    "STATIC AD BANNER",
+    "VISA PROCESSING COUNTRIES",
+    "TAB PROMOTION",
+    "ADD SLIDER",
+    "TRENDING FLIGHT DEALS",
+    "POPULAR HOTELS",
+    "TRAVELS AND TOURS NEWSLETTER",
+    "FOOTER QUICK LINKS",
+    "SEARCH"
+]
+
+const property_user = [
+    "REGISTER PROPERTY",
+    "VIEW PROPERTY"
+]
 
 const tenancy_rental = [ 
     "REGISTER TENANT",
     "VIEW TENANTS",
+    "VIEW ENQUIRES",
     "PROPERTY SALES",
     "VIEW PROPERTY SALES",
     "DUE PROPERTY PAYMENTS",
@@ -33,13 +63,15 @@ const accounts_user = [
   ]
 
 const settings_user = [
+    "ORGANISATION INFO",
     "MORE FEES"
   ] 
   
   
 
 const access_array = [
-                        ['accessctrl_user', 'USER', accessctrl_user], 
+                        ['admin_user', 'ADMIN', admin_user], 
+                        ['content_user', 'CONTENT', content_user], 
                         ['property_user', 'PROPERTY', property_user], 
                         ['tenancy_rental', 'CLIENTS/SALES', tenancy_rental],
                         ['transaction_user', 'OTHER TRANSACTION', transaction_user],
@@ -49,24 +81,69 @@ const access_array = [
 
 function permissionDisplayName(permission) {
     const map = {
+        "ACCESS CONTROL": "ACCESS CONTROL",
+        "SELECT USER": "SELECT USER",
         "REGISTER TENANT": "REGISTER CLIENT",
-        "VIEW TENANTS": "VIEW CLIENTS"
+        "VIEW TENANTS": "VIEW CLIENTS",
+        "VIEW ENQUIRIES": "VIEW ENQUIRES"
     };
     return map[permission] || permission;
 }
 
 function permissionMatches(savedPermissions, permissionName) {
     const aliases = {
+        "ACCESS CONTROL": ["ACCESS CONTROL"],
+        "CHANGE PASSWORD": ["CHANGE PASSWORD"],
+        "DEACTIVATE USER": ["DEACTIVATE USER"],
+        "PROFILE": ["PROFILE"],
+        "SELECT USER": ["SELECT USER"],
+        "LOGO": ["LOGO"],
+        "NAVIGATION": ["NAVIGATION"],
+        "BANNER": ["BANNER"],
+        "OTHER INFO": ["OTHER INFO"],
+        "COPYRIGHT": ["COPYRIGHT"],
+        "PARTNERS": ["PARTNERS"],
+        "SEAT CATEGORY": ["SEAT CATEGORY"],
+        "SOCIAL MEDIA LINKS": ["SOCIAL MEDIA LINKS"],
+        "STATIC AD BANNER": ["STATIC AD BANNER"],
+        "VISA PROCESSING COUNTRIES": ["VISA PROCESSING COUNTRIES"],
+        "TAB PROMOTION": ["TAB PROMOTION"],
+        "ADD SLIDER": ["ADD SLIDER"],
+        "TRENDING FLIGHT DEALS": ["TRENDING FLIGHT DEALS"],
+        "POPULAR HOTELS": ["POPULAR HOTELS"],
+        "TRAVELS AND TOURS NEWSLETTER": ["TRAVELS AND TOURS NEWSLETTER"],
+        "FOOTER QUICK LINKS": ["FOOTER QUICK LINKS"],
+        "SEARCH": ["SEARCH"],
+        "REGISTER PROPERTY": ["PROPERTY REGISTRATION"],
+        "PROPERTY REGISTRATION": ["REGISTER PROPERTY"],
+        "VIEW PROPERTY": ["VIEW PROPERTY REGISTRATION"],
+        "VIEW PROPERTY REGISTRATION": ["VIEW PROPERTY"],
         "REGISTER CLIENT": ["REGISTER TENANT"],
         "REGISTER TENANT": ["REGISTER CLIENT"],
         "VIEW CLIENTS": ["VIEW TENANTS"],
         "VIEW TENANTS": ["VIEW CLIENTS"],
+        "VIEW ENQUIRES": ["VIEW ENQUIRIES"],
+        "VIEW ENQUIRIES": ["VIEW ENQUIRES"],
         "PROPERTY SALES": ["RENT A PROPERTY"],
         "RENT A PROPERTY": ["PROPERTY SALES"],
         "VIEW PROPERTY SALES": ["VIEW RENTED PROPERTY"],
         "VIEW RENTED PROPERTY": ["VIEW PROPERTY SALES"],
         "DUE PROPERTY PAYMENTS": ["DUE RENTALS/RENEWALS"],
-        "DUE RENTALS/RENEWALS": ["DUE PROPERTY PAYMENTS"]
+        "DUE RENTALS/RENEWALS": ["DUE PROPERTY PAYMENTS"],
+        "ORGANISATION INFO": ["ORGANISATION INFO"],
+        "MORE FEES": ["MORE FEES"],
+        "OTHER PAYMENTS": ["OTHER PAYMENTS"],
+        "PAYMENT HISTORY": ["PAYMENT HISTORY"],
+        "EXPENSES": ["EXPENSES"],
+        "VIEW EXPENSES": ["VIEW EXPENSES"],
+        "NET TRANSACTIONS": ["NET TRANSACTIONS"],
+        "ADD GL ACCOUNT": ["ADD GL ACCOUNT"],
+        "VIEW GL ACCOUNTS": ["VIEW GL ACCOUNTS"],
+        "ADD GL TRANSACTION": ["ADD GL TRANSACTION"],
+        "GL TRANSACTION HISTORY": ["GL TRANSACTION HISTORY"],
+        "TRIAL BALANCE": ["TRIAL BALANCE"],
+        "INCOME STATEMENT": ["INCOME STATEMENT"],
+        "BALANCE SHEET": ["BALANCE SHEET"]
     };
     const values = (savedPermissions || '').split('||').map(item => item.trim().toUpperCase()).filter(Boolean);
     const target = permissionName.toUpperCase();
