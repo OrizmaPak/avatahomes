@@ -690,7 +690,7 @@
                     <img src="./images/icon.png" alt="Avata Homes logo">
                 </div>
                 <span class="brand-text">
-                    AVATAR HOMES
+                    AVATA HOMES
                     <small>Property Management Software</small>
                 </span>
             </a>
