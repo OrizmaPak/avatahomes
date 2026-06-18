@@ -126,22 +126,22 @@ async function onduerentalsTableDataSignal() {
     let rows = getSignaledDatasource().map((item, index) => `
     <tr> 
         <td>${index + 1 }</td>
-        <td>${item.propertydata.propertyidno}</td>
-        <td>${item.propertydata.propertyname}</td>
-        <td>${item.unitname}</td> 
-        <td>${item.propertydata.state} ${item.propertydata.city}</td>
-        <td>${formatNumber(item.rent)}</td>
+        <td>${item.propertydata?.propertyidno || 'N/A'}</td>
+        <td>${item.propertydata?.propertyname || 'N/A'}</td>
+        <td>${item.unitname || 'N/A'}</td> 
+        <td>${[item.propertydata?.state, item.propertydata?.city].filter(Boolean).join(' ') || 'N/A'}</td>
+        <td>${formatNumber(item.rent || 0)}</td>
         <td>${formatNumber(item.otherrenewablefees || 0)}</td>
         <td>${formatOtherFeesDetail(item.otherrenewablefeesdetail)}</td>
-        <td>${item.propertydata.propertymanager}</td>
-        <td>${item.propertydata.typeofunits}</td>
-        <td>${item.tenantdata.firstname} ${item.tenantdata.lastname}</td> 
-        <td>${item.tenantdata.phone}</td>
-        <td>${formatNumber(item.lastrentdata.amountpaid)}</td>
-        <td>${formatDate(item.lastrentdata.paymentdate)}</td>
-        <td>${formatDate(item.lastrentdata.expirationdate)}</td>
-        <td>${item.rent}</td>
-        <td>${item.rentstatus}</td>
+        <td>${item.propertydata?.propertymanager || 'N/A'}</td>
+        <td>${item.propertydata?.typeofunits || 'N/A'}</td>
+        <td>${[item.tenantdata?.firstname, item.tenantdata?.lastname].filter(Boolean).join(' ') || 'Vacant'}</td> 
+        <td>${item.tenantdata?.phone || 'N/A'}</td>
+        <td>${formatNumber(item.lastrentdata?.amountpaid || 0)}</td>
+        <td>${formatDate(item.lastrentdata?.paymentdate || '')}</td>
+        <td>${formatDate(item.lastrentdata?.expirationdate || '')}</td>
+        <td>${formatNumber(item.rent || 0)}</td>
+        <td>${item.rentstatus || 'N/A'}</td>
         <td class="flex items-center gap-3">
             <button title="Edit row entry" onclick="duerentalpay(${item.unitid})" class="bg-[green]-g h-8 w-fit text-white drop-shadow-md text-sm px-4 rounded-md" style="background: green;font-size: 18px;padding-left: 14px;padding-right: 14px;border-radius: 6px;font-size: small">Record Payment</button>
             <button title="Delete row entry"s onclick="duerentalsvacate('${item.unitid}')" class="bg-red-600 h-8 w-fit text-white drop-shadow-md text-sm px-4 rounded-md" style="font-size: 18px;padding-left: 14px;padding-right: 14px;border-radius: 6px;font-size: small">Vacate</button>
@@ -154,7 +154,7 @@ async function onduerentalsTableDataSignal() {
 
 function formatOtherFeesDetail(details){
     if(!details || !details.length) return 'None';
-    return details.map(fee => `${fee.feename}: ${formatNumber(fee.amount)}`).join('<br>');
+    return details.map(fee => `${fee?.feename || 'N/A'}: ${formatNumber(fee?.amount || 0)}`).join('<br>');
 } 
 
 async function duerentalsFormSubmitHandler(payloadd='') {
