@@ -51,7 +51,7 @@ function normalizeUnitFeeName(unit) {
 }
 
 function normalizeUnitAmount(unit) {
-  const value = unit?.rent ?? unit?.amount ?? unit?.feeamount ?? 0;
+  const value = unit?.amount ?? unit?.rent ?? unit?.feeamount ?? 0;
   const numericValue = Number(value);
   return Number.isFinite(numericValue) ? numericValue : 0;
 }
