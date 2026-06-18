@@ -13,6 +13,12 @@ async function fetchOrganization() {
     }
 }
 
+function formatViewRentNumber(value) {
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) return '0';
+    return formatNumber(numericValue);
+}
+
 async function viewrentapropertyActive() {
     const form = document.querySelector('#viewrentapropertysform')
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', e=>viewrentapropertyFormSubmitHandler('payload'))
@@ -81,9 +87,9 @@ async function onviewrentapropertyTableDataSignal() {
         <td>${item.property}</td>
         <td>${item.tenant}</td>
         <td>${item.unitname}</td>
-        <td>${formatNumber(item.rentdata.amountpaid)}</td>
-        <td class="hidden">${formatNumber(item.rentdata.otherfees)}</td>
-        <td>${formatNumber(item.rentdata.otherfees)}</td>
+        <td class="text-right">${formatViewRentNumber(item.rentdata.amountpaid)}</td>
+        <td class="hidden text-right">${formatViewRentNumber(item.rentdata.otherfees)}</td>
+        <td class="text-right">${formatViewRentNumber(item.rentdata.otherfees)}</td>
         <td>${formatDate(item.rentdata.begindate)}</td>
         <td>${formatDate(item.rentdata.expirationdate)}</td>
         <td>${formatDate(item.rentdata.paymentdate.split(' ')[0])}</td>
@@ -102,7 +108,7 @@ async function onviewrentapropertyTableDataSignal() {
                     ${item.rentalfees.map(fee => `
                         <tr>
                             <td>${fee.feename || 'N/A'}</td>
-                            <td>${formatNumber(fee.amount)}</td>
+                            <td class="text-right">${formatViewRentNumber(fee.amount)}</td>
                             <td>${fee.renewable}</td>
                         </tr>
                     `).join('')}
