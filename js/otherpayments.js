@@ -48,9 +48,20 @@ async function fetchmorefeesa() {
 
 async function otherpaymentssubmitss(){
     if(!validateForm('otherpaymentsform', getallid('otherpaymentsverify'))) return notification('Please fill all the required fields', 0)
+    const otherDetailValue = document.getElementById('otherdetail')
+        ? document.getElementById('otherdetail').value
+        : document.getElementById('description').value
+    const paymentMethodValue = document.getElementById('paymentmethod')
+        ? document.getElementById('paymentmethod').value
+        : ''
+    const additionalPayload = [
+        ['paymentmethod', paymentMethodValue],
+        ['otherdetail', otherDetailValue]
+    ]
+    if(document.getElementById('id').value) additionalPayload.unshift(['id', document.getElementById('id').value])
     let payload
 
-    payload = getFormData2(document.querySelector('#otherpaymentsform'), document.getElementById('id').value ? [['id', document.getElementById('id').value]] : null)
+    payload = getFormData2(document.querySelector('#otherpaymentsform'), additionalPayload)
     // function payload(){
     //     let params = new FormData()
     //     if(document.getElementById('id').value)params.append('id', document.getElementById('id').value)

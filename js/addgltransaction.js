@@ -183,8 +183,12 @@ async function addgltransactionFormSubmitHandler() {
     let request = await httpRequest2('../controllers/gltransactionscript', payload(), document.querySelector('#addgltransactionform #submit'))
     if(request.status) {
         notification('Record saved successfully!', 1);
-        addgltransactionFormResetHandler() 
-        // fetchaddgltransaction();
+        const navigationItem = document.getElementById('addgltransaction')
+        if(navigationItem) {
+            navigationItem.click()
+            return 
+        }
+        addgltransactionFormResetHandler()
         return
     }
     // document.querySelector('#addgltransactionform').reset();
