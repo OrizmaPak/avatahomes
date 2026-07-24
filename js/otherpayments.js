@@ -48,12 +48,15 @@ async function fetchmorefeesa() {
 
 async function otherpaymentssubmitss(){
     if(!validateForm('otherpaymentsform', getallid('otherpaymentsverify'))) return notification('Please fill all the required fields', 0)
-    const otherDetailValue = document.getElementById('otherdetail')
-        ? document.getElementById('otherdetail').value
-        : document.getElementById('description').value
     const paymentMethodValue = document.getElementById('paymentmethod')
-        ? document.getElementById('paymentmethod').value
+        ? document.getElementById('paymentmethod').value.trim().toUpperCase()
         : ''
+    const otherDetailValue = document.getElementById('otherdetail')
+        ? document.getElementById('otherdetail').value.trim()
+        : document.getElementById('description').value
+    if((paymentMethodValue === 'TRANSFER' || paymentMethodValue === 'POS') && !otherDetailValue) {
+        return notification('Provide bank name, account detail, or related payment info for transfer or POS payments', 0)
+    }
     const additionalPayload = [
         ['paymentmethod', paymentMethodValue],
         ['otherdetail', otherDetailValue]
