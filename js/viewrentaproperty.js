@@ -1,5 +1,5 @@
 let viewrentapropertyid
-organizationData = null;
+let organizationData = null;
 async function viewrentapropertyActive() {
     const form = document.querySelector('#viewrentapropertysform')
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', e=>viewrentapropertyFormSubmitHandler('payload'))
@@ -9,6 +9,17 @@ async function viewrentapropertyActive() {
     document.getElementById('enddate').value = today;
     // await viewrentapropertyFormSubmitHandler()
     fetchOrganization()
+}
+
+async function fetchOrganization() {
+    try {
+        const request = await httpRequest2('../controllers/fetchorganisationscript', null, null, 'json')
+        if(request.status) {
+            organizationData = request?.data?.data?.[0] || request?.data?.[0] || request?.data || null
+        }
+    } catch (error) {
+        console.error('Unable to load organization data for receipt', error)
+    }
 }
 
 async function fetchviewrentapropertys(id) {
@@ -112,17 +123,15 @@ async function onviewrentapropertyTableDataSignal() {
 
 // Receipt generation functions
 function generateReceipt(data) {
-    // make sure we have our org info
-    if (typeof organizationData === 'undefined' || !organizationData) {
-      console.error('Organization data not loaded');
-      return;
-    }
-  
     // build the HTML
     const receiptHTML = generateReceiptHTML(data);
   
     // open a new window and write the receipt
     const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      notification('Unable to open receipt window. Please allow popups and try again.', 0);
+      return;
+    }
     printWindow.document.write(`
       <!DOCTYPE html>
       <html lang="en">
@@ -162,28 +171,117 @@ function generateReceipt(data) {
               <button class="btn" onclick="window.print()" style="margin-right: .5rem; padding: .5rem 1rem; border:none; background:#22c55e; color:white; cursor:pointer;">
                 Print
               </button>
-              <button class="btn" onclick="downloadPDF()" style="padding: .5rem 1rem; border:none; background:#10b981; color:white; cursor:pointer;">
-                Download PDF
-              </button>
             </div>
           </div>
           <script>
-            function downloadPDF() {
-              const doc = new jspdf.jsPDF({ unit: 'pt', format: 'a4' });
-              doc.html(document.querySelector('.receipt-container'), {
-                callback: function(pdf) {
-                  pdf.save('Receipt-${data.rentdata.reference}.pdf');
-                },
-                margin: [40, 40, 40, 40],
-                html2canvas: { scale: 0.75 }
-              });
-            }
+            window.onload = function() {
+              setTimeout(function() {
+                window.focus();
+                window.print();
+              }, 300);
+            };
           </script>
         </body>
       </html>
     `);
     printWindow.document.close();
   }
+
+function escapeReceiptText(value) {
+    return String(value ?? '').replace(/[&<>"']/g, function(character) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[character];
+    });
+}
+
+function getReceiptCurrency(value) {
+    const amount = Number(value || 0);
+    return Number.isFinite(amount) ? formatNumber(amount) : formatNumber(0);
+}
+
+function generateReceiptHTML(data) {
+    const rentdata = data?.rentdata || {};
+    const fees = Array.isArray(data?.rentalfees) ? data.rentalfees : [];
+    const org = organizationData || {};
+    const orgName = org.companyname || org.organisationname || 'Avatar Homes';
+    const orgPhone = org.telephone || org.phone || '';
+    const orgLogo = org.logo && org.logo !== '-' ? `../images/${org.logo}` : '';
+    const totalFees = fees.reduce((sum, fee) => sum + Number(fee.amount || 0), 0);
+
+    return `
+      <header>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+          <div>
+            <h1>${escapeReceiptText(orgName)}</h1>
+            <p>${escapeReceiptText(org.address || '')}</p>
+            <p>${escapeReceiptText([orgPhone, org.email].filter(Boolean).join(' | '))}</p>
+          </div>
+          ${orgLogo ? `<img class="logo" src="${escapeReceiptText(orgLogo)}" alt="Logo">` : ''}
+        </div>
+      </header>
+
+      <div class="title-block">
+        <h2>PROPERTY SALES PAYMENT RECEIPT</h2>
+        <p>Official Payment Confirmation</p>
+      </div>
+
+      <div class="info-grid">
+        <div>
+          <p><span class="label">Client:</span> ${escapeReceiptText(data?.tenant || '')}</p>
+          <p><span class="label">Property:</span> ${escapeReceiptText(data?.property || '')}</p>
+          <p><span class="label">Unit:</span> ${escapeReceiptText(data?.unitname || '')}</p>
+        </div>
+        <div>
+          <p><span class="label">Payment Date:</span> ${escapeReceiptText(formatDate((rentdata.paymentdate || '').split(' ')[0] || rentdata.paymentdate || ''))}</p>
+          <p><span class="label">Reference No:</span> ${escapeReceiptText(rentdata.reference || '')}</p>
+          <p><span class="label">Receipt Date:</span> ${escapeReceiptText(formatDate(new Date().toISOString().split('T')[0]))}</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left;">Description</th>
+            <th style="text-align:right;">Amount</th>
+            <th style="text-align:right;">Deposit</th>
+            <th style="text-align:right;">Discount</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${fees.length ? fees.map(fee => `
+            <tr>
+              <td>${escapeReceiptText(fee.feename || 'Sales Fee')}</td>
+              <td style="text-align:right;">${getReceiptCurrency(fee.amount)}</td>
+              <td style="text-align:right;">${getReceiptCurrency(fee.deposit)}</td>
+              <td style="text-align:right;">${getReceiptCurrency(fee.discount)}</td>
+            </tr>
+          `).join('') : `
+            <tr>
+              <td>Property payment</td>
+              <td style="text-align:right;">${getReceiptCurrency(rentdata.amountpaid)}</td>
+              <td style="text-align:right;">${getReceiptCurrency(rentdata.amountpaid)}</td>
+              <td style="text-align:right;">${getReceiptCurrency(0)}</td>
+            </tr>
+          `}
+          <tr class="total-row">
+            <td>Total Fees</td>
+            <td style="text-align:right;">${getReceiptCurrency(totalFees || rentdata.amountpaid)}</td>
+            <td style="text-align:right;">Amount Paid</td>
+            <td style="text-align:right;">${getReceiptCurrency(rentdata.amountpaid)}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="footer">
+        <p>Authorized Signature</p>
+      </div>
+    `;
+}
   
   
 
