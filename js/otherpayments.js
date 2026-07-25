@@ -3,6 +3,7 @@ async function otherpaymentsActive() {
     fetchmorefeesa()
     const form = document.querySelector('#otherpaymentsform')
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', otherpaymentssubmitss)
+    ensureOtherPaymentFields()
     if(document.getElementById('paymentmethod')) {
         document.getElementById('paymentmethod').addEventListener('change', toggleOtherPaymentDetail)
         toggleOtherPaymentDetail()
@@ -33,6 +34,39 @@ async function otherpaymentsActive() {
          
     }
     otherpaymentsid = ''
+}
+
+function ensureOtherPaymentFields() {
+    const formGrid = document.querySelector('#otherpaymentsform .grid')
+    const creditInput = document.getElementById('credit')
+    if (!formGrid || !creditInput) return
+
+    if (!document.getElementById('paymentmethod')) {
+        const paymentMethodGroup = document.createElement('div')
+        paymentMethodGroup.className = 'form-group'
+        paymentMethodGroup.innerHTML = `
+            <label for="paymentmethod" class="control-label">payment method</label>
+            <select class="form-control otherpaymentsverify" name="paymentmethod" id="paymentmethod">
+                <option value="">-- Select Payment Method --</option>
+                <option value="CASH">Cash</option>
+                <option value="TRANSFER">Transfer</option>
+                <option value="POS">POS</option>
+                <option value="NONCASH">Non-Cash</option>
+            </select>
+        `
+        creditInput.closest('.form-group').insertAdjacentElement('afterend', paymentMethodGroup)
+    }
+
+    if (!document.getElementById('otherdetail')) {
+        const detailGroup = document.createElement('div')
+        detailGroup.className = 'form-group hidden'
+        detailGroup.id = 'otherdetailgroup'
+        detailGroup.innerHTML = `
+            <label for="otherdetail" class="control-label">payment details</label>
+            <input type="text" name="otherdetail" id="otherdetail" class="form-control" placeholder="Bank name, account details, POS terminal, or transfer note">
+        `
+        document.getElementById('paymentmethod')?.closest('.form-group')?.insertAdjacentElement('afterend', detailGroup)
+    }
 }
 
 function toggleOtherPaymentDetail() {
