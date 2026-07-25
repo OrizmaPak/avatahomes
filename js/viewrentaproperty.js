@@ -19,6 +19,109 @@ function formatViewRentNumber(value) {
     return formatNumber(numericValue);
 }
 
+function escapeReceiptValue(value) {
+    return `${value ?? ''}`
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function getReceiptOrgName() {
+    return organizationData?.companyname || organizationData?.organisationname || 'AVATA HOMES';
+}
+
+function getReceiptOrgPhone() {
+    return organizationData?.telephone || organizationData?.mobile || organizationData?.phone || '';
+}
+
+function getReceiptLogoMarkup() {
+    const logo = `${organizationData?.logo || ''}`.trim();
+    if (!logo || logo === '-') return '';
+    const candidates = [
+        `../controllers/storage/${logo}`,
+        `./controllers/storage/${logo}`,
+        `./images/${logo}`
+    ];
+    return `<img class="logo" src="${escapeReceiptValue(candidates[0])}" alt="Organisation Logo" onerror="this.onerror=null;this.src='${escapeReceiptValue(candidates[1])}'">`;
+}
+
+function generateReceiptHTML(data) {
+    const rentData = data?.rentdata || {};
+    const fees = Array.isArray(data?.rentalfees) ? data.rentalfees : [];
+    const tenant = data?.tenant || 'N/A';
+    const property = data?.property || 'N/A';
+    const unit = data?.unitname || 'N/A';
+    const paymentDate = rentData.paymentdate ? formatDate(`${rentData.paymentdate}`.split(' ')[0]) : 'N/A';
+    const beginDate = rentData.begindate ? formatDate(rentData.begindate) : 'N/A';
+    const expiryDate = rentData.expirationdate ? formatDate(`${rentData.expirationdate}`.split(' ')[0]) : 'N/A';
+    const amountPaid = formatViewRentNumber(rentData.amountpaid || 0);
+    const otherFees = formatViewRentNumber(rentData.otherfees || 0);
+    const receiptDate = formatDate(new Date().toISOString().split('T')[0]);
+    const feeRows = fees.length
+        ? fees.map(fee => `
+            <tr>
+                <td>${escapeReceiptValue(fee.feename || 'Fee')}</td>
+                <td class="amount">${formatViewRentNumber(fee.amount || 0)}</td>
+                <td>${escapeReceiptValue(fee.renewable || 'N/A')}</td>
+            </tr>
+        `).join('')
+        : `<tr><td colspan="3">No fee breakdown available</td></tr>`;
+
+    return `
+        <header>
+            <div>
+                <h1>${escapeReceiptValue(getReceiptOrgName())}</h1>
+                <p>${escapeReceiptValue(organizationData?.address || '')}</p>
+                <p>${escapeReceiptValue(getReceiptOrgPhone())}${organizationData?.email ? ` | ${escapeReceiptValue(organizationData.email)}` : ''}</p>
+            </div>
+            ${getReceiptLogoMarkup()}
+        </header>
+
+        <section class="title-block">
+            <h2>PROPERTY SALES PAYMENT RECEIPT</h2>
+            <p>Official Payment Confirmation</p>
+        </section>
+
+        <section class="info-grid">
+            <p><span class="label">Client:</span> ${escapeReceiptValue(tenant)}</p>
+            <p><span class="label">Reference:</span> ${escapeReceiptValue(rentData.reference || 'N/A')}</p>
+            <p><span class="label">Property:</span> ${escapeReceiptValue(property)}</p>
+            <p><span class="label">Payment Date:</span> ${paymentDate}</p>
+            <p><span class="label">Unit:</span> ${escapeReceiptValue(unit)}</p>
+            <p><span class="label">Receipt Date:</span> ${receiptDate}</p>
+            <p><span class="label">Begin Date:</span> ${beginDate}</p>
+            <p><span class="label">Expiry Date:</span> ${expiryDate}</p>
+        </section>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Instalment</th>
+                </tr>
+            </thead>
+            <tbody>${feeRows}</tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td>Other Fees</td>
+                    <td class="amount">${otherFees}</td>
+                    <td></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Amount Paid</td>
+                    <td class="amount">${amountPaid}</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="footer">Thank you for your payment.</div>
+    `;
+}
+
 async function viewrentapropertyActive() {
     const form = document.querySelector('#viewrentapropertysform')
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', e=>viewrentapropertyFormSubmitHandler('payload'))
@@ -134,7 +237,6 @@ function generateReceipt(data) {
     // make sure we have our org info
     if (typeof organizationData === 'undefined' || !organizationData) {
       console.error('Organization data not loaded');
-      return;
     }
   
     // build the HTML
@@ -148,6 +250,7 @@ function generateReceipt(data) {
         <head>
           <meta charset="UTF-8">
           <title>Receipt - ${data.rentdata.reference}</title>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
           <style>
             body { background: #f3f4f6; margin: 0; padding: 2rem; font-family: sans-serif; }
             .receipt-container { background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 768px; margin: 0 auto; }
@@ -163,6 +266,8 @@ function generateReceipt(data) {
             .info-grid .label { font-weight: 600; color: #374151; }
             table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
             th, td { padding: 0.75rem 2rem; }
+            th { text-align: left; }
+            .amount { text-align: right; }
             thead tr { background: #f3f4f6; }
             tbody tr + tr { border-top: 1px solid #e5e7eb; }
             .total-row td { font-weight: 600; border-top: 2px solid #e5e7eb; }
@@ -197,6 +302,12 @@ function generateReceipt(data) {
                 html2canvas: { scale: 0.75 }
               });
             }
+            window.addEventListener('load', function() {
+              setTimeout(function() {
+                window.focus();
+                window.print();
+              }, 300);
+            });
           </script>
         </body>
       </html>
