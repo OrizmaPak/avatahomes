@@ -135,7 +135,7 @@ const routerTree = {
     otherpayments: {
         template: 'otherpayments',
         startingFunction: 'otherpaymentsActive',
-        scriptName:  './js/otherpayments.js?v=20260725a'
+        scriptName:  './js/otherpayments.js?v=20260725b'
     },
     paymenthistory: {
         template: 'paymenthistory',

@@ -3,6 +3,10 @@ async function otherpaymentsActive() {
     fetchmorefeesa()
     const form = document.querySelector('#otherpaymentsform')
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', otherpaymentssubmitss)
+    if(document.getElementById('paymentmethod')) {
+        document.getElementById('paymentmethod').addEventListener('change', toggleOtherPaymentDetail)
+        toggleOtherPaymentDetail()
+    }
     let request1 = await httpRequest2('../controllers/fetchtenants', null, null, 'json')
     if(request1.status){
         document.getElementById('ownerid').innerHTML = `<option value="">-- Select Client --</option>`
@@ -31,6 +35,17 @@ async function otherpaymentsActive() {
     otherpaymentsid = ''
 }
 
+function toggleOtherPaymentDetail() {
+    const paymentMethod = document.getElementById('paymentmethod')?.value
+    const otherDetailGroup = document.getElementById('otherdetailgroup')
+    const otherDetail = document.getElementById('otherdetail')
+    const shouldRequireDetail = paymentMethod === 'TRANSFER' || paymentMethod === 'POS'
+    if (!otherDetailGroup || !otherDetail) return
+    otherDetailGroup.classList[shouldRequireDetail ? 'remove' : 'add']('hidden')
+    otherDetail.classList[shouldRequireDetail ? 'add' : 'remove']('otherpaymentsverify')
+    if (!shouldRequireDetail) otherDetail.value = ''
+}
+
 async function fetchmorefeesa() {
     let request = await fetchEnsuredMoreFees()
     if(request.status) {
@@ -43,11 +58,12 @@ async function fetchmorefeesa() {
 }
 
 async function otherpaymentssubmitss(){
+    toggleOtherPaymentDetail()
     if(!validateForm('otherpaymentsform', getallid('otherpaymentsverify'))) return notification('Please fill all the required fields', 0)
     let payload
 
     payload = getFormData2(document.querySelector('#otherpaymentsform'), document.getElementById('id').value ? [['id', document.getElementById('id').value]] : null)
-    payload.set('otherdetail', document.getElementById('description').value.trim())
+    payload.set('otherdetail', document.getElementById('otherdetail').value.trim())
     payload.set('paymentmethod', document.getElementById('paymentmethod').value)
     // function payload(){
     //     let params = new FormData()

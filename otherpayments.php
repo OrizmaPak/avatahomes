@@ -36,6 +36,10 @@
                                                 <option value="NONCASH">Non-Cash</option>
                                             </select>
                                         </div>
+                                        <div class="form-group hidden" id="otherdetailgroup">
+                                            <label for="otherdetail" class="control-label">payment details</label>
+                                            <input type="text" name="otherdetail" id="otherdetail" class="form-control" placeholder="Bank name, account details, POS terminal, or transfer note">
+                                        </div>
                                         <div class="form-group">
                                             <label for="country" class="control-label">transaction date</label>
                                             <input type="date" name="transactiondate" id="transactiondate" class="form-control otherpaymentsverify">
