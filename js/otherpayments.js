@@ -47,6 +47,8 @@ async function otherpaymentssubmitss(){
     let payload
 
     payload = getFormData2(document.querySelector('#otherpaymentsform'), document.getElementById('id').value ? [['id', document.getElementById('id').value]] : null)
+    payload.set('otherdetail', document.getElementById('description').value.trim())
+    payload.set('paymentmethod', document.getElementById('paymentmethod').value)
     // function payload(){
     //     let params = new FormData()
     //     if(document.getElementById('id').value)params.append('id', document.getElementById('id').value)

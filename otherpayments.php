@@ -27,6 +27,16 @@
                                             <input type="text" name="credit" id="credit" class="form-control otherpaymentsverify">
                                         </div>
                                         <div class="form-group">
+                                            <label for="paymentmethod" class="control-label">payment method</label>
+                                            <select class="form-control otherpaymentsverify" name="paymentmethod" id="paymentmethod">
+                                                <option value="">-- Select Payment Method --</option>
+                                                <option value="CASH">Cash</option>
+                                                <option value="TRANSFER">Transfer</option>
+                                                <option value="POS">POS</option>
+                                                <option value="NONCASH">Non-Cash</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
                                             <label for="country" class="control-label">transaction date</label>
                                             <input type="date" name="transactiondate" id="transactiondate" class="form-control otherpaymentsverify">
                                         </div>
