@@ -323,44 +323,54 @@ function getOrdinalSuffix(day) {
 // TO PRINT
 
 function printTable() {
-    // Get the table content
     const tableContent = document.querySelector('.table-content');
-
-    // Check if the table content exists
-    if (tableContent) {
-        // Clone the table content to avoid modifying the original
-        const clonedContent = tableContent.cloneNode(true);
-
-        // Remove the "action" column from the cloned content
-        const headers = clonedContent.querySelectorAll('thead th');
-        const lastHeader = headers[headers.length - 1];
-
-        if (lastHeader.textContent.trim().toLowerCase() === 'action') {
-            lastHeader.parentNode.removeChild(lastHeader);
-
-            const dataRows = clonedContent.querySelectorAll('tbody tr');
-            dataRows.forEach(row => {
-                const lastCell = row.querySelector('td:last-child');
-                if (lastCell) {
-                    lastCell.parentNode.removeChild(lastCell);
-                }
-            });
-        } else {
-            console.warn('Last column header is not titled "Action". No action taken.');
-        }
-
-        // Create a new window and append the cloned content with inline styles
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write('<html><head><title>Print</title><link rel="stylesheet" href="./css/index.css"><link rel="stylesheet" href="./css/css_vanilla.css"></head><body>');
-        printWindow.document.body.appendChild(clonedContent);
-        printWindow.document.write('</body></html>');
-
-        // Trigger the print dialog
-        printWindow.print();
-        printWindow.document.close();
-    } else {
+    if (!tableContent) {
         console.error('Table content not found.');
+        return;
     }
+
+    const clonedContent = tableContent.cloneNode(true);
+    clonedContent.querySelectorAll('.hidden').forEach(element => element.remove());
+
+    const headers = clonedContent.querySelectorAll('thead th');
+    const lastHeader = headers[headers.length - 1];
+    const lastHeaderText = lastHeader?.textContent.trim().toLowerCase();
+    if (lastHeader && ['action', 'actions'].includes(lastHeaderText)) {
+        lastHeader.remove();
+        clonedContent.querySelectorAll('tbody tr').forEach(row => {
+            row.querySelector('td:last-child')?.remove();
+        });
+    }
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        notification('Unable to open print window. Please allow popups for this site.', 0);
+        return;
+    }
+
+    printWindow.document.open();
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Print</title>
+                <link rel="stylesheet" href="./css/index.css">
+                <link rel="stylesheet" href="./css/css_vanilla.css">
+                <style>
+                    body { padding: 24px; background: #fff; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid #d1d5db; padding: 8px; text-align: left; }
+                    th { background: #64748b; color: #fff; }
+                    @media print { body { padding: 0; } }
+                </style>
+            </head>
+            <body>${clonedContent.outerHTML}</body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.onload = function () {
+        printWindow.focus();
+        printWindow.print();
+    };
 }
 
 
