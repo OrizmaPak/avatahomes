@@ -160,7 +160,7 @@ const routerTree = {
     gltransactionhistory: {
         template: 'gltransactionhistory',
         startingFunction: 'gltransactionhistoryActive',
-        scriptName: './js/gltransactionhistory.js?v=20260219b'
+        scriptName: './js/gltransactionhistory.js?v=20260826a'
     },
     trialbalance: {
         template: 'trialbalance',

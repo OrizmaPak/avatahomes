@@ -6,8 +6,8 @@
                                 <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">
                                     <div class="grid grid-cols-3 gap-6"> 
                                         <div class="form-group">
-                                            <label for="logoname" class="control-label">Supplier Type</label>
-                                            <input type="text" name="accountnumber" id="accountnumber" list="gltransactionhistorylist" onchange="checkdatalist(this)" class="form-control" placeholder="Enter account">
+                                            <label for="accountnumber" class="control-label">Select GL Accounts</label>
+                                            <input type="text" name="accountnumber" id="accountnumber" list="gltransactionhistorylist" onchange="checkdatalist(this)" class="form-control" placeholder="Select GL account">
                                         </div>
                                          <div class="form-group">
                                             <label for="logoname" class="control-label">Start Date</label>
