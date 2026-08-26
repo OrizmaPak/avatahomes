@@ -16,7 +16,7 @@ async function fetchgltransactionhistory(id) {
     let request = await httpRequest2('../controllers/fetchglaccounts', id ? getparamm() : null, null, 'json')
     // if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     if(request.status) {
-        window.did('gltransactionhistorylist').innerHTML = request.data.data.map(data=>`<option>${data.description} __${data.accountnumber}</option>`)
+        window.did('gltransactionhistorylist').innerHTML = request.data.data.map(data=>`<option value="${data.accountnumber}" label="${data.description || ''}"></option>`)
     } 
     else return notification('No records retrieved')
 }
@@ -68,7 +68,7 @@ async function gltransactionhistoryFormSubmitHandler() {
     function payload(){
         	var paramstr = new FormData();
 		
-		paramstr.append('accountnumber', document.getElementById('accountnumber').value.split('__')[1]);
+		paramstr.append('accountnumber', document.getElementById('accountnumber').value.trim());
 		paramstr.append('startdate', document.getElementById('startdate').value);
 		paramstr.append('enddate', document.getElementById('enddate').value);
 		
