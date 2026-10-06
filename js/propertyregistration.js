@@ -150,7 +150,9 @@ function updatePropertyRegistrationCounts() {
     if (!tbody || !unitsInput || !floorsInput) return
 
     const floorValues = new Set()
-    Array.from(tbody.children).forEach((row) => {
+    Array.from(tbody.children).forEach((row, index) => {
+        const serialCell = row.querySelector('[data-field="serial-number"]')
+        if (serialCell) serialCell.textContent = index + 1
         const floorInput = row.querySelector('input[id^="fl-"]')
         const floorValue = floorInput?.value.trim().toLowerCase()
         if (floorValue) floorValues.add(floorValue)
@@ -170,6 +172,7 @@ function addPropertyRegistrationRow(prefill = {}) {
     tr.dataset.feeMode = ''
     tr.dataset.percentageRate = ''
     tr.innerHTML = `
+        <td class="text-center font-semibold" data-field="serial-number"></td>
         <td>
             <div class="form-group">
                 <p class="hidden">Unit Name</p>
@@ -205,7 +208,7 @@ function addPropertyRegistrationRow(prefill = {}) {
         </td> 
         <td class="text-center hidden" id="ap-${id}"></td>
         <td>
-            <div data-action="remove-row" style="padding: 10px 20px;border-radius: 10px;background: red;width: fit-content; height: fit-content;font-size: larger; color: white;font-weight: bold">-</div>
+            <div data-action="remove-row" title="Delete this row" style="padding: 10px 20px;border-radius: 10px;background: red;width: fit-content; height: fit-content;font-size: larger; color: white;font-weight: bold">-</div>
         </td>
     `
 
@@ -892,7 +895,8 @@ function populatePropertyImportGroupInForm(group) {
     document.getElementById('typeofunits').value = group.typeofunits
     document.getElementById('propertymanager').value = group.propertymanager
     clearPropertyRegistrationTable()
-    group.units.forEach((unit, index) => {
+    const completeUnits = group.units.filter((unit) => cleanPropertyImportCell(unit.unitname) && cleanPropertyImportCell(unit.floor))
+    completeUnits.forEach((unit, index) => {
         addPropertyRegistrationRow({
             unitName: unit.unitname,
             floor: unit.floor,

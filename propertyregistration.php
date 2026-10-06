@@ -109,6 +109,7 @@
                                             <table>
                                                 <thead>   
                                                     <tr>
+                                                        <th>S/N</th>
                                                         <th>unit name</th>
                                                         <th>floor</th>
                                                         <th>Fee Name</th> 
