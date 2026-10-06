@@ -23,11 +23,17 @@
                                             <input type="text" name="address" id="address" class="form-control propertyregistrationverify">
                                         </div>
                                         <div class="form-group">
-                                            <label for="country" class="control-label">number of units</label>
+                                            <label for="numberofunits" class="control-label inline-flex items-center gap-1">
+                                                number of units
+                                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" tabindex="0" role="img" aria-label="Number of units information" title="Automatically generated from the number of rows in the unit table. Add a row to increase the unit count or remove a row to decrease it.">info</span>
+                                            </label>
                                             <input type="number" name="numberofunits" id="numberofunits" class="form-control propertyregistrationverify" min="0" readonly>
                                         </div>
                                         <div class="form-group">
-                                            <label for="country" class="control-label">number of floors</label>
+                                            <label for="numberoffloors" class="control-label inline-flex items-center gap-1">
+                                                number of floors
+                                                <span class="material-symbols-outlined text-gray-400 cursor-help" style="font-size: 16px;" tabindex="0" role="img" aria-label="Number of floors information" title="Automatically generated from the unique floor values entered in the unit table. Each different floor value counts as one floor.">info</span>
+                                            </label>
                                             <input type="number" name="numberoffloors" id="numberoffloors" class="form-control propertyregistrationverify" min="0" readonly>
                                         </div>
                                         <div class="form-group">
