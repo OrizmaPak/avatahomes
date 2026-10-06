@@ -3,6 +3,11 @@ let propertyfees = []
 let propertyImportGroups = []
 const APPLY_PERCENTAGE_GROUP = 'property-registration-apply-percent'
 const PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION = 'NOT APPLICABLE'
+const PROPERTY_IMPORT_DEFAULT_SALES_FEES = [
+    { amount: 250000000, feeName: 'SALES 250' },
+    { amount: 280000000, feeName: 'SALES 280' },
+    { amount: 0, feeName: 'SALES 0' }
+]
 
 function getAddRowButton() {
     return document.getElementById('propertyregistrationaddrow')
@@ -609,9 +614,12 @@ function normalizePropertyImportRows(rows) {
             const mappedKey = keyMap[String(key).trim().toLowerCase()]
             if (mappedKey) normalized[mappedKey] = cleanPropertyImportCell(row[key])
         })
-        if (!normalized.rentalperiod) normalized.rentalperiod = PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION
-        if (!normalized.feename) normalized.feename = 'PROPERTY SALES'
         normalized.amount = normalizePropertyImportAmount(normalized.amount)
+        if (!normalized.amount) normalized.amount = '0'
+        if (!normalized.rentalperiod) normalized.rentalperiod = PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION
+        if (!normalized.feename || normalized.feename.toUpperCase() === 'PROPERTY SALES') {
+            normalized.feename = getDefaultPropertyImportSalesFeeName(normalized.amount)
+        }
         return normalized
     }).filter((row) => Object.values(row).some((value) => `${value}`.trim() !== ''))
 }
@@ -630,6 +638,12 @@ function normalizePropertyImportAmount(value) {
     }
     const numericValue = Number.parseFloat(raw)
     return Number.isFinite(numericValue) ? String(numericValue) : ''
+}
+
+function getDefaultPropertyImportSalesFeeName(amount) {
+    const numericAmount = Number.parseFloat(amount)
+    const match = PROPERTY_IMPORT_DEFAULT_SALES_FEES.find((fee) => fee.amount === numericAmount)
+    return match ? match.feeName : 'SALES 0'
 }
 
 function buildPropertyImportGroups(rows) {
