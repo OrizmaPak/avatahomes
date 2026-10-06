@@ -2,8 +2,10 @@ let propertyregistrationid
 let propertyfees = []
 let propertyImportGroups = []
 let propertyImportActiveIndex = -1
+let propertyImportSkippedRows = 0
 const APPLY_PERCENTAGE_GROUP = 'property-registration-apply-percent'
 const PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION = 'NOT APPLICABLE'
+const PROPERTY_IMPORT_DEFAULT_RENTAL_PERIOD = '6'
 const PROPERTY_IMPORT_DEFAULT_SALES_FEES = [
     { amount: 250000000, feeName: 'SALES 250' },
     { amount: 280000000, feeName: 'SALES 280' },
@@ -567,6 +569,7 @@ async function handlePropertyImportFile(event) {
             const workbook = XLSX.read(loadEvent.target.result, { type: 'array' })
             const sheet = workbook.Sheets[workbook.SheetNames[0]]
             const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' })
+            propertyImportSkippedRows = 0
             propertyImportGroups = buildPropertyImportGroups(normalizePropertyImportRows(rows))
             propertyImportActiveIndex = -1
             renderPropertyImportPreview()
@@ -616,21 +619,25 @@ function normalizePropertyImportRows(rows) {
         'size_sqft': 'size'
     }
 
-    return rows.map((row) => {
+    const normalizedRows = rows.map((row) => {
         const normalized = {}
         Object.keys(row).forEach((key) => {
             const mappedKey = keyMap[String(key).trim().toLowerCase()]
             if (mappedKey) normalized[mappedKey] = cleanPropertyImportCell(row[key])
         })
+        normalized.hasRequiredUnitInfo = !!(cleanPropertyImportCell(normalized.unitname) && cleanPropertyImportCell(normalized.floor))
         normalized.amount = normalizePropertyImportAmount(normalized.amount)
         if (!normalized.amount) normalized.amount = '0'
-        if (!normalized.rentalperiod) normalized.rentalperiod = PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION
+        if (!normalized.rentalperiod || normalized.rentalperiod.toUpperCase() === PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION) normalized.rentalperiod = PROPERTY_IMPORT_DEFAULT_RENTAL_PERIOD
         if (!normalized.feename || normalized.feename.toUpperCase() === 'PROPERTY SALES') {
             normalized.feename = getDefaultPropertyImportSalesFeeName(normalized.amount)
         }
         normalized.unitname = formatPropertyImportUnitName(normalized)
         return normalized
     }).filter((row) => Object.values(row).some((value) => `${value}`.trim() !== ''))
+
+    propertyImportSkippedRows = normalizedRows.filter((row) => !row.hasRequiredUnitInfo).length
+    return normalizedRows.filter((row) => row.hasRequiredUnitInfo)
 }
 
 function cleanPropertyImportCell(value) {
@@ -766,7 +773,10 @@ function renderPropertyImportPreview() {
         table.appendChild(tr)
     })
 
-    if (summary) summary.textContent = `${propertyImportGroups.length} propert${propertyImportGroups.length === 1 ? 'y' : 'ies'} found, ${readyGroups} ready to load`
+    if (summary) {
+        const skippedText = propertyImportSkippedRows ? `, ${propertyImportSkippedRows} blank unit/floor row${propertyImportSkippedRows === 1 ? '' : 's'} skipped` : ''
+        summary.textContent = `${propertyImportGroups.length} propert${propertyImportGroups.length === 1 ? 'y' : 'ies'} found, ${readyGroups} ready to load${skippedText}`
+    }
     if (submitButton) {
         if (readyGroups) submitButton.removeAttribute('disabled')
         else submitButton.setAttribute('disabled', true)
@@ -776,6 +786,7 @@ function renderPropertyImportPreview() {
 function clearPropertyImportPreview() {
     propertyImportGroups = []
     propertyImportActiveIndex = -1
+    propertyImportSkippedRows = 0
     const preview = document.getElementById('propertyImportPreview')
     const table = document.getElementById('propertyImportTable')
     const status = document.getElementById('propertyImportStatus')
@@ -843,7 +854,7 @@ function mapPropertyImportGroupToPayload(group) {
         payload.append(`floor${rowNumber}`, unit.floor)
         payload.append(`feenameid${rowNumber}`, resolvePropertyImportFeeId(unit))
         payload.append(`amount${rowNumber}`, unit.amount)
-        payload.append(`rentalperiod${rowNumber}`, unit.rentalperiod || PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION)
+        payload.append(`rentalperiod${rowNumber}`, unit.rentalperiod || PROPERTY_IMPORT_DEFAULT_RENTAL_PERIOD)
         payload.append(`unitid${rowNumber}`, '')
     })
 
@@ -887,7 +898,7 @@ function populatePropertyImportGroupInForm(group) {
             floor: unit.floor,
             feeId: resolvePropertyImportFeeId(unit),
             amount: unit.amount,
-            rentalPeriod: unit.rentalperiod || PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION,
+            rentalPeriod: unit.rentalperiod || PROPERTY_IMPORT_DEFAULT_RENTAL_PERIOD,
             autoSelectSource: index === 0
         })
     })
