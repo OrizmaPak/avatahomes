@@ -27,6 +27,10 @@
                                             <input type="number" name="numberofunits" id="numberofunits" class="form-control propertyregistrationverify">
                                         </div>
                                         <div class="form-group">
+                                            <label for="country" class="control-label">number of floors</label>
+                                            <input type="number" name="numberoffloors" id="numberoffloors" class="form-control propertyregistrationverify">
+                                        </div>
+                                        <div class="form-group">
                                             <label for="country" class="control-label">location</label>
                                             <input type="text" name="location" id="location" class="form-control propertyregistrationverify">
                                         </div>
@@ -58,6 +62,7 @@
                                                 <thead>   
                                                     <tr>
                                                         <th>unit name</th>
+                                                        <th>floor</th>
                                                         <th>Fee Name</th> 
                                                         <th>Mode</th>  
                                                         <th>Amount</th> 

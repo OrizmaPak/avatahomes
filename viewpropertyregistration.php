@@ -27,6 +27,7 @@
                                                 <th>Property Name</th>
                                                 <th>Property Manager</th>
                                                 <th>Number of Units</th>
+                                                <th>Number of Floors</th>
                                                 <th>state</th>
                                                 <th>Property Units</th>
                                                 <th>Property id number</th>

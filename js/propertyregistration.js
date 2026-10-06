@@ -107,6 +107,7 @@ async function propertyregistrationActive() {
                 units.forEach((unit) => {
                     addPropertyRegistrationRow({
                         unitName: unit.unitname ?? '',
+                        floor: unit.floor ?? unit.floornumber ?? unit.floorno ?? '',
                         feeId: unit.feenameid ? String(unit.feenameid) : '',
                         amount: unit.amount ?? unit.rent ?? '',
                         rentalPeriod: unit.rentalperiod ?? '',
@@ -149,6 +150,12 @@ function addPropertyRegistrationRow(prefill = {}) {
         </td>
         <td>
             <div class="form-group">
+                <p class="hidden">Floor</p>
+                <input type="text" id="fl-${id}" class="form-control propertyregistrationverify" placeholder="Enter Floor">
+            </div>
+        </td>
+        <td>
+            <div class="form-group">
                 <p class="hidden">Fee Name</p>
                 <select id="fe-${id}" class="form-control propertyregistrationverify"></select>
             </div>
@@ -180,6 +187,7 @@ function addPropertyRegistrationRow(prefill = {}) {
     if (!controls.row) return tr
 
     controls.unit.value = prefill.unitName ?? ''
+    controls.floor.value = prefill.floor ?? ''
     controls.unitId.value = prefill.unitId ?? ''
     controls.rental.value = prefill.rentalPeriod ?? ''
 
@@ -225,6 +233,7 @@ function getRowControls(rowId) {
     return {
         row,
         unit: document.getElementById(`un-${rowId}`),
+        floor: document.getElementById(`fl-${rowId}`),
         feeSelect: document.getElementById(`fe-${rowId}`),
         modeDisplay: document.getElementById(`mo-${rowId}`),
         amount: document.getElementById(`ar-${rowId}`),
@@ -450,12 +459,14 @@ async function propertyregistrationsubmit() {
         params.append('city', document.getElementById('city').value)
         params.append('state', document.getElementById('state').value)
         params.append('numberofunits', document.getElementById('numberofunits').value)
+        params.append('numberoffloors', document.getElementById('numberoffloors').value)
         params.append('typeofunits', document.getElementById('typeofunits').value)
         params.append('propertymanager', document.getElementById('propertymanager').value)
         params.append('rowcount', table.children.length)
         for (let i = 0; i < table.children.length; i++) {
             let id = table.children[i].id 
             params.append(`unitname${i + 1}`, document.getElementById(`un-${id}`).value)
+            params.append(`floor${i + 1}`, document.getElementById(`fl-${id}`).value)
             params.append(`feenameid${i + 1}`, document.getElementById(`fe-${id}`).value)
             params.append(`amount${i + 1}`, document.getElementById(`ar-${id}`).value)
             params.append(`rentalperiod${i + 1}`, document.getElementById(`rp-${id}`).value)

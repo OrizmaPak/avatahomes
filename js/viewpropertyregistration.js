@@ -62,6 +62,7 @@ async function onviewpropertyregistrationTableDataSignal() {
         <td>${item.property.propertyname}</td>
         <td>${item.property.propertymanager}</td> 
         <td>${item.property.numberofunits}</td>
+        <td>${item.property.numberoffloors ?? ''}</td>
         <td>${item.property.state}</td> 
         <td>  
         <div class="table-content"> y
@@ -69,6 +70,7 @@ async function onviewpropertyregistrationTableDataSignal() {
 wren                    <tr style="background: 64748b !important; color: white !important">
                         <th  style="background: 64748b !important; color: black !important">s/n</th>
                         <th  style="background: 64748b !important; color: black !important">unit name</th>
+                        <th  style="background: 64748b !important; color: black !important">floor</th>
                         <th  style="background: 64748b !important; color: black !important">fee name</th>
                         <th  style="background: 64748b !important; color: black !important">amount</th>
                         <th  style="display: none; background: 64748b !important; color: black !important">rental period (MNTH)</th>
@@ -81,6 +83,7 @@ wren                    <tr style="background: 64748b !important; color: white !
                       <tr>
                         <td>${index+1}</td> 
                         <td>${data.unitname}</td>
+                        <td>${data.floor ?? data.floornumber ?? data.floorno ?? ''}</td>
                         <td>${data.feename ?? ''}</td>
                         <td>${(data.amount ?? data.rent) ?? ''}</td>
                         <td class="hidden">${data.rentalperiod ?? ''}</td>
