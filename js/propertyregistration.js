@@ -605,7 +605,12 @@ function normalizePropertyImportRows(rows) {
         'price': 'amount',
         'rental period': 'rentalperiod',
         'payment period': 'rentalperiod',
-        'rentalperiod': 'rentalperiod'
+        'rentalperiod': 'rentalperiod',
+        'type': 'type',
+        'unit type': 'type',
+        'size': 'size',
+        'size sqft': 'size',
+        'size_sqft': 'size'
     }
 
     return rows.map((row) => {
@@ -620,6 +625,7 @@ function normalizePropertyImportRows(rows) {
         if (!normalized.feename || normalized.feename.toUpperCase() === 'PROPERTY SALES') {
             normalized.feename = getDefaultPropertyImportSalesFeeName(normalized.amount)
         }
+        normalized.unitname = formatPropertyImportUnitName(normalized)
         return normalized
     }).filter((row) => Object.values(row).some((value) => `${value}`.trim() !== ''))
 }
@@ -644,6 +650,19 @@ function getDefaultPropertyImportSalesFeeName(amount) {
     const numericAmount = Number.parseFloat(amount)
     const match = PROPERTY_IMPORT_DEFAULT_SALES_FEES.find((fee) => fee.amount === numericAmount)
     return match ? match.feeName : 'SALES 0'
+}
+
+function formatPropertyImportUnitName(row) {
+    const parts = [row.unitname, row.type, formatPropertyImportSize(row.size)]
+        .map((value) => cleanPropertyImportCell(value))
+        .filter(Boolean)
+    return parts.join(' - ')
+}
+
+function formatPropertyImportSize(value) {
+    const size = cleanPropertyImportCell(value)
+    if (!size) return ''
+    return /sq\s*ft/i.test(size) ? size.toUpperCase().replace(/\s+/g, ' ') : `${size} SQFT`
 }
 
 function buildPropertyImportGroups(rows) {
