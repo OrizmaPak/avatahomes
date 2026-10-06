@@ -1,5 +1,6 @@
 let propertyregistrationid
 let propertyfees = []
+let propertyImportGroups = []
 const APPLY_PERCENTAGE_GROUP = 'property-registration-apply-percent'
 const PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION = 'NOT APPLICABLE'
 
@@ -89,6 +90,7 @@ async function propertyregistrationActive() {
         setAddRowButtonLoading(false)
     }
 
+    wirePropertyRegistrationImport()
     idInput.value = ''
     clearPropertyRegistrationTable()
 
@@ -480,6 +482,7 @@ async function propertyregistrationsubmit() {
         params.append('address', document.getElementById('address').value)
         params.append('city', document.getElementById('city').value)
         params.append('state', document.getElementById('state').value)
+        params.append('location', document.getElementById('location').value)
         params.append('numberofunits', document.getElementById('numberofunits').value)
         params.append('numberoffloors', document.getElementById('numberoffloors').value)
         params.append('typeofunits', document.getElementById('typeofunits').value)
@@ -505,6 +508,328 @@ async function propertyregistrationsubmit() {
         return
     }
     return notification(request.message, 0)
+}
+
+function wirePropertyRegistrationImport() {
+    const uploadButton = document.getElementById('propertyImportUploadBtn')
+    const importInput = document.getElementById('propertyImportInput')
+    const submitButton = document.getElementById('propertyImportSubmitBtn')
+    const clearButton = document.getElementById('propertyImportClearBtn')
+
+    if (uploadButton && importInput && !uploadButton.dataset.bound) {
+        uploadButton.addEventListener('click', () => importInput.click())
+        uploadButton.dataset.bound = '1'
+    }
+    if (importInput && !importInput.dataset.bound) {
+        importInput.addEventListener('change', handlePropertyImportFile)
+        importInput.dataset.bound = '1'
+    }
+    if (submitButton && !submitButton.dataset.bound) {
+        submitButton.addEventListener('click', submitImportedProperties)
+        submitButton.dataset.bound = '1'
+    }
+    if (clearButton && !clearButton.dataset.bound) {
+        clearButton.addEventListener('click', clearPropertyImportPreview)
+        clearButton.dataset.bound = '1'
+    }
+}
+
+async function ensurePropertyImportXlsxLoaded() {
+    if (window.XLSX) return true
+    return await new Promise((resolve) => {
+        const script = document.createElement('script')
+        script.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'
+        script.onload = () => resolve(true)
+        script.onerror = () => resolve(false)
+        document.head.appendChild(script)
+    })
+}
+
+async function handlePropertyImportFile(event) {
+    const file = event.target.files[0]
+    if (!file) return
+    const ok = await ensurePropertyImportXlsxLoaded()
+    if (!ok) {
+        event.target.value = ''
+        return notification('Could not load Excel helper. Check your connection.', 0)
+    }
+
+    const reader = new FileReader()
+    reader.onload = (loadEvent) => {
+        try {
+            const workbook = XLSX.read(loadEvent.target.result, { type: 'array' })
+            const sheet = workbook.Sheets[workbook.SheetNames[0]]
+            const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' })
+            propertyImportGroups = buildPropertyImportGroups(normalizePropertyImportRows(rows))
+            renderPropertyImportPreview()
+        } catch (error) {
+            console.error(error)
+            notification('Unable to read property import Excel. Please confirm the file format.', 0)
+        } finally {
+            event.target.value = ''
+        }
+    }
+    reader.readAsArrayBuffer(file)
+}
+
+function normalizePropertyImportRows(rows) {
+    const keyMap = {
+        'property name': 'propertyname',
+        'propertyname': 'propertyname',
+        'block': 'propertyname',
+        'state': 'state',
+        'city': 'city',
+        'address': 'address',
+        'location': 'location',
+        'type of units': 'typeofunits',
+        'typeofunits': 'typeofunits',
+        'property manager': 'propertymanager',
+        'facility manager': 'propertymanager',
+        'propertymanager': 'propertymanager',
+        'unit name': 'unitname',
+        'unit': 'unitname',
+        'unitname': 'unitname',
+        'apartment number': 'unitname',
+        'floor': 'floor',
+        'fee name': 'feename',
+        'feename': 'feename',
+        'fee': 'feename',
+        'fee name id': 'feenameid',
+        'feenameid': 'feenameid',
+        'amount': 'amount',
+        'price': 'amount',
+        'rental period': 'rentalperiod',
+        'payment period': 'rentalperiod',
+        'rentalperiod': 'rentalperiod'
+    }
+
+    return rows.map((row) => {
+        const normalized = {}
+        Object.keys(row).forEach((key) => {
+            const mappedKey = keyMap[String(key).trim().toLowerCase()]
+            if (mappedKey) normalized[mappedKey] = cleanPropertyImportCell(row[key])
+        })
+        if (!normalized.rentalperiod) normalized.rentalperiod = PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION
+        if (!normalized.feename) normalized.feename = 'PROPERTY SALES'
+        normalized.amount = normalizePropertyImportAmount(normalized.amount)
+        return normalized
+    }).filter((row) => Object.values(row).some((value) => `${value}`.trim() !== ''))
+}
+
+function cleanPropertyImportCell(value) {
+    if (value === undefined || value === null) return ''
+    return `${value}`.trim()
+}
+
+function normalizePropertyImportAmount(value) {
+    const raw = cleanPropertyImportCell(value).toUpperCase().replace(/,/g, '')
+    if (!raw) return ''
+    if (raw.endsWith('M')) {
+        const millionValue = Number.parseFloat(raw.replace('M', ''))
+        return Number.isFinite(millionValue) ? String(millionValue * 1000000) : ''
+    }
+    const numericValue = Number.parseFloat(raw)
+    return Number.isFinite(numericValue) ? String(numericValue) : ''
+}
+
+function buildPropertyImportGroups(rows) {
+    const grouped = new Map()
+    rows.forEach((row) => {
+        const propertyName = cleanPropertyImportCell(row.propertyname)
+        if (!propertyName) return
+        const key = propertyName.toUpperCase()
+        if (!grouped.has(key)) {
+            grouped.set(key, {
+                propertyname: propertyName,
+                state: cleanPropertyImportCell(row.state),
+                city: cleanPropertyImportCell(row.city),
+                address: cleanPropertyImportCell(row.address),
+                location: cleanPropertyImportCell(row.location),
+                typeofunits: cleanPropertyImportCell(row.typeofunits) || 'FLATS',
+                propertymanager: cleanPropertyImportCell(row.propertymanager),
+                units: [],
+                errors: []
+            })
+        }
+        const group = grouped.get(key)
+        ;['state', 'city', 'address', 'location', 'typeofunits', 'propertymanager'].forEach((field) => {
+            if (!group[field] && row[field]) group[field] = cleanPropertyImportCell(row[field])
+        })
+        group.units.push(row)
+    })
+
+    return Array.from(grouped.values()).map((group) => {
+        group.errors = validatePropertyImportGroup(group)
+        return group
+    })
+}
+
+function validatePropertyImportGroup(group) {
+    const errors = []
+    ;['propertyname', 'state', 'city', 'address', 'location', 'typeofunits', 'propertymanager'].forEach((field) => {
+        if (!cleanPropertyImportCell(group[field])) errors.push(`${field} is required`)
+    })
+    if (!group.units.length) errors.push('at least one unit is required')
+
+    group.units.forEach((unit, index) => {
+        const rowNumber = index + 1
+        if (!cleanPropertyImportCell(unit.unitname)) errors.push(`unit ${rowNumber}: unit name is required`)
+        if (!cleanPropertyImportCell(unit.floor)) errors.push(`unit ${rowNumber}: floor is required`)
+        if (!cleanPropertyImportCell(unit.amount)) errors.push(`unit ${rowNumber}: amount is required`)
+        if (!resolvePropertyImportFeeId(unit)) errors.push(`unit ${rowNumber}: fee name not found`)
+        const rentalPeriod = cleanPropertyImportCell(unit.rentalperiod)
+        if (rentalPeriod !== PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION && (!/^\d+$/.test(rentalPeriod) || parseInt(rentalPeriod, 10) < 1)) {
+            errors.push(`unit ${rowNumber}: rental period is invalid`)
+        }
+    })
+
+    return errors
+}
+
+function resolvePropertyImportFeeId(unit) {
+    if (unit.feenameid) return cleanPropertyImportCell(unit.feenameid)
+    const feeName = cleanPropertyImportCell(unit.feename || 'PROPERTY SALES').toUpperCase()
+    const fee = propertyfees.find((item) => cleanPropertyImportCell(item.feename).toUpperCase() === feeName)
+    return fee ? String(fee.id) : ''
+}
+
+function renderPropertyImportPreview() {
+    const preview = document.getElementById('propertyImportPreview')
+    const table = document.getElementById('propertyImportTable')
+    const summary = document.getElementById('propertyImportSummary')
+    const submitButton = document.getElementById('propertyImportSubmitBtn')
+    if (!preview || !table) return
+
+    preview.classList.remove('hidden')
+    table.innerHTML = ''
+
+    if (!propertyImportGroups.length) {
+        table.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-[#666]">No property rows found in the Excel file.</td></tr>`
+        if (summary) summary.textContent = '0 properties found'
+        if (submitButton) submitButton.setAttribute('disabled', true)
+        return
+    }
+
+    let validGroups = 0
+    propertyImportGroups.forEach((group, index) => {
+        const isValid = !group.errors.length
+        if (isValid) validGroups += 1
+        const tr = document.createElement('tr')
+        tr.innerHTML = `
+            <td>
+                <input type="checkbox" class="property-import-checkbox accent-[#22c55e]" data-index="${index}" ${isValid ? 'checked' : 'disabled'}>
+            </td>
+            <td>${escapePropertyImportValue(group.propertyname)}</td>
+            <td>${group.units.length}</td>
+            <td>${getPropertyImportFloorCount(group)}</td>
+            <td class="text-right">${formatPropertyImportAmount(getPropertyImportTotal(group))}</td>
+            <td class="${isValid ? 'text-green-700' : 'text-red-600'}">${isValid ? 'Ready' : escapePropertyImportValue(group.errors.slice(0, 3).join('; '))}</td>
+        `
+        table.appendChild(tr)
+    })
+
+    if (summary) summary.textContent = `${propertyImportGroups.length} propert${propertyImportGroups.length === 1 ? 'y' : 'ies'} found, ${validGroups} ready to submit`
+    if (submitButton) {
+        if (validGroups) submitButton.removeAttribute('disabled')
+        else submitButton.setAttribute('disabled', true)
+    }
+}
+
+function clearPropertyImportPreview() {
+    propertyImportGroups = []
+    const preview = document.getElementById('propertyImportPreview')
+    const table = document.getElementById('propertyImportTable')
+    const status = document.getElementById('propertyImportStatus')
+    if (table) table.innerHTML = ''
+    if (status) status.textContent = ''
+    if (preview) preview.classList.add('hidden')
+}
+
+function getPropertyImportFloorCount(group) {
+    const floors = new Set()
+    group.units.forEach((unit) => {
+        const floor = cleanPropertyImportCell(unit.floor).toLowerCase()
+        if (floor) floors.add(floor)
+    })
+    return floors.size
+}
+
+function getPropertyImportTotal(group) {
+    return group.units.reduce((total, unit) => total + (Number.parseFloat(unit.amount) || 0), 0)
+}
+
+function formatPropertyImportAmount(value) {
+    const numericValue = Number(value)
+    if (!Number.isFinite(numericValue)) return '0'
+    return typeof formatNumber === 'function' ? formatNumber(numericValue) : numericValue.toLocaleString()
+}
+
+function escapePropertyImportValue(value) {
+    return cleanPropertyImportCell(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+}
+
+async function submitImportedProperties() {
+    const selectedGroups = Array.from(document.querySelectorAll('.property-import-checkbox'))
+        .filter((checkbox) => checkbox.checked && !checkbox.disabled)
+        .map((checkbox) => propertyImportGroups[Number(checkbox.dataset.index)])
+        .filter(Boolean)
+
+    if (!selectedGroups.length) return notification('Select at least one valid property to import.', 0)
+
+    const submitButton = document.getElementById('propertyImportSubmitBtn')
+    const loader = submitButton?.querySelector('.btnloader')
+    const status = document.getElementById('propertyImportStatus')
+    if (loader) loader.style.display = 'flex'
+    if (submitButton) submitButton.setAttribute('disabled', true)
+
+    let successCount = 0
+    for (let i = 0; i < selectedGroups.length; i += 1) {
+        const group = selectedGroups[i]
+        if (status) status.textContent = `Submitting ${i + 1}/${selectedGroups.length}: ${group.propertyname}`
+        const request = await httpRequest2('../controllers/propertyscript', mapPropertyImportGroupToPayload(group), null, 'json')
+        if (request?.status) {
+            successCount += 1
+        } else {
+            const message = request?.message || `Unable to submit ${group.propertyname}`
+            notification(message, 0)
+        }
+    }
+
+    if (loader) loader.style.display = 'none'
+    if (submitButton) submitButton.removeAttribute('disabled')
+    if (status) status.textContent = `${successCount}/${selectedGroups.length} properties submitted`
+    notification(`${successCount}/${selectedGroups.length} properties imported`, successCount ? 1 : 0)
+}
+
+function mapPropertyImportGroupToPayload(group) {
+    const payload = new FormData()
+    payload.append('propertyname', group.propertyname)
+    payload.append('address', group.address)
+    payload.append('city', group.city)
+    payload.append('state', group.state)
+    payload.append('location', group.location)
+    payload.append('numberofunits', group.units.length)
+    payload.append('numberoffloors', getPropertyImportFloorCount(group))
+    payload.append('typeofunits', group.typeofunits)
+    payload.append('propertymanager', group.propertymanager)
+    payload.append('rowcount', group.units.length)
+
+    group.units.forEach((unit, index) => {
+        const rowNumber = index + 1
+        payload.append(`unitname${rowNumber}`, unit.unitname)
+        payload.append(`floor${rowNumber}`, unit.floor)
+        payload.append(`feenameid${rowNumber}`, resolvePropertyImportFeeId(unit))
+        payload.append(`amount${rowNumber}`, unit.amount)
+        payload.append(`rentalperiod${rowNumber}`, unit.rentalperiod || PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION)
+        payload.append(`unitid${rowNumber}`, '')
+    })
+
+    return payload
 }
 
 // Fallback delegation: ensure live updates even if per-row binding fails

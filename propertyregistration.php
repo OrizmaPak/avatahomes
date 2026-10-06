@@ -3,6 +3,48 @@
                             <p class="page-title">
                                 <span>Register Property </span>
                             </p>
+                            <div class="mb-5 rounded-sm border border-[#e8d7a6] bg-[#fffaf0] p-4">
+                                <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                                    <div>
+                                        <p class="font-semibold text-[#7a5a12]">Temporary Excel import</p>
+                                        <p class="text-xs text-[#7a6332]">Upload the apartment property Excel to preview each block, then submit the properties one after another.</p>
+                                        <p class="text-xs text-[#9a6b12]">Fill the blank property details and studio prices in the Excel before importing.</p>
+                                    </div>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <a href="./templates/avata_apartment_property_import.xlsx" download class="btn !bg-[#334155] !text-white">Download prepared Excel</a>
+                                        <button type="button" class="btn" id="propertyImportUploadBtn">Upload Excel</button>
+                                        <input type="file" id="propertyImportInput" accept=".xlsx,.xls,.csv" class="hidden">
+                                    </div>
+                                </div>
+                                <div id="propertyImportPreview" class="mt-4 hidden">
+                                    <div class="mb-3 flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+                                        <p id="propertyImportSummary" class="text-sm font-semibold text-[#475569]"></p>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" class="btn !bg-[#64748b] !text-white" id="propertyImportClearBtn">Clear</button>
+                                            <button type="button" class="btn" id="propertyImportSubmitBtn">
+                                                <div class="btnloader" style="display: none;"></div>
+                                                <span>Submit imported properties</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="propertyImportStatus" class="mb-3 text-xs font-semibold text-[#7a6332]"></div>
+                                    <div class="table-content">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Import</th>
+                                                    <th>Property</th>
+                                                    <th>Units</th>
+                                                    <th>Floors</th>
+                                                    <th>Total amount</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="propertyImportTable"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                             <form id="propertyregistrationform">
                                 <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">
                                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
