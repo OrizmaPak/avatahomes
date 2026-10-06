@@ -95,12 +95,12 @@ const routerTree = {
     propertyregistration: {
         template: 'propertyregistration',
         startingFunction: 'propertyregistrationActive',
-        scriptName:  './js/propertyregistration.js?v=20261006e'
+        scriptName:  './js/propertyregistration.js?v=20261007a'
     },
     viewpropertyregistration: {
         template: 'viewpropertyregistration',
         startingFunction: 'viewpropertyregistrationActive',
-        scriptName:  './js/viewpropertyregistration.js?v=20261006a'
+        scriptName:  './js/viewpropertyregistration.js?v=20261007a'
     },
     registeratenant: {
         template: 'registeratenant',

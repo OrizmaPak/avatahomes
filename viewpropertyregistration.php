@@ -29,6 +29,10 @@
                                                 <th>Number of Units</th>
                                                 <th>Number of Floors</th>
                                                 <th>state</th>
+                                                <th>city</th>
+                                                <th>address</th>
+                                                <th>location</th>
+                                                <th>type of units</th>
                                                 <th>Property Units</th>
                                                 <th>Property id number</th>
                                                 <th>action</th>

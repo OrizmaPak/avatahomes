@@ -117,6 +117,7 @@ async function propertyregistrationActive() {
                 units.forEach((unit) => {
                     addPropertyRegistrationRow({
                         unitName: unit.unitname ?? '',
+                        description: unit.description ?? unit.unitdescription ?? '',
                         floor: unit.floor ?? unit.floornumber ?? unit.floorno ?? '',
                         feeId: unit.feenameid ? String(unit.feenameid) : '',
                         amount: unit.amount ?? unit.rent ?? '',
@@ -181,6 +182,12 @@ function addPropertyRegistrationRow(prefill = {}) {
         </td>
         <td>
             <div class="form-group">
+                <p class="hidden">Description</p>
+                <input type="text" id="de-${id}" class="form-control" placeholder="Enter Description">
+            </div>
+        </td>
+        <td>
+            <div class="form-group">
                 <p class="hidden">Floor</p>
                 <input type="text" id="fl-${id}" class="form-control propertyregistrationverify" placeholder="Enter Floor">
             </div>
@@ -218,6 +225,7 @@ function addPropertyRegistrationRow(prefill = {}) {
     if (!controls.row) return tr
 
     controls.unit.value = prefill.unitName ?? ''
+    controls.description.value = prefill.description ?? ''
     controls.floor.value = prefill.floor ?? ''
     controls.unitId.value = prefill.unitId ?? ''
     controls.rental.value = prefill.rentalPeriod ?? ''
@@ -267,6 +275,7 @@ function getRowControls(rowId) {
     return {
         row,
         unit: document.getElementById(`un-${rowId}`),
+        description: document.getElementById(`de-${rowId}`),
         floor: document.getElementById(`fl-${rowId}`),
         feeSelect: document.getElementById(`fe-${rowId}`),
         modeDisplay: document.getElementById(`mo-${rowId}`),
@@ -502,6 +511,7 @@ async function propertyregistrationsubmit() {
         for (let i = 0; i < table.children.length; i++) {
             let id = table.children[i].id 
             params.append(`unitname${i + 1}`, document.getElementById(`un-${id}`).value)
+            params.append(`description${i + 1}`, document.getElementById(`de-${id}`).value)
             params.append(`floor${i + 1}`, document.getElementById(`fl-${id}`).value)
             params.append(`feenameid${i + 1}`, document.getElementById(`fe-${id}`).value)
             params.append(`amount${i + 1}`, document.getElementById(`ar-${id}`).value)
@@ -604,6 +614,9 @@ function normalizePropertyImportRows(rows) {
         'unit': 'unitname',
         'unitname': 'unitname',
         'apartment number': 'unitname',
+        'description': 'description',
+        'unit description': 'description',
+        'unitdescription': 'description',
         'floor': 'floor',
         'fee name': 'feename',
         'feename': 'feename',
@@ -636,6 +649,7 @@ function normalizePropertyImportRows(rows) {
             normalized.feename = getDefaultPropertyImportSalesFeeName(normalized.amount)
         }
         normalized.unitname = formatPropertyImportUnitName(normalized)
+        normalized.description = normalized.description || formatPropertyImportUnitDescription(normalized)
         return normalized
     }).filter((row) => Object.values(row).some((value) => `${value}`.trim() !== ''))
 
@@ -667,7 +681,11 @@ function getDefaultPropertyImportSalesFeeName(amount) {
 
 function formatPropertyImportUnitName(row) {
     const baseUnitName = cleanPropertyImportCell(row.unitname).split(' - ')[0]
-    const parts = [baseUnitName, row.type, formatPropertyImportSize(row.size)]
+    return baseUnitName
+}
+
+function formatPropertyImportUnitDescription(row) {
+    const parts = [row.type, formatPropertyImportSize(row.size)]
         .map((value) => cleanPropertyImportCell(value))
         .filter(Boolean)
     return parts.join(' - ')
@@ -854,6 +872,7 @@ function mapPropertyImportGroupToPayload(group) {
     group.units.forEach((unit, index) => {
         const rowNumber = index + 1
         payload.append(`unitname${rowNumber}`, unit.unitname)
+        payload.append(`description${rowNumber}`, unit.description || '')
         payload.append(`floor${rowNumber}`, unit.floor)
         payload.append(`feenameid${rowNumber}`, resolvePropertyImportFeeId(unit))
         payload.append(`amount${rowNumber}`, unit.amount)
@@ -899,6 +918,7 @@ function populatePropertyImportGroupInForm(group) {
     completeUnits.forEach((unit, index) => {
         addPropertyRegistrationRow({
             unitName: unit.unitname,
+            description: unit.description || '',
             floor: unit.floor,
             feeId: resolvePropertyImportFeeId(unit),
             amount: unit.amount,

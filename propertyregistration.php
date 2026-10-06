@@ -111,6 +111,7 @@
                                                     <tr>
                                                         <th>S/N</th>
                                                         <th>unit name</th>
+                                                        <th>description</th>
                                                         <th>floor</th>
                                                         <th>Fee Name</th> 
                                                         <th>Mode</th>  

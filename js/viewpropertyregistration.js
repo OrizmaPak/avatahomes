@@ -46,7 +46,7 @@ async function removeviewpropertyregistration(id) {
         return paramstr;
     }
 
-    let request = await httpRequest2('../controllers/removevisacountries', id ? getparamm() : null, null, 'json');
+    let request = await httpRequest2('../controllers/removeproperty', id ? getparamm() : null, null, 'json');
     
     // Show notification based on the result
     fetchviewpropertyregistrations()
@@ -59,30 +59,37 @@ async function onviewpropertyregistrationTableDataSignal() {
     let rows = getSignaledDatasource().map((item, index) => `
     <tr>
         <td>${index + 1 }</td>
-        <td>${item.property.propertyname}</td>
-        <td>${item.property.propertymanager}</td> 
-        <td>${item.property.numberofunits}</td>
-        <td>${item.property.numberoffloors ?? ''}</td>
-        <td>${item.property.state}</td> 
+        <td>${item.property?.propertyname ?? ''}</td>
+        <td>${item.property?.propertymanager ?? ''}</td>
+        <td>${item.property?.numberofunits ?? ''}</td>
+        <td>${item.property?.numberoffloors ?? ''}</td>
+        <td>${item.property?.state ?? ''}</td>
+        <td>${item.property?.city ?? ''}</td>
+        <td>${item.property?.address ?? ''}</td>
+        <td>${item.property?.location ?? ''}</td>
+        <td>${item.property?.typeofunits ?? ''}</td>
         <td>  
-        <div class="table-content"> y
+        <div class="table-content">
         <table>
-wren                    <tr style="background: 64748b !important; color: white !important">
-                        <th  style="background: 64748b !important; color: black !important">s/n</th>
-                        <th  style="background: 64748b !important; color: black !important">unit name</th>
-                        <th  style="background: 64748b !important; color: black !important">floor</th>
-                        <th  style="background: 64748b !important; color: black !important">fee name</th>
-                        <th  style="background: 64748b !important; color: black !important">amount</th>
-                        <th  style="display: none; background: 64748b !important; color: black !important">rental period (MNTH)</th>
-                        <th  style="background: 64748b !important; color: black !important">rented</th>
+                <thead>
+                    <tr style="background: #64748b !important; color: white !important">
+                        <th style="background: #64748b !important; color: white !important">s/n</th>
+                        <th style="background: #64748b !important; color: white !important">unit name</th>
+                        <th style="background: #64748b !important; color: white !important">description</th>
+                        <th style="background: #64748b !important; color: white !important">floor</th>
+                        <th style="background: #64748b !important; color: white !important">fee name</th>
+                        <th style="background: #64748b !important; color: white !important">amount</th>
+                        <th style="display: none; background: #64748b !important; color: white !important">rental period (MNTH)</th>
+                        <th style="background: #64748b !important; color: white !important">rented</th>
                     </tr>
                 </thead>
                 <tbody> 
                 ${
-                      item.propertyunits.map((data, index)=>`
+                      (item.propertyunits || []).map((data, index)=>`
                       <tr>
                         <td>${index+1}</td> 
-                        <td>${data.unitname}</td>
+                        <td>${data.unitname ?? ''}</td>
+                        <td>${data.description ?? data.unitdescription ?? ''}</td>
                         <td>${data.floor ?? data.floornumber ?? data.floorno ?? ''}</td>
                         <td>${data.feename ?? ''}</td>
                         <td>${(data.amount ?? data.rent) ?? ''}</td>
@@ -95,10 +102,10 @@ wren                    <tr style="background: 64748b !important; color: white !
                  </table>
             </div>
             </td>
-                    <td>${item.property.propertyidno??''}</td>
+                    <td>${item.property?.propertyidno??''}</td>
         <td class="flex items-center gap-3">
-            <button style="background:blue" title="Edit row entry" onclick="document.getElementById('propertyregistration').click();propertyregistrationid = ${item.property.id}" class="material-symbols-outlined rounded-full bg-[blue] h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
-            <button title="Delete row entry"s onclick="removevisaprocessingcountries('${item.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">delete</button>
+            <button style="background:blue" title="Edit row entry" onclick="document.getElementById('propertyregistration').click();propertyregistrationid = ${item.property?.id}" class="material-symbols-outlined rounded-full bg-[blue] h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
+            <button title="Delete row entry" onclick="removeviewpropertyregistration('${item.property?.id ?? item.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">delete</button>
         </td>
     </tr>`
     )
