@@ -7,8 +7,8 @@
                                 <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                                     <div>
                                         <p class="font-semibold text-[#7a5a12]">Temporary Excel import</p>
-                                        <p class="text-xs text-[#7a6332]">Upload the apartment property Excel to preview each block, then submit the properties one after another.</p>
-                                        <p class="text-xs text-[#9a6b12]">Fill the blank property details and studio prices in the Excel before importing.</p>
+                                        <p class="text-xs text-[#7a6332]">Upload the apartment property Excel, load one building into the form, review it, then click Submit.</p>
+                                        <p class="text-xs text-[#9a6b12]">After each successful save, the next building loads automatically for review.</p>
                                     </div>
                                     <div class="flex flex-wrap items-center gap-2">
                                         <a href="./templates/avata_apartment_property_import.xlsx" download class="btn !bg-[#334155] !text-white">Download prepared Excel</a>
@@ -23,7 +23,7 @@
                                             <button type="button" class="btn !bg-[#64748b] !text-white" id="propertyImportClearBtn">Clear</button>
                                             <button type="button" class="btn" id="propertyImportSubmitBtn">
                                                 <div class="btnloader" style="display: none;"></div>
-                                                <span>Submit imported properties</span>
+                                                <span>Load selected building</span>
                                             </button>
                                         </div>
                                     </div>
@@ -32,7 +32,7 @@
                                         <table>
                                             <thead>
                                                 <tr>
-                                                    <th>Import</th>
+                                                    <th>Select</th>
                                                     <th>Property</th>
                                                     <th>Units</th>
                                                     <th>Floors</th>

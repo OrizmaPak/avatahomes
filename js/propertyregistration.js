@@ -1,6 +1,7 @@
 let propertyregistrationid
 let propertyfees = []
 let propertyImportGroups = []
+let propertyImportActiveIndex = -1
 const APPLY_PERCENTAGE_GROUP = 'property-registration-apply-percent'
 const PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION = 'NOT APPLICABLE'
 const PROPERTY_IMPORT_DEFAULT_SALES_FEES = [
@@ -510,6 +511,7 @@ async function propertyregistrationsubmit() {
         notification('Record saved successfully!', 1)
         document.querySelector('#propertyregistrationform').reset()
         clearPropertyRegistrationTable()
+        loadNextPropertyImportGroupAfterSave()
         return
     }
     return notification(request.message, 0)
@@ -530,7 +532,7 @@ function wirePropertyRegistrationImport() {
         importInput.dataset.bound = '1'
     }
     if (submitButton && !submitButton.dataset.bound) {
-        submitButton.addEventListener('click', submitImportedProperties)
+        submitButton.addEventListener('click', loadSelectedPropertyImportGroup)
         submitButton.dataset.bound = '1'
     }
     if (clearButton && !clearButton.dataset.bound) {
@@ -566,6 +568,7 @@ async function handlePropertyImportFile(event) {
             const sheet = workbook.Sheets[workbook.SheetNames[0]]
             const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' })
             propertyImportGroups = buildPropertyImportGroups(normalizePropertyImportRows(rows))
+            propertyImportActiveIndex = -1
             renderPropertyImportPreview()
         } catch (error) {
             console.error(error)
@@ -653,7 +656,8 @@ function getDefaultPropertyImportSalesFeeName(amount) {
 }
 
 function formatPropertyImportUnitName(row) {
-    const parts = [row.unitname, row.type, formatPropertyImportSize(row.size)]
+    const baseUnitName = cleanPropertyImportCell(row.unitname).split(' - ')[0]
+    const parts = [baseUnitName, row.type, formatPropertyImportSize(row.size)]
         .map((value) => cleanPropertyImportCell(value))
         .filter(Boolean)
     return parts.join(' - ')
@@ -743,39 +747,53 @@ function renderPropertyImportPreview() {
         return
     }
 
-    let validGroups = 0
+    let readyGroups = 0
     propertyImportGroups.forEach((group, index) => {
         const isValid = !group.errors.length
-        if (isValid) validGroups += 1
+        const isActive = index === propertyImportActiveIndex
+        if (isValid && !group.completed) readyGroups += 1
         const tr = document.createElement('tr')
         tr.innerHTML = `
             <td>
-                <input type="checkbox" class="property-import-checkbox accent-[#22c55e]" data-index="${index}" ${isValid ? 'checked' : 'disabled'}>
+                <input type="radio" name="property-import-building" class="property-import-radio accent-[#22c55e]" data-index="${index}" ${isValid && !group.completed ? '' : 'disabled'} ${isActive || (propertyImportActiveIndex === -1 && isValid && !group.completed && readyGroups === 1) ? 'checked' : ''}>
             </td>
             <td>${escapePropertyImportValue(group.propertyname)}</td>
             <td>${group.units.length}</td>
             <td>${getPropertyImportFloorCount(group)}</td>
             <td class="text-right">${formatPropertyImportAmount(getPropertyImportTotal(group))}</td>
-            <td class="${isValid ? 'text-green-700' : 'text-red-600'}">${isValid ? 'Ready' : escapePropertyImportValue(group.errors.slice(0, 3).join('; '))}</td>
+            <td class="${getPropertyImportStatusClass(group, isValid, isActive)}">${getPropertyImportStatusText(group, isValid, isActive)}</td>
         `
         table.appendChild(tr)
     })
 
-    if (summary) summary.textContent = `${propertyImportGroups.length} propert${propertyImportGroups.length === 1 ? 'y' : 'ies'} found, ${validGroups} ready to submit`
+    if (summary) summary.textContent = `${propertyImportGroups.length} propert${propertyImportGroups.length === 1 ? 'y' : 'ies'} found, ${readyGroups} ready to load`
     if (submitButton) {
-        if (validGroups) submitButton.removeAttribute('disabled')
+        if (readyGroups) submitButton.removeAttribute('disabled')
         else submitButton.setAttribute('disabled', true)
     }
 }
 
 function clearPropertyImportPreview() {
     propertyImportGroups = []
+    propertyImportActiveIndex = -1
     const preview = document.getElementById('propertyImportPreview')
     const table = document.getElementById('propertyImportTable')
     const status = document.getElementById('propertyImportStatus')
     if (table) table.innerHTML = ''
     if (status) status.textContent = ''
     if (preview) preview.classList.add('hidden')
+}
+
+function getPropertyImportStatusClass(group, isValid, isActive) {
+    if (group.completed) return 'text-green-700'
+    if (isActive) return 'text-[#b8860b]'
+    return isValid ? 'text-green-700' : 'text-red-600'
+}
+
+function getPropertyImportStatusText(group, isValid, isActive) {
+    if (group.completed) return 'Saved'
+    if (isActive) return 'Loaded for review'
+    return isValid ? 'Ready' : escapePropertyImportValue(group.errors.slice(0, 3).join('; '))
 }
 
 function getPropertyImportFloorCount(group) {
@@ -806,39 +824,6 @@ function escapePropertyImportValue(value) {
         .replace(/'/g, '&#039;')
 }
 
-async function submitImportedProperties() {
-    const selectedGroups = Array.from(document.querySelectorAll('.property-import-checkbox'))
-        .filter((checkbox) => checkbox.checked && !checkbox.disabled)
-        .map((checkbox) => propertyImportGroups[Number(checkbox.dataset.index)])
-        .filter(Boolean)
-
-    if (!selectedGroups.length) return notification('Select at least one valid property to import.', 0)
-
-    const submitButton = document.getElementById('propertyImportSubmitBtn')
-    const loader = submitButton?.querySelector('.btnloader')
-    const status = document.getElementById('propertyImportStatus')
-    if (loader) loader.style.display = 'flex'
-    if (submitButton) submitButton.setAttribute('disabled', true)
-
-    let successCount = 0
-    for (let i = 0; i < selectedGroups.length; i += 1) {
-        const group = selectedGroups[i]
-        if (status) status.textContent = `Submitting ${i + 1}/${selectedGroups.length}: ${group.propertyname}`
-        const request = await httpRequest2('../controllers/propertyscript', mapPropertyImportGroupToPayload(group), null, 'json')
-        if (request?.status) {
-            successCount += 1
-        } else {
-            const message = request?.message || `Unable to submit ${group.propertyname}`
-            notification(message, 0)
-        }
-    }
-
-    if (loader) loader.style.display = 'none'
-    if (submitButton) submitButton.removeAttribute('disabled')
-    if (status) status.textContent = `${successCount}/${selectedGroups.length} properties submitted`
-    notification(`${successCount}/${selectedGroups.length} properties imported`, successCount ? 1 : 0)
-}
-
 function mapPropertyImportGroupToPayload(group) {
     const payload = new FormData()
     payload.append('propertyname', group.propertyname)
@@ -863,6 +848,68 @@ function mapPropertyImportGroupToPayload(group) {
     })
 
     return payload
+}
+
+function loadSelectedPropertyImportGroup() {
+    const selected = document.querySelector('.property-import-radio:checked')
+    if (!selected) return notification('Select one building to load.', 0)
+    loadPropertyImportGroup(Number(selected.dataset.index))
+}
+
+function loadPropertyImportGroup(index) {
+    const group = propertyImportGroups[index]
+    if (!group) return notification('Selected building was not found.', 0)
+    if (group.errors?.length) return notification(group.errors[0], 0)
+
+    propertyImportActiveIndex = index
+    populatePropertyImportGroupInForm(group)
+    renderPropertyImportPreview()
+    const status = document.getElementById('propertyImportStatus')
+    if (status) status.textContent = `${group.propertyname} loaded. Review the form and click Submit to save.`
+    scrollToTop('scrolldiv')
+}
+
+function populatePropertyImportGroupInForm(group) {
+    const form = document.querySelector('#propertyregistrationform')
+    if (form) form.reset()
+    document.getElementById('id').value = ''
+    document.getElementById('propertyname').value = group.propertyname
+    document.getElementById('state').value = group.state
+    document.getElementById('city').value = group.city
+    document.getElementById('address').value = group.address
+    document.getElementById('location').value = group.location
+    document.getElementById('typeofunits').value = group.typeofunits
+    document.getElementById('propertymanager').value = group.propertymanager
+    clearPropertyRegistrationTable()
+    group.units.forEach((unit, index) => {
+        addPropertyRegistrationRow({
+            unitName: unit.unitname,
+            floor: unit.floor,
+            feeId: resolvePropertyImportFeeId(unit),
+            amount: unit.amount,
+            rentalPeriod: unit.rentalperiod || PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION,
+            autoSelectSource: index === 0
+        })
+    })
+    updatePropertyRegistrationCounts()
+    recalculatePercentageRows()
+}
+
+function loadNextPropertyImportGroupAfterSave() {
+    if (propertyImportActiveIndex < 0 || !propertyImportGroups.length) return
+    propertyImportGroups[propertyImportActiveIndex].completed = true
+    const nextIndex = propertyImportGroups.findIndex((group, index) => index > propertyImportActiveIndex && !group.completed && !group.errors?.length)
+    renderPropertyImportPreview()
+
+    if (nextIndex >= 0) {
+        loadPropertyImportGroup(nextIndex)
+        return
+    }
+
+    propertyImportActiveIndex = -1
+    const status = document.getElementById('propertyImportStatus')
+    if (status) status.textContent = 'All valid imported buildings have been saved.'
+    renderPropertyImportPreview()
 }
 
 // Fallback delegation: ensure live updates even if per-row binding fails
