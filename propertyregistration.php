@@ -24,11 +24,11 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="country" class="control-label">number of units</label>
-                                            <input type="number" name="numberofunits" id="numberofunits" class="form-control propertyregistrationverify">
+                                            <input type="number" name="numberofunits" id="numberofunits" class="form-control propertyregistrationverify" min="0" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="country" class="control-label">number of floors</label>
-                                            <input type="number" name="numberoffloors" id="numberoffloors" class="form-control propertyregistrationverify">
+                                            <input type="number" name="numberoffloors" id="numberoffloors" class="form-control propertyregistrationverify" min="0" readonly>
                                         </div>
                                         <div class="form-group">
                                             <label for="country" class="control-label">location</label>

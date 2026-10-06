@@ -130,6 +130,24 @@ function clearPropertyRegistrationTable() {
     while (tbody.firstChild) {
         tbody.removeChild(tbody.firstChild)
     }
+    updatePropertyRegistrationCounts()
+}
+
+function updatePropertyRegistrationCounts() {
+    const tbody = document.getElementById('propertyregistrationtable')
+    const unitsInput = document.getElementById('numberofunits')
+    const floorsInput = document.getElementById('numberoffloors')
+    if (!tbody || !unitsInput || !floorsInput) return
+
+    const floorValues = new Set()
+    Array.from(tbody.children).forEach((row) => {
+        const floorInput = row.querySelector('input[id^="fl-"]')
+        const floorValue = floorInput?.value.trim().toLowerCase()
+        if (floorValue) floorValues.add(floorValue)
+    })
+
+    unitsInput.value = tbody.children.length
+    floorsInput.value = floorValues.size
 }
 
 function addPropertyRegistrationRow(prefill = {}) {
@@ -195,6 +213,7 @@ function addPropertyRegistrationRow(prefill = {}) {
     populateFeeSelect(controls.feeSelect, prefill.feeId ? String(prefill.feeId) : '')
 
     controls.feeSelect.addEventListener('change', () => handleFeeChange(id))
+    controls.floor.addEventListener('input', updatePropertyRegistrationCounts)
     const amountInstantHandler = () => handleAmountInput(id)
     controls.amount.addEventListener('input', amountInstantHandler)
     controls.amount.addEventListener('keyup', amountInstantHandler)
@@ -206,6 +225,8 @@ function addPropertyRegistrationRow(prefill = {}) {
         initialAmount: prefill.amount,
         autoSelectSource: prefill.autoSelectSource === true
     })
+
+    updatePropertyRegistrationCounts()
 
     return tr
 }
@@ -418,6 +439,7 @@ function removePropertyRegistrationRow(rowId) {
         ensureDefaultFlatSelection()
     }
     recalculatePercentageRows()
+    updatePropertyRegistrationCounts()
 }
 
 async function fetchpropertyfees() {
