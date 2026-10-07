@@ -19,6 +19,7 @@ if(!isset($_SESSION["wuseremail"]))
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/index.css?v=20260219c">
     <link rel="stylesheet" href="./css/css_vanilla.css?v=20260219c">
+    <link rel="stylesheet" href="./css/floorplans.css?v=20261007b">
      <!-- PWA Manifest --> 
   <link rel="manifest" href="./manifest.json"> 
       <!-- ios support -->

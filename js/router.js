@@ -105,7 +105,7 @@ const routerTree = {
     floorplans: {
         template: 'floorplans',
         startingFunction: 'floorplansActive',
-        scriptName: './js/floorplans.js?v=20261007a'
+        scriptName: './js/floorplans.js?v=20261007c'
     },
     registeratenant: {
         template: 'registeratenant',
