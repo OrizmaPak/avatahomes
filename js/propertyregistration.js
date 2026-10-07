@@ -163,6 +163,10 @@ function updatePropertyRegistrationCounts() {
     floorsInput.value = floorValues.size
 }
 
+function normalizePropertyUnitName(value) {
+    return cleanPropertyImportCell(value).replace(/\s+/g, '')
+}
+
 function addPropertyRegistrationRow(prefill = {}) {
     const tbody = document.getElementById('propertyregistrationtable')
     if (!tbody) return null
@@ -224,7 +228,7 @@ function addPropertyRegistrationRow(prefill = {}) {
     const controls = getRowControls(id)
     if (!controls.row) return tr
 
-    controls.unit.value = prefill.unitName ?? ''
+    controls.unit.value = normalizePropertyUnitName(prefill.unitName ?? '')
     controls.description.value = prefill.description ?? ''
     controls.floor.value = prefill.floor ?? ''
     controls.unitId.value = prefill.unitId ?? ''
@@ -239,8 +243,6 @@ function addPropertyRegistrationRow(prefill = {}) {
     controls.amount.addEventListener('input', amountInstantHandler)
     controls.amount.addEventListener('keyup', amountInstantHandler)
     controls.amount.addEventListener('change', amountInstantHandler)
-    controls.removeButton.addEventListener('click', () => removePropertyRegistrationRow(id))
-
     handleFeeChange(id, {
         isInitialLoad: true,
         initialAmount: prefill.amount,
@@ -510,7 +512,7 @@ async function propertyregistrationsubmit() {
         params.append('rowcount', table.children.length)
         for (let i = 0; i < table.children.length; i++) {
             let id = table.children[i].id 
-            params.append(`unitname${i + 1}`, document.getElementById(`un-${id}`).value)
+            params.append(`unitname${i + 1}`, normalizePropertyUnitName(document.getElementById(`un-${id}`).value))
             params.append(`description${i + 1}`, document.getElementById(`de-${id}`).value)
             params.append(`floor${i + 1}`, document.getElementById(`fl-${id}`).value)
             params.append(`feenameid${i + 1}`, document.getElementById(`fe-${id}`).value)
@@ -681,7 +683,7 @@ function getDefaultPropertyImportSalesFeeName(amount) {
 
 function formatPropertyImportUnitName(row) {
     const baseUnitName = cleanPropertyImportCell(row.unitname).split(' - ')[0]
-    return baseUnitName
+    return normalizePropertyUnitName(baseUnitName)
 }
 
 function formatPropertyImportUnitDescription(row) {
@@ -871,7 +873,7 @@ function mapPropertyImportGroupToPayload(group) {
 
     group.units.forEach((unit, index) => {
         const rowNumber = index + 1
-        payload.append(`unitname${rowNumber}`, unit.unitname)
+        payload.append(`unitname${rowNumber}`, normalizePropertyUnitName(unit.unitname))
         payload.append(`description${rowNumber}`, unit.description || '')
         payload.append(`floor${rowNumber}`, unit.floor)
         payload.append(`feenameid${rowNumber}`, resolvePropertyImportFeeId(unit))
@@ -917,7 +919,7 @@ function populatePropertyImportGroupInForm(group) {
     const completeUnits = group.units.filter((unit) => cleanPropertyImportCell(unit.unitname) && cleanPropertyImportCell(unit.floor))
     completeUnits.forEach((unit, index) => {
         addPropertyRegistrationRow({
-            unitName: unit.unitname,
+            unitName: normalizePropertyUnitName(unit.unitname),
             description: unit.description || '',
             floor: unit.floor,
             feeId: resolvePropertyImportFeeId(unit),
@@ -960,6 +962,14 @@ document.addEventListener('input', (e) => {
             recalculatePercentageRows()
         }
     }
+}, true)
+
+document.addEventListener('click', (e) => {
+    const removeButton = e.target?.closest?.('[data-action="remove-row"]')
+    if (!removeButton) return
+    const row = removeButton.closest('tr')
+    if (!row || !document.getElementById('propertyregistrationtable')?.contains(row)) return
+    removePropertyRegistrationRow(row.id)
 }, true)
 
 
