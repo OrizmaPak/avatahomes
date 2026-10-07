@@ -3,7 +3,7 @@
                             <p class="page-title">
                                 <span>Register Property </span>
                             </p>
-                            <div class="mb-5 rounded-sm border border-[#e8d7a6] bg-[#fffaf0] p-4">
+                            <div class="hidden mb-5 rounded-sm border border-[#e8d7a6] bg-[#fffaf0] p-4">
                                 <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                                     <div>
                                         <p class="font-semibold text-[#7a5a12]">Temporary Excel import</p>
