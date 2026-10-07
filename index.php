@@ -140,6 +140,7 @@ if(!isset($_SESSION["wuseremail"]))
                                         <!--<li class="navitem-child" id="logo">logo</li>-->
                                         <li class="navitem-child" id="propertyregistration">Register Property</li>
                                         <li class="navitem-child" id="viewpropertyregistration">View Property</li>
+                                        <li class="navitem-child" id="floorplans">Floor Plans</li>
                                     </ul>
                                 </li>
                               

@@ -30,7 +30,8 @@ const content_user = [
 
 const property_user = [
     "REGISTER PROPERTY",
-    "VIEW PROPERTY"
+    "VIEW PROPERTY",
+    "FLOOR PLANS"
 ]
 
 const tenancy_rental = [ 
@@ -118,6 +119,7 @@ function permissionMatches(savedPermissions, permissionName) {
         "PROPERTY REGISTRATION": ["REGISTER PROPERTY"],
         "VIEW PROPERTY": ["VIEW PROPERTY REGISTRATION"],
         "VIEW PROPERTY REGISTRATION": ["VIEW PROPERTY"],
+        "FLOOR PLANS": ["FLOOR PLANS"],
         "REGISTER CLIENT": ["REGISTER TENANT"],
         "REGISTER TENANT": ["REGISTER CLIENT"],
         "VIEW CLIENTS": ["VIEW TENANTS"],

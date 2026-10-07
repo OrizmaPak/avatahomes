@@ -213,6 +213,7 @@ async function runPermissions(){
                 'PROPERTY REGISTRATION': ['REGISTER PROPERTY'],
                 'VIEW PROPERTY': ['VIEW PROPERTY REGISTRATION'],
                 'VIEW PROPERTY REGISTRATION': ['VIEW PROPERTY'],
+                'FLOOR PLANS': ['FLOOR PLANS'],
                 'REGISTER CLIENT': ['REGISTER TENANT'],
                 'VIEW CLIENTS': ['VIEW TENANTS'],
                 'REGISTER TENANT': ['REGISTER CLIENT'],
