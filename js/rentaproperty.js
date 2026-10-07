@@ -59,7 +59,8 @@ function normalizeUnitAmount(unit) {
 function isRentPropertyUnitEligible(unit) {
   const feeName = normalizeUnitFeeName(unit);
   const rentedValue = `${unit?.rented ?? unit?.isrented ?? ''}`.trim().toUpperCase();
-  return RENT_ALLOWED_UNIT_FEES.includes(feeName) && rentedValue !== 'YES';
+  const isSalesFee = feeName.startsWith('SALES ') || feeName.startsWith('PROPERTY SALES ');
+  return (RENT_ALLOWED_UNIT_FEES.includes(feeName) || isSalesFee) && rentedValue !== 'YES';
 }
 
 function findSelectedPropertyData(propertyId) {
