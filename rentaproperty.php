@@ -113,7 +113,7 @@
                     <div class="flex-1 flex items-center gap-2">
                         <select
                             class="w-full px-3 py-2 text-sm bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-200 focus:border-blue-500 transition-shadow"
-                            name="tenantid" id="tenantid">
+                            name="tenantid" id="tenantid" onchange="updateRentExitModeVisibility()">
                             <option value="">-- Select Existing Client --</option>
                         </select>
                         <button type="button"
@@ -126,10 +126,23 @@
 
                 <div class="form-group">
                     <label for="country" class="control-label">property</label>
-                    <select class="form-control rentapropertyverify" onchange="checkrentapropertyproperty(this)"
+                    <select class="form-control rentapropertyverify" onchange="updateRentExitModeVisibility()"
                         name="propertyid" id="propertyid">
                         <option value="">-- Select Property --</option>
                     </select>
+                </div>
+                <div id="exitmode" class="form-group hidden lg:col-span-3">
+                    <label class="control-label">Transaction type</label>
+                    <div class="flex flex-wrap gap-4 rounded-md border border-[#eadfbd] bg-[#fffaf0] p-3">
+                        <label class="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-700">
+                            <input type="radio" name="exitmode" value="rent" onchange="handleRentExitModeChange(this)" class="h-4 w-4 accent-[#c9a227]">
+                            <span>Renting</span>
+                        </label>
+                        <label class="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-700">
+                            <input type="radio" name="exitmode" value="sale" onchange="handleRentExitModeChange(this)" class="h-4 w-4 accent-[#c9a227]">
+                            <span>Selling</span>
+                        </label>
+                    </div>
                 </div>
                 <div id="unitt" class="form-group hidden">
                     <label for="country" class="control-label">unit</label>
