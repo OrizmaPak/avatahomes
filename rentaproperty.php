@@ -145,7 +145,8 @@
                     </div>
                 </div>
                 <div id="unitt" class="form-group hidden">
-                    <label for="country" class="control-label">unit</label>
+                    <label for="unitsearch" class="control-label">unit</label>
+                    <input type="search" id="unitsearch" class="form-control mb-2" placeholder="Search unit or floor" autocomplete="off">
                     <select class="form-control rentapropertyverify" onchange="checkrentapropertyunit(this)"
                         name="unitid" id="unitid">
                         <option value="">-- Select Unit --</option>

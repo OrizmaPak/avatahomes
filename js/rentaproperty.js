@@ -88,6 +88,11 @@ function updateRentExitModeVisibility() {
 async function handleRentExitModeChange() {
   const propertySelect = document.getElementById('propertyid');
   if (!propertySelect?.value) return;
+  const unitSelect = document.getElementById('unitid');
+  if (unitSelect) unitSelect.value = '';
+  document.querySelectorAll('.remain').forEach(element => element.classList.add('hidden'));
+  const feeTable = document.getElementById('rentapropertytable');
+  if (feeTable) feeTable.innerHTML = '';
   await checkrentapropertyproperty(propertySelect);
 }
 
@@ -232,6 +237,7 @@ async function rentapropertyActive() {
       const propertySelect = document.getElementById('propertyid');
       if (propertySelect) {
         propertySelect.value = record.rentdata.propertyid;
+        setRentExitModeForEdit(record.rentdata);
         await checkrentapropertyproperty(propertySelect);
       }
 
@@ -379,9 +385,49 @@ async function checkrentapropertyproperty(el) {
   }
   document.getElementById('unitid').innerHTML =
     `<option value="">-- Select Property Unit --</option>` +
-    units.map(d =>
-      `<option value="${d.id}">${d.unitname} ₦${Number(d.rent).toLocaleString()}</option>`
+    Object.entries(units.reduce((groups, unit) => {
+      const floor = `${unit.floor ?? unit.floornumber ?? unit.floorno ?? 'Floor not assigned'}`.trim() || 'Floor not assigned';
+      (groups[floor] ||= []).push(unit);
+      return groups;
+    }, {})).sort(([floorA], [floorB]) => floorA.localeCompare(floorB, undefined, { numeric: true })).map(([floor, floorUnits]) =>
+      `<optgroup label="${floor}">${floorUnits.map(unit => `<option value="${unit.id}" data-search="${`${unit.unitname || ''} ${floor} ${unit.description || ''}`.toLowerCase()}">${unit.unitname} - ₦${Number(unit.rent ?? unit.amount ?? 0).toLocaleString()}</option>`).join('')}</optgroup>`
     ).join('');
+  const unitSearch = document.getElementById('unitsearch');
+  if (unitSearch) {
+    unitSearch.value = '';
+    unitSearch.oninput = filterRentPropertyUnits;
+  }
+}
+
+function filterRentPropertyUnits() {
+  const query = `${document.getElementById('unitsearch')?.value || ''}`.trim().toLowerCase();
+  const select = document.getElementById('unitid');
+  if (!select) return;
+  select.querySelectorAll('option').forEach(option => {
+    if (!option.value) {
+      option.hidden = false;
+      return;
+    }
+    option.hidden = !!query && !(option.dataset.search || option.textContent.toLowerCase()).includes(query);
+  });
+  select.querySelectorAll('optgroup').forEach(group => {
+    group.hidden = !Array.from(group.options).some(option => !option.hidden);
+  });
+}
+
+function setRentExitModeForEdit(rentData) {
+  const savedMode = `${rentData?.exitmode ?? rentData?.exit_mode ?? ''}`.trim().toUpperCase();
+  let mode = ['RENT', 'SALE'].includes(savedMode) ? savedMode : '';
+  if (!mode) {
+    const propertyData = findSelectedPropertyData(rentData?.propertyid);
+    const propertyUnits = Array.isArray(propertyData?.propertyunits) ? propertyData.propertyunits : [];
+    const unit = propertyUnits.find(item => `${item?.id ?? ''}` === `${rentData?.unitid ?? ''}`);
+    const feeName = normalizeUnitFeeName(unit);
+    mode = feeName === 'RENT' ? 'RENT' : (feeName.startsWith('SALES ') || feeName.startsWith('PROPERTY SALES ')) ? 'SALE' : '';
+  }
+  document.querySelectorAll('input[name="exitmode"]').forEach(input => { input.checked = input.value === mode; });
+  updateRentExitModeVisibility();
+  return mode;
 }
   
 /* -------- FETCH & RENDER FEES -------- */
