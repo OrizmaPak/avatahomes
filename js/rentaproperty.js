@@ -1,6 +1,7 @@
 let rentapropertyid;
 let rentapropertyresult;
 let rentFeeDefinitions = [];
+let rentUnitChoices = null;
 const RENT_APPLY_PERCENTAGE_GROUP = 'rentaproperty-apply-percent';
 const RENT_NOT_APPLICABLE_DURATION = 'NOT APPLICABLE';
 const RENT_ALLOWED_UNIT_FEES = ['RENT', 'PROPERTY SALES'];
@@ -80,6 +81,8 @@ function updateRentExitModeVisibility() {
   modeContainer?.classList.toggle('hidden', !ready);
   if (!ready || !getSelectedExitMode()) {
     unitContainer?.classList.add('hidden');
+    rentUnitChoices?.destroy();
+    rentUnitChoices = null;
     if (unitSelect) unitSelect.innerHTML = '<option value="">-- Select Unit --</option>';
     document.querySelectorAll('.remain').forEach(element => element.classList.add('hidden'));
   }
@@ -94,6 +97,28 @@ async function handleRentExitModeChange() {
   const feeTable = document.getElementById('rentapropertytable');
   if (feeTable) feeTable.innerHTML = '';
   await checkrentapropertyproperty(propertySelect);
+}
+
+function initializeRentUnitChoices() {
+  const unitSelect = document.getElementById('unitid');
+  if (!unitSelect) return;
+  if (unitSelect.dataset.rentChangeBound !== 'true') {
+    unitSelect.addEventListener('change', () => checkrentapropertyunit(unitSelect));
+    unitSelect.dataset.rentChangeBound = 'true';
+  }
+  if (typeof Choices === 'undefined') return;
+  rentUnitChoices?.destroy();
+  rentUnitChoices = new Choices(unitSelect, {
+    searchEnabled: true,
+    searchPlaceholderValue: 'Search unit, floor or description',
+    shouldSort: false,
+    itemSelectText: '',
+    noResultsText: 'No matching units found',
+    noChoicesText: 'No units available',
+    allowHTML: false,
+    searchResultLimit: -1,
+    position: 'auto'
+  });
 }
 
 function findSelectedPropertyData(propertyId) {
@@ -244,6 +269,7 @@ async function rentapropertyActive() {
       const unitSelect = document.getElementById('unitid');
       if (unitSelect) {
         unitSelect.value = record.rentdata.unitid;
+        rentUnitChoices?.setChoiceByValue(String(record.rentdata.unitid));
         await checkrentapropertyunit(unitSelect, record.rentalfees || []);
       }
 
@@ -383,36 +409,19 @@ async function checkrentapropertyproperty(el) {
   if (propertyData) {
     propertyData.renewableunits = units;
   }
-  document.getElementById('unitid').innerHTML =
+  const unitSelect = document.getElementById('unitid');
+  rentUnitChoices?.destroy();
+  rentUnitChoices = null;
+  unitSelect.innerHTML =
     `<option value="">-- Select Property Unit --</option>` +
     Object.entries(units.reduce((groups, unit) => {
       const floor = `${unit.floor ?? unit.floornumber ?? unit.floorno ?? 'Floor not assigned'}`.trim() || 'Floor not assigned';
       (groups[floor] ||= []).push(unit);
       return groups;
     }, {})).sort(([floorA], [floorB]) => floorA.localeCompare(floorB, undefined, { numeric: true })).map(([floor, floorUnits]) =>
-      `<optgroup label="${floor}">${floorUnits.map(unit => `<option value="${unit.id}" data-search="${`${unit.unitname || ''} ${floor} ${unit.description || ''}`.toLowerCase()}">${unit.unitname} - ₦${Number(unit.rent ?? unit.amount ?? 0).toLocaleString()}</option>`).join('')}</optgroup>`
+      `<optgroup label="${floor}">${floorUnits.map(unit => `<option value="${unit.id}" data-search="${`${unit.unitname || ''} ${floor} ${unit.description || ''}`.toLowerCase()}">${unit.unitname} · ${floor} · ${unit.description || 'Unit'} · ₦${Number(unit.rent ?? unit.amount ?? 0).toLocaleString()}</option>`).join('')}</optgroup>`
     ).join('');
-  const unitSearch = document.getElementById('unitsearch');
-  if (unitSearch) {
-    unitSearch.value = '';
-    unitSearch.oninput = filterRentPropertyUnits;
-  }
-}
-
-function filterRentPropertyUnits() {
-  const query = `${document.getElementById('unitsearch')?.value || ''}`.trim().toLowerCase();
-  const select = document.getElementById('unitid');
-  if (!select) return;
-  select.querySelectorAll('option').forEach(option => {
-    if (!option.value) {
-      option.hidden = false;
-      return;
-    }
-    option.hidden = !!query && !(option.dataset.search || option.textContent.toLowerCase()).includes(query);
-  });
-  select.querySelectorAll('optgroup').forEach(group => {
-    group.hidden = !Array.from(group.options).some(option => !option.hidden);
-  });
+  initializeRentUnitChoices();
 }
 
 function setRentExitModeForEdit(rentData) {

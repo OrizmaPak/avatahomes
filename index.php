@@ -20,6 +20,8 @@ if(!isset($_SESSION["wuseremail"]))
     <link rel="stylesheet" href="./css/index.css?v=20260219c">
     <link rel="stylesheet" href="./css/css_vanilla.css?v=20260219c">
     <link rel="stylesheet" href="./css/floorplans.css?v=20261007b">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+    <link rel="stylesheet" href="./css/rentaproperty.css?v=20261007b">
      <!-- PWA Manifest --> 
   <link rel="manifest" href="./manifest.json"> 
       <!-- ios support -->
@@ -38,6 +40,7 @@ if(!isset($_SESSION["wuseremail"]))
   <script src="./js/main.js?v=20260617a" defer></script>
   <script src="./js/push.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link

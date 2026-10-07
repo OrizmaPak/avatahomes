@@ -1,4 +1,4 @@
-<section class="animate__animated animate__fadeIn">
+<section class="animate__animated animate__fadeIn rentaproperty-page">
     <input type="hidden" id="id">
     <p class="page-title">
         <span>Property Sales</span>
@@ -145,9 +145,8 @@
                     </div>
                 </div>
                 <div id="unitt" class="form-group hidden">
-                    <label for="unitsearch" class="control-label">unit</label>
-                    <input type="search" id="unitsearch" class="form-control mb-2" placeholder="Search unit or floor" autocomplete="off">
-                    <select class="form-control rentapropertyverify" onchange="checkrentapropertyunit(this)"
+                    <label for="unitid" class="control-label">unit</label>
+                    <select class="form-control rentapropertyverify"
                         name="unitid" id="unitid">
                         <option value="">-- Select Unit --</option>
                     </select>
