@@ -135,11 +135,11 @@
                     <label class="control-label">Transaction type</label>
                     <div class="flex flex-wrap gap-4 rounded-md border border-[#eadfbd] bg-[#fffaf0] p-3">
                         <label class="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-700">
-                            <input type="radio" name="exitmode" value="rent" onchange="handleRentExitModeChange(this)" class="h-4 w-4 accent-[#c9a227]">
+                            <input type="radio" name="exitmode" value="RENT" onchange="handleRentExitModeChange(this)" class="h-4 w-4 accent-[#c9a227]">
                             <span>Renting</span>
                         </label>
                         <label class="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-700">
-                            <input type="radio" name="exitmode" value="sale" onchange="handleRentExitModeChange(this)" class="h-4 w-4 accent-[#c9a227]">
+                            <input type="radio" name="exitmode" value="SALE" onchange="handleRentExitModeChange(this)" class="h-4 w-4 accent-[#c9a227]">
                             <span>Selling</span>
                         </label>
                     </div>

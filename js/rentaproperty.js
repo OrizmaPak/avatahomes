@@ -62,11 +62,11 @@ function isRentPropertyUnitEligible(unit) {
   const isSalesFee = feeName.startsWith('SALES ') || feeName.startsWith('PROPERTY SALES ');
   const exitMode = getSelectedExitMode();
   const isRentFee = RENT_ALLOWED_UNIT_FEES.includes(feeName);
-  return (exitMode === 'sale' ? isSalesFee : exitMode === 'rent' ? isRentFee : false) && rentedValue !== 'YES';
+  return (exitMode === 'SALE' ? isSalesFee : exitMode === 'RENT' ? isRentFee : false) && rentedValue !== 'YES';
 }
 
 function getSelectedExitMode() {
-  return document.querySelector('input[name="exitmode"]:checked')?.value || '';
+  return document.querySelector('input[name="exitmode"]:checked')?.value.toUpperCase() || '';
 }
 
 function updateRentExitModeVisibility() {
@@ -102,7 +102,7 @@ function mergePropertySalesUnits(propertyId, renewableUnits = []) {
   const propertyUnits = Array.isArray(propertyData?.propertyunits) ? propertyData.propertyunits : [];
   const filteredRenewableUnits = renewableUnits.filter(unit => {
     const feeName = normalizeUnitFeeName(unit);
-    return !feeName ? exitMode === 'rent' : isRentPropertyUnitEligible(unit);
+    return !feeName ? exitMode === 'RENT' : isRentPropertyUnitEligible(unit);
   });
   const seenUnitIds = new Set(filteredRenewableUnits.map(unit => `${unit?.id ?? ''}`));
   const mergedUnits = [...filteredRenewableUnits];
