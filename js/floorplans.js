@@ -42,8 +42,9 @@ function floorplansText(value, fallback = '-') {
     return text || fallback;
 }
 
-function floorplansIconMarkup(icon) {
-    return `<span class="material-symbols-outlined" aria-hidden="true">${floorplansEscape(icon)}</span>`;
+function floorplansStatusMarkup(status) {
+    const statusClass = { AVAILABLE: 'available', TAKEN: 'taken', NEEDS_REVIEW: 'review', UNCONFIRMED: 'unconfirmed' }[status.key] || 'unconfirmed';
+    return `<span class="floorplans-status-marker ${statusClass}" aria-hidden="true"></span>${status.label}`;
 }
 
 function floorplansNormalize(value) {
@@ -222,7 +223,7 @@ function floorplansRenderExplorer() {
     if (plan) plan.innerHTML = visibleUnits.map(unit => floorplansUnitMarkup(unit, code, floorUnits)).join('') || '<div class="floorplans-message" style="grid-column:1/-1">No apartments match the current filters.</div>';
     document.querySelectorAll('[data-floorplans-unit]').forEach(button => button.addEventListener('click', () => { floorplansState.selectedUnitId = button.dataset.floorplansUnit; floorplansRenderDetails(units); floorplansRenderExplorer(); }));
     const additional = document.getElementById('floorplansAdditional');
-    const positioned = code ? visibleUnits.filter(unit => floorplansPositionClass(code, unit)) : [];
+    const positioned = code ? visibleUnits.filter(unit => floorplansPositionClass(code, unit)) : visibleUnits;
     const extra = visibleUnits.filter(unit => !positioned.includes(unit));
     if (additional) { additional.classList.toggle('hidden', !extra.length); additional.innerHTML = extra.length ? `<h3>Additional units</h3>${extra.map(unit => floorplansUnitMarkup(unit, '', floorUnits)).join('')}` : ''; }
     floorplansRenderDetails(units);
@@ -239,7 +240,7 @@ function floorplansUnitMarkup(unit, code, floorUnits) {
     const position = floorplansPositionClass(code, unit); const search = `${document.getElementById('floorplansSearch')?.value || ''}`.trim().toLowerCase(); const statusFilter = document.getElementById('floorplansStatus')?.value || 'ALL'; const dimmed = (search && !`${unit.unitname || ''} ${unit.description || ''}`.toLowerCase().includes(search)) || (statusFilter !== 'ALL' && unit._status.key !== statusFilter);
     const cssClass = position || `auto-${Math.max(0, floorUnits.indexOf(unit))}`;
     const statusClass = { AVAILABLE: 'available', TAKEN: 'taken', NEEDS_REVIEW: 'review', UNCONFIRMED: 'unconfirmed' }[unit._status.key] || 'unconfirmed';
-    return `<button type="button" class="floorplans-unit ${cssClass} ${statusClass} ${dimmed ? 'dimmed' : ''}" data-floorplans-unit="${floorplansEscape(floorplansUnitId(unit))}"><strong>${floorplansEscape(floorplansText(unit.unitname))}</strong><small>${floorplansEscape(floorplansText(unit.description, 'Unit'))}</small><em>${floorplansIconMarkup(unit._status.icon)} ${unit._status.label}</em></button>`;
+    return `<button type="button" class="floorplans-unit ${cssClass} ${statusClass} ${dimmed ? 'dimmed' : ''}" data-floorplans-unit="${floorplansEscape(floorplansUnitId(unit))}"><strong>${floorplansEscape(floorplansText(unit.unitname))}</strong><small>${floorplansEscape(floorplansText(unit.description, 'Unit'))}</small><em>${floorplansStatusMarkup(unit._status)}</em></button>`;
 }
 
 function floorplansRenderDetails(units) {
@@ -247,12 +248,12 @@ function floorplansRenderDetails(units) {
     if (!panel || !selected) { if (panel) panel.innerHTML = '<div class="floorplans-empty-detail"><span class="material-symbols-outlined">touch_app</span><p>Select an apartment to view its details.</p></div>'; return; }
     const transaction = floorplansState.sales.find(item => floorplansSalesPropertyId(item) === selected._propertyId && floorplansSalesUnitId(item) === floorplansUnitId(selected));
     const detailStatusClass = { AVAILABLE: 'available', TAKEN: 'taken', NEEDS_REVIEW: 'review', UNCONFIRMED: 'unconfirmed' }[selected._status.key] || 'unconfirmed';
-    panel.innerHTML = `<h3>${floorplansEscape(floorplansText(selected.unitname))}</h3><span class="floorplans-detail-status ${detailStatusClass}">${floorplansIconMarkup(selected._status.icon)} ${selected._status.label}</span><dl class="floorplans-detail-grid"><div><dt>Floor</dt><dd>${floorplansEscape(floorplansFloor(selected))}</dd></div><div><dt>Fee name</dt><dd>${floorplansEscape(floorplansText(selected.feename))}</dd></div><div><dt>Description</dt><dd>${floorplansEscape(floorplansText(selected.description))}</dd></div><div><dt>Listed amount</dt><dd>${floorplansEscape(floorplansText(selected.amount ?? selected.rent))}</dd></div>${transaction ? `<div><dt>Payment status</dt><dd>Recorded transaction</dd></div><div><dt>Client</dt><dd>${floorplansEscape(floorplansText(transaction.tenant, 'Restricted'))}</dd></div>` : ''}</dl><p class="floorplans-detail-note">Availability is determined separately from payment amount and expiration date.</p>`;
+    panel.innerHTML = `<h3>${floorplansEscape(floorplansText(selected.unitname))}</h3><span class="floorplans-detail-status ${detailStatusClass}">${floorplansStatusMarkup(selected._status)}</span><dl class="floorplans-detail-grid"><div><dt>Floor</dt><dd>${floorplansEscape(floorplansFloor(selected))}</dd></div><div><dt>Fee name</dt><dd>${floorplansEscape(floorplansText(selected.feename))}</dd></div><div><dt>Description</dt><dd>${floorplansEscape(floorplansText(selected.description))}</dd></div><div><dt>Listed amount</dt><dd>${floorplansEscape(floorplansText(selected.amount ?? selected.rent))}</dd></div>${transaction ? `<div><dt>Payment status</dt><dd>Recorded transaction</dd></div><div><dt>Client</dt><dd>${floorplansEscape(floorplansText(transaction.tenant, 'Restricted'))}</dd></div>` : ''}</dl><p class="floorplans-detail-note">Availability is determined separately from payment amount and expiration date.</p>`;
 }
 
 function floorplansRenderList(properties) {
     const list = document.getElementById('floorplansList'); if (!list) return;
-    const rows = properties.flatMap(item => floorplansDecoratedUnits(item).filter(floorplansUnitMatchesFilters).map(unit => `<tr data-floorplans-list-unit="${floorplansEscape(floorplansUnitId(unit))}" data-floorplans-list-property="${floorplansEscape(unit._propertyId)}"><td>${floorplansEscape(floorplansPropertyName(item))}</td><td>${floorplansEscape(floorplansFloor(unit))}</td><td>${floorplansEscape(floorplansText(unit.unitname))}</td><td>${floorplansEscape(floorplansText(unit.description))}</td><td>${floorplansEscape(floorplansText(unit.amount ?? unit.rent))}</td><td class="floorplans-status-cell">${floorplansIconMarkup(unit._status.icon)} ${unit._status.label}</td></tr>`)).join('');
+    const rows = properties.flatMap(item => floorplansDecoratedUnits(item).filter(floorplansUnitMatchesFilters).map(unit => `<tr data-floorplans-list-unit="${floorplansEscape(floorplansUnitId(unit))}" data-floorplans-list-property="${floorplansEscape(unit._propertyId)}"><td>${floorplansEscape(floorplansPropertyName(item))}</td><td>${floorplansEscape(floorplansFloor(unit))}</td><td>${floorplansEscape(floorplansText(unit.unitname))}</td><td>${floorplansEscape(floorplansText(unit.description))}</td><td>${floorplansEscape(floorplansText(unit.amount ?? unit.rent))}</td><td class="floorplans-status-cell">${floorplansStatusMarkup(unit._status)}</td></tr>`)).join('');
     list.innerHTML = `<table><thead><tr><th>Building</th><th>Floor</th><th>Unit</th><th>Description</th><th>Listed amount</th><th>Status</th></tr></thead><tbody>${rows || '<tr><td colspan="6">No apartments match the current filters.</td></tr>'}</tbody></table>`;
     list.querySelectorAll('[data-floorplans-list-unit]').forEach(row => row.addEventListener('click', () => { floorplansState.selectedPropertyId = row.dataset.floorplansListProperty; floorplansState.selectedFloor = floorplansFloor(floorplansDecoratedUnits(floorplansState.properties.find(item => floorplansPropertyId(item) === floorplansState.selectedPropertyId)).find(unit => floorplansUnitId(unit) === row.dataset.floorplansListUnit)); floorplansState.selectedUnitId = row.dataset.floorplansListUnit; floorplansState.view = 'plan'; document.querySelector('[data-floorplans-view="plan"]')?.click(); }));
 }

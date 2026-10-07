@@ -39,5 +39,5 @@
 </section>
 
 <style>
-    .floorplans-page .material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:16px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-feature-settings:'liga';font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 20;vertical-align:middle}
+    .floorplans-page .material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:16px;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-feature-settings:'liga';font-variation-settings:'FILL' 0,'wght' 500,'GRAD' 0,'opsz' 20;vertical-align:middle}.floorplans-status-marker{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}.floorplans-status-marker.available{background:#2f9c62}.floorplans-status-marker.taken{background:#d95959}.floorplans-status-marker.review{background:#e1a936}.floorplans-status-marker.unconfirmed{background:#94a3b8}
 </style>
