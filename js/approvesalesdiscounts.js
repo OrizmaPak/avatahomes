@@ -46,9 +46,9 @@ function renderSalesApprovalDetail() {
       <div class="approval-detail-item"><small>Client</small><strong>${salesApprovalClient(item)}</strong></div>
       <div class="approval-detail-item"><small>Property</small><strong>${salesApprovalProperty(item)}</strong></div>
       <div class="approval-detail-item"><small>Unit</small><strong>${salesApprovalUnit(item)}</strong></div>
-      <div class="approval-detail-item"><small>Sale amount</small><strong>${salesApprovalMoney(salesApprovalText(item, 'salesamount', 'amount', 'totalamount'))}</strong></div>
+      <div class="approval-detail-item"><small>Original sale amount</small><strong>${salesApprovalMoney(salesApprovalText(item, 'salesamount', 'originalamount', 'amount'))}</strong></div>
       <div class="approval-detail-item"><small>Requested discount</small><strong>${salesApprovalMoney(salesApprovalText(item, 'salesdiscount', 'discount', 'discountamount'))}</strong></div>
-      <div class="approval-detail-item"><small>Final total</small><strong>${salesApprovalMoney(salesApprovalText(item, 'finalsalestotal', 'finaltotal'))}</strong></div>
+      <div class="approval-detail-item"><small>Final total</small><strong>${salesApprovalMoney(salesApprovalText(item, 'totalamount', 'finalsalestotal', 'finaltotal'))}</strong></div>
       <div class="approval-detail-item"><small>Instalments</small><strong>${salesApprovalText(item, 'numberofinstalments', 'instalmentcount') || 'N/A'}</strong></div>
       <div class="approval-detail-item"><small>Submitted by</small><strong>${salesApprovalText(item, 'user', 'username', 'createdby') || 'N/A'}</strong></div>
     </div>

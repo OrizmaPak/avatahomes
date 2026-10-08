@@ -10,7 +10,7 @@
     </div>
     <div class="table-content approval-table-wrap">
         <table>
-            <thead><tr><th>S/N</th><th>Client</th><th>Property</th><th>Unit</th><th>Amount</th><th>Discount</th><th>Status</th><th>Action</th></tr></thead>
+            <thead><tr><th>S/N</th><th>Client</th><th>Property</th><th>Unit</th><th>Final total</th><th>Discount</th><th>Status</th><th>Action</th></tr></thead>
             <tbody id="pendingapprovaltable"><tr><td colspan="8">Loading pending approvals...</td></tr></tbody>
         </table>
     </div>

@@ -1032,6 +1032,7 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
     formData.set('salesamount', document.getElementById('salesamount')?.value || '');
     formData.set('salesdiscount', saleDiscount.toString());
     formData.set('finalsalestotal', document.getElementById('finalsalestotal')?.value || '');
+    formData.set('totalamount', document.getElementById('finalsalestotal')?.value || '');
     formData.set('discountapprovalstatus', approvalStatus);
     formData.set('approvalrequired', saleDiscount > 0 ? 'YES' : 'NO');
     formData.set('action', submissionAction);
