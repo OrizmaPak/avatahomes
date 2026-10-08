@@ -500,8 +500,7 @@ function renderSaleInstallments(total, count) {
   const rowsContainer = document.getElementById('saleinstallmentrows');
   if (!container || !rowsContainer) return;
   const previous = [...rowsContainer.querySelectorAll('.sale-installment-card')].map((row) => ({
-    dueDate: row.querySelector('.sale-installment-due-date')?.value || '',
-    deposit: row.querySelector('.sale-installment-deposit')?.value || ''
+    dueDate: row.querySelector('.sale-installment-due-date')?.value || ''
   }));
   const safeCount = Math.max(0, Math.min(120, Number.parseInt(count, 10) || 0));
   if (!safeCount || total <= 0 || !saleInstallmentStartDate) {
