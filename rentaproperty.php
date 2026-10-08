@@ -179,6 +179,7 @@
                     </div>
                     <input type="hidden" id="discountapprovalstatus" value="NOT_REQUIRED">
                     <input type="hidden" id="approvalrequired" value="NO">
+                    <input type="hidden" id="discountapprovalsubmitted" value="NO">
                     <div id="saleinstallments" class="sale-installments hidden">
                         <div class="sale-installments-heading">
                             <span>Instalment schedule</span>
@@ -322,6 +323,10 @@
 
         </div>
         <div class="flex justify-end mt-5">
+            <button type="button" class="btn hidden" id="sendapproval">
+                <div class="btnloader" style="display: none;"></div>
+                <span>Send for Approval</span>
+            </button>
             <button type="button" class="btn" id="submit">
                 <div class="btnloader" style="display: none;"></div>
                 <span>Submit</span>

@@ -97,6 +97,8 @@ async function handleRentExitModeChange() {
   const feeTable = document.getElementById('rentapropertytable');
   if (feeTable) feeTable.innerHTML = '';
   document.getElementById('saleplan')?.classList.add('hidden');
+  document.getElementById('submit')?.classList.remove('hidden');
+  document.getElementById('sendapproval')?.classList.add('hidden');
   await checkrentapropertyproperty(propertySelect);
 }
 
@@ -192,6 +194,8 @@ async function rentapropertyActive() {
   const form = document.querySelector('#rentapropertyform');
   form.querySelector('#submit')
       .addEventListener('click', rentapropertysubmit);
+  form.querySelector('#sendapproval')
+      ?.addEventListener('click', () => rentapropertysubmit('SEND_APPROVAL'));
 
   // Fetch tenants
   const tRes = await httpRequest2('../controllers/fetchtenants', null, null, 'json');
@@ -266,6 +270,9 @@ async function rentapropertyActive() {
       }
       if (document.getElementById('discountapprovalstatus') && savedApprovalStatus) {
         document.getElementById('discountapprovalstatus').value = `${savedApprovalStatus}`.toUpperCase();
+        if (['PENDING', 'PENDING_APPROVAL'].includes(`${savedApprovalStatus}`.toUpperCase())) {
+          document.getElementById('discountapprovalsubmitted').value = 'YES';
+        }
       }
 
       const propertySelect = document.getElementById('propertyid');
@@ -537,6 +544,16 @@ function updateSalePlan() {
     ? document.getElementById('discountapprovalstatus')?.value
     : 'NOT_REQUIRED');
   const finalTotal = status === 'APPROVED' ? Math.max(baseAmount - discount, 0) : baseAmount;
+  const submitButton = document.getElementById('submit');
+  const approvalButton = document.getElementById('sendapproval');
+  const approvalRequired = discount > 0 && status !== 'APPROVED';
+  submitButton?.classList.toggle('hidden', approvalRequired);
+  approvalButton?.classList.toggle('hidden', !approvalRequired);
+  if (approvalButton) {
+    const submitted = document.getElementById('discountapprovalsubmitted')?.value === 'YES';
+    approvalButton.disabled = submitted;
+    approvalButton.querySelector('span').textContent = submitted ? 'Awaiting Approval' : 'Send for Approval';
+  }
   if (amountInput) amountInput.value = baseAmount || '';
   if (finalInput) finalInput.value = finalTotal || '';
   const count = document.getElementById('installmentcount')?.value || '';
@@ -989,7 +1006,7 @@ function rentapropertydate(months, begin, el) {
 }
 
 /* -------- FORM SUBMIT -------- */
-async function rentapropertysubmit() {
+async function rentapropertysubmit(submissionAction = 'COMPLETE') {
   const formData = new FormData(document.querySelector('#rentapropertyform'));
   const exitMode = getSelectedExitMode();
   if (!exitMode) {
@@ -1003,7 +1020,7 @@ async function rentapropertysubmit() {
     const approvalStatus = `${document.getElementById('discountapprovalstatus')?.value || 'NOT_REQUIRED'}`.toUpperCase();
     const installmentCount = Number.parseInt(document.getElementById('installmentcount')?.value || '', 10);
     const installmentRows = [...document.querySelectorAll('#saleinstallmentrows .sale-installment-card')];
-    if (saleDiscount > 0 && approvalStatus !== 'APPROVED') {
+    if (submissionAction === 'COMPLETE' && saleDiscount > 0 && approvalStatus !== 'APPROVED') {
       return notification('This discount must be approved by the MD or approving officer before completing the sale', 0);
     }
     if (!Number.isInteger(installmentCount) || installmentCount < 1 || installmentRows.length !== installmentCount) {
@@ -1017,6 +1034,7 @@ async function rentapropertysubmit() {
     formData.set('finalsalestotal', document.getElementById('finalsalestotal')?.value || '');
     formData.set('discountapprovalstatus', approvalStatus);
     formData.set('approvalrequired', saleDiscount > 0 ? 'YES' : 'NO');
+    formData.set('action', submissionAction);
     formData.set('numberofinstalments', installmentCount.toString());
     formData.set('instalmentcount', installmentCount.toString());
     installmentRows.forEach((row, index) => {
@@ -1073,14 +1091,25 @@ async function rentapropertysubmit() {
     formData.set('tenantid', document.getElementById('tenantid').value)
   }
 
-  const btn = document.querySelector('#rentapropertyform #submit');
+  const btn = document.querySelector(`#rentapropertyform #${submissionAction === 'SEND_APPROVAL' ? 'sendapproval' : 'submit'}`);
   const res = await httpRequest2(
-    '../controllers/rentapropertyscript',
+    submissionAction === 'SEND_APPROVAL' ? '../controllers/senddiscountapproval' : '../controllers/rentapropertyscript',
     formData,
     btn
   );
   // if (res.status) notification('Record saved successfully!', 1); and also did click on rentaproperty
-  if (res.status) {notification('Record saved successfully!', 1);document.getElementById('rentaproperty').click();}else notification(res.message, 0);
+  if (res.status) {
+    notification(submissionAction === 'SEND_APPROVAL' ? 'Sale sent for MD approval' : 'Record saved successfully!', 1);
+    if (submissionAction === 'SEND_APPROVAL') {
+      const approvalStatus = document.getElementById('discountapprovalstatus');
+      if (approvalStatus) approvalStatus.value = 'PENDING';
+      const approvalSubmitted = document.getElementById('discountapprovalsubmitted');
+      if (approvalSubmitted) approvalSubmitted.value = 'YES';
+      updateSalePlan();
+    } else {
+      document.getElementById('rentaproperty').click();
+    }
+  } else notification(res.message, 0);
 
 }
 
@@ -1102,7 +1131,9 @@ document.addEventListener('input', (e) => {
   if (e.target?.id === 'salesdiscount') {
     const discount = parseFloat(e.target.value) || 0;
     const approvalStatus = document.getElementById('discountapprovalstatus');
+    const approvalSubmitted = document.getElementById('discountapprovalsubmitted');
     if (approvalStatus) approvalStatus.value = discount > 0 ? 'PENDING' : 'NOT_REQUIRED';
+    if (approvalSubmitted) approvalSubmitted.value = 'NO';
     updateSalePlan();
   }
   if (e.target?.id === 'installmentcount') updateSalePlan();
