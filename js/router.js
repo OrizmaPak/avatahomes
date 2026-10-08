@@ -135,12 +135,12 @@ const routerTree = {
     pendingdiscountapprovals: {
         template: 'pendingdiscountapprovals',
         startingFunction: 'pendingdiscountapprovalsActive',
-        scriptName: './js/pendingdiscountapprovals.js?v=20261008a'
+        scriptName: './js/pendingdiscountapprovals.js?v=20261008b'
     },
     approvesalesdiscounts: {
         template: 'approvesalesdiscounts',
         startingFunction: 'approvesalesdiscountsActive',
-        scriptName: './js/approvesalesdiscounts.js?v=20261008a'
+        scriptName: './js/approvesalesdiscounts.js?v=20261008b'
     },
     duerentals: {
         template: 'duerentals',

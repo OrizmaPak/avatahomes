@@ -1,4 +1,5 @@
 let pendingDiscountRows = [];
+let pendingApprovalStatusFilter = 'PENDING';
 
 function approvalValue(item, ...keys) {
   for (const key of keys) if (item?.[key] !== undefined && item?.[key] !== null && item[key] !== '') return item[key];
@@ -8,6 +9,7 @@ function approvalValue(item, ...keys) {
 function approvalRowsFromResponse(response) {
   if (Array.isArray(response?.data)) return response.data;
   if (Array.isArray(response?.data?.data)) return response.data.data;
+  if (response?.data && typeof response.data === 'object') return [response.data];
   if (Array.isArray(response?.rows)) return response.rows;
   return [];
 }
@@ -39,7 +41,13 @@ function approvalStatusMarkup(status) {
 }
 
 function pendingApprovalMatches(item, query) {
-  return `${approvalClient(item)} ${approvalProperty(item)} ${approvalUnit(item)} ${approvalValue(item, 'reference', 'id')}`.toLowerCase().includes(query);
+  const status = approvalStatus(item);
+  const matchesStatus = pendingApprovalStatusFilter === 'PENDING'
+    ? !['APPROVED', 'REJECTED', 'DENIED'].includes(status)
+    : pendingApprovalStatusFilter === 'REJECTED'
+      ? ['REJECTED', 'DENIED'].includes(status)
+      : status === pendingApprovalStatusFilter;
+  return matchesStatus && `${approvalClient(item)} ${approvalProperty(item)} ${approvalUnit(item)} ${approvalValue(item, 'reference', 'id')}`.toLowerCase().includes(query);
 }
 
 function renderPendingDiscountApprovals() {
@@ -66,7 +74,12 @@ function renderPendingDiscountApprovals() {
 }
 
 async function fetchPendingDiscountApprovals() {
-  const response = await httpRequest2('../controllers/fetchsalesdraft', null, document.getElementById('pendingapprovalrefresh'), 'json');
+  const payload = new FormData();
+  payload.append('status', pendingApprovalStatusFilter);
+  payload.append('approvalstatus', pendingApprovalStatusFilter);
+  payload.append('startdate', document.getElementById('pendingapprovalstartdate')?.value || '');
+  payload.append('enddate', document.getElementById('pendingapprovalenddate')?.value || '');
+  const response = await httpRequest2('../controllers/fetchsalesdraft', payload, document.getElementById('pendingapprovalrefresh'), 'json');
   if (!response?.status) {
     pendingDiscountRows = [];
     renderPendingDiscountApprovals();
@@ -79,5 +92,12 @@ async function fetchPendingDiscountApprovals() {
 async function pendingdiscountapprovalsActive() {
   document.getElementById('pendingapprovalsearch')?.addEventListener('input', renderPendingDiscountApprovals);
   document.getElementById('pendingapprovalrefresh')?.addEventListener('click', fetchPendingDiscountApprovals);
+  document.querySelectorAll('[data-approval-status]').forEach(tab => tab.addEventListener('click', () => {
+    pendingApprovalStatusFilter = tab.dataset.approvalStatus;
+    document.querySelectorAll('[data-approval-status]').forEach(item => item.classList.toggle('active', item === tab));
+    fetchPendingDiscountApprovals();
+  }));
+  document.getElementById('pendingapprovalstartdate')?.addEventListener('change', fetchPendingDiscountApprovals);
+  document.getElementById('pendingapprovalenddate')?.addEventListener('change', fetchPendingDiscountApprovals);
   await fetchPendingDiscountApprovals();
 }

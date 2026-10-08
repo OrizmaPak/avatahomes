@@ -4,6 +4,7 @@ let selectedSalesApproval = null;
 function salesApprovalResponseRows(response) {
   if (Array.isArray(response?.data)) return response.data;
   if (Array.isArray(response?.data?.data)) return response.data.data;
+  if (response?.data && typeof response.data === 'object') return [response.data];
   return [];
 }
 
@@ -34,6 +35,17 @@ function renderSalesApprovalList() {
 function selectSalesApproval(id) {
   selectedSalesApproval = salesApprovalRows.find(item => `${salesApprovalText(item, 'id', 'saleid', 'rentid')}` === `${id}`) || null;
   renderSalesApprovalDetail();
+}
+
+async function fetchSalesApprovalDetail(id) {
+  const payload = new FormData();
+  payload.append('id', id);
+  const response = await httpRequest2('../controllers/fetchsalesdraft', payload, null, 'json');
+  const rows = salesApprovalResponseRows(response);
+  if (response?.status && rows.length) {
+    selectedSalesApproval = rows[0];
+    renderSalesApprovalDetail();
+  }
 }
 
 function renderSalesApprovalDetail() {
@@ -87,7 +99,7 @@ async function fetchSalesApprovalRows() {
   const requestedId = sessionStorage.getItem('approvalSaleId');
   if (requestedId) {
     sessionStorage.removeItem('approvalSaleId');
-    selectSalesApproval(requestedId);
+    await fetchSalesApprovalDetail(requestedId);
   }
 }
 
