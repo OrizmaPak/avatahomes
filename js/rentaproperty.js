@@ -93,7 +93,7 @@ async function handleRentExitModeChange() {
   const propertySelect = document.getElementById('propertyid');
   if (!propertySelect?.value) return;
   saleInstallmentStartDate = '';
-  const startDateInput = document.getElementById('saleinstallmentstartdate');
+  const startDateInput = document.getElementById('begindate');
   if (startDateInput) startDateInput.value = '';
   const unitSelect = document.getElementById('unitid');
   if (unitSelect) unitSelect.value = '';
@@ -200,7 +200,7 @@ async function rentapropertyActive() {
       .addEventListener('click', rentapropertysubmit);
   form.querySelector('#sendapproval')
       ?.addEventListener('click', () => rentapropertysubmit('SEND_APPROVAL'));
-  document.getElementById('saleinstallmentstartdate')?.addEventListener('change', (event) => {
+  document.getElementById('begindate')?.addEventListener('change', (event) => {
     saleInstallmentStartDate = event.target.value;
     updateSalePlan();
   });
@@ -554,6 +554,7 @@ function updateSalePlan() {
   if (!panel) return;
   updateRentDurationVisibility();
   const isSale = getSelectedExitMode() === 'SALE' && !!document.getElementById('unitid')?.value;
+  saleInstallmentStartDate = document.getElementById('begindate')?.value || '';
   panel.classList.toggle('hidden', !isSale);
   if (!isSale) return;
   const saleRow = getSaleFeeTableRow();
@@ -581,6 +582,9 @@ function updateSalePlan() {
   if (finalInput) finalInput.value = finalTotal || '';
   const count = document.getElementById('installmentcount')?.value || '';
   renderSaleInstallments(finalTotal, count);
+  const lastInstallmentDate = [...document.querySelectorAll('#saleinstallmentrows .sale-installment-due-date')].at(-1)?.value || '';
+  const expirationDate = document.getElementById('expirationdate');
+  if (expirationDate && isSale) expirationDate.value = lastInstallmentDate;
   const firstInstallment = document.querySelector('.sale-installment-amount')?.value;
   const deposit = saleRow?.querySelector('.deposit-input');
   if (deposit && firstInstallment && saleRow.dataset.saleDepositEdited !== 'true') {
@@ -599,7 +603,7 @@ function updateRentDurationVisibility() {
 async function checkrentapropertyunit(el, prefillFees) {
   const unitId = el.value;
   saleInstallmentStartDate = '';
-  const startDateInput = document.getElementById('saleinstallmentstartdate');
+  const startDateInput = document.getElementById('begindate');
   if (startDateInput) startDateInput.value = '';
   const tbody = document.getElementById('rentapropertytable');
   if (!tbody) return; 

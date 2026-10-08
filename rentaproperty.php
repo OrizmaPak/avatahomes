@@ -151,6 +151,12 @@
                         <option value="">-- Select Unit --</option>
                     </select>
                 </div>
+                <div id="begin" class="form-group remain hidden">
+                    <label for="begindate" class="control-label">begin date</label>
+                    <input type="date" name="begindate" id="begindate"
+                        onchange="document.getElementById('duration').value = 'NOT APPLICABLE';document.getElementById('expirationdate').value = ''"
+                        class="form-control rentapropertyverify">
+                </div>
                 <div id="saleplan" class="sale-plan hidden lg:col-span-3">
                     <div class="sale-plan-heading">
                         <div>
@@ -176,10 +182,6 @@
                             <label for="installmentcount" class="control-label">Number of instalments</label>
                             <input type="number" id="installmentcount" class="form-control" min="1" step="1" placeholder="1">
                         </div>
-                        <div class="form-group">
-                            <label for="saleinstallmentstartdate" class="control-label">Instalment begin date</label>
-                            <input type="date" id="saleinstallmentstartdate" class="form-control">
-                        </div>
                     </div>
                     <input type="hidden" id="discountapprovalstatus" value="NOT_REQUIRED">
                     <input type="hidden" id="approvalrequired" value="NO">
@@ -191,12 +193,6 @@
                         </div>
                         <div class="sale-installments-grid" id="saleinstallmentrows"></div>
                     </div>
-                </div>
-                <div id="begin" class="form-group remain hidden">
-                    <label for="country" class="control-label">begin date</label>
-                    <input type="date" name="begindate" id="begindate"
-                        onchange="document.getElementById('duration').value = 'NOT APPLICABLE';document.getElementById('expirationdate').value = ''"
-                        class="form-control rentapropertyverify">
                 </div>
                 <div id="durationcontainer" class="form-group remain hidden">
                     <label for="country" class="control-label">Duration</label>
