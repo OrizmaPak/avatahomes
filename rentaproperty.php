@@ -176,6 +176,10 @@
                             <label for="installmentcount" class="control-label">Number of instalments</label>
                             <input type="number" id="installmentcount" class="form-control" min="1" step="1" placeholder="1">
                         </div>
+                        <div class="form-group">
+                            <label for="saleinstallmentstartdate" class="control-label">Instalment begin date</label>
+                            <input type="date" id="saleinstallmentstartdate" class="form-control">
+                        </div>
                     </div>
                     <input type="hidden" id="discountapprovalstatus" value="NOT_REQUIRED">
                     <input type="hidden" id="approvalrequired" value="NO">
@@ -186,18 +190,6 @@
                             <small>Set a due date for every instalment. The first amount is copied to Deposit below.</small>
                         </div>
                         <div class="sale-installments-grid" id="saleinstallmentrows"></div>
-                    </div>
-                </div>
-                <div id="saleinstallmentstartmodal" class="sale-installment-modal hidden" role="dialog" aria-modal="true" aria-labelledby="saleinstallmentstarttitle">
-                    <div class="sale-installment-modal-card">
-                        <h2 id="saleinstallmentstarttitle">Choose instalment start date</h2>
-                        <p>We will use the day you select for every monthly instalment. If a month does not have that day, its last valid day will be used.</p>
-                        <label for="saleinstallmentstartdate" class="control-label">Start counting from</label>
-                        <input type="date" id="saleinstallmentstartdate" class="form-control">
-                        <div class="sale-installment-modal-actions">
-                            <button type="button" id="saleinstallmentstartcancel" class="btn">Cancel</button>
-                            <button type="button" id="saleinstallmentstartconfirm" class="btn">Generate Schedule</button>
-                        </div>
                     </div>
                 </div>
                 <div id="begin" class="form-group remain hidden">

@@ -93,6 +93,8 @@ async function handleRentExitModeChange() {
   const propertySelect = document.getElementById('propertyid');
   if (!propertySelect?.value) return;
   saleInstallmentStartDate = '';
+  const startDateInput = document.getElementById('saleinstallmentstartdate');
+  if (startDateInput) startDateInput.value = '';
   const unitSelect = document.getElementById('unitid');
   if (unitSelect) unitSelect.value = '';
   document.querySelectorAll('.remain').forEach(element => element.classList.add('hidden'));
@@ -198,11 +200,9 @@ async function rentapropertyActive() {
       .addEventListener('click', rentapropertysubmit);
   form.querySelector('#sendapproval')
       ?.addEventListener('click', () => rentapropertysubmit('SEND_APPROVAL'));
-  bindSaleInstallmentStartModal();
-  document.getElementById('installmentcount')?.addEventListener('change', () => {
-    if (getSelectedExitMode() === 'SALE' && Number.parseInt(document.getElementById('installmentcount').value, 10) > 0) {
-      openSaleInstallmentStartModal();
-    }
+  document.getElementById('saleinstallmentstartdate')?.addEventListener('change', (event) => {
+    saleInstallmentStartDate = event.target.value;
+    updateSalePlan();
   });
 
   // Fetch tenants
@@ -504,7 +504,7 @@ function renderSaleInstallments(total, count) {
     deposit: row.querySelector('.sale-installment-deposit')?.value || ''
   }));
   const safeCount = Math.max(0, Math.min(120, Number.parseInt(count, 10) || 0));
-  if (!safeCount || total <= 0) {
+  if (!safeCount || total <= 0 || !saleInstallmentStartDate) {
     rowsContainer.innerHTML = '';
     container.classList.add('hidden');
     return;
@@ -549,35 +549,6 @@ function getMonthlyInstallmentDate(startDate, monthOffset) {
   return `${targetYear}-${String(normalizedMonth + 1).padStart(2, '0')}-${String(validDay).padStart(2, '0')}`;
 }
 
-function openSaleInstallmentStartModal() {
-  const modal = document.getElementById('saleinstallmentstartmodal');
-  const input = document.getElementById('saleinstallmentstartdate');
-  if (!modal || !input) return;
-  input.value = saleInstallmentStartDate || new Date().toISOString().split('T')[0];
-  modal.classList.remove('hidden');
-  setTimeout(() => input.focus(), 0);
-}
-
-function closeSaleInstallmentStartModal() {
-  document.getElementById('saleinstallmentstartmodal')?.classList.add('hidden');
-}
-
-function confirmSaleInstallmentStartDate() {
-  const value = document.getElementById('saleinstallmentstartdate')?.value || '';
-  if (!value) return notification('Choose the date to start the instalment schedule', 0);
-  saleInstallmentStartDate = value;
-  closeSaleInstallmentStartModal();
-  updateSalePlan();
-}
-
-function bindSaleInstallmentStartModal() {
-  document.getElementById('saleinstallmentstartconfirm')?.addEventListener('click', confirmSaleInstallmentStartDate);
-  document.getElementById('saleinstallmentstartcancel')?.addEventListener('click', closeSaleInstallmentStartModal);
-  document.getElementById('saleinstallmentstartmodal')?.addEventListener('click', (event) => {
-    if (event.target.id === 'saleinstallmentstartmodal') closeSaleInstallmentStartModal();
-  });
-}
-
 function updateSalePlan() {
   const panel = document.getElementById('saleplan');
   if (!panel) return;
@@ -620,6 +591,8 @@ function updateSalePlan() {
 async function checkrentapropertyunit(el, prefillFees) {
   const unitId = el.value;
   saleInstallmentStartDate = '';
+  const startDateInput = document.getElementById('saleinstallmentstartdate');
+  if (startDateInput) startDateInput.value = '';
   const tbody = document.getElementById('rentapropertytable');
   if (!tbody) return; 
   tbody.innerHTML = '';
