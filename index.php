@@ -21,7 +21,7 @@ if(!isset($_SESSION["wuseremail"]))
     <link rel="stylesheet" href="./css/css_vanilla.css?v=20260219c">
     <link rel="stylesheet" href="./css/floorplans.css?v=20261007b">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
-    <link rel="stylesheet" href="./css/rentaproperty.css?v=20261007b">
+    <link rel="stylesheet" href="./css/rentaproperty.css?v=20261008a">
      <!-- PWA Manifest --> 
   <link rel="manifest" href="./manifest.json"> 
       <!-- ios support -->

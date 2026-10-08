@@ -96,6 +96,7 @@ async function handleRentExitModeChange() {
   document.querySelectorAll('.remain').forEach(element => element.classList.add('hidden'));
   const feeTable = document.getElementById('rentapropertytable');
   if (feeTable) feeTable.innerHTML = '';
+  document.getElementById('saleplan')?.classList.add('hidden');
   await checkrentapropertyproperty(propertySelect);
 }
 
@@ -258,6 +259,14 @@ async function rentapropertyActive() {
     if (r.status && r.data.length) {
       const record = r.data[0];
       populateData(record.rentdata);
+      const savedSaleDiscount = record.rentdata.salesdiscount ?? record.rentdata.discountamount ?? '';
+      const savedApprovalStatus = record.rentdata.discountapprovalstatus ?? record.rentdata.approvalstatus ?? '';
+      if (document.getElementById('salesdiscount') && savedSaleDiscount !== '') {
+        document.getElementById('salesdiscount').value = savedSaleDiscount;
+      }
+      if (document.getElementById('discountapprovalstatus') && savedApprovalStatus) {
+        document.getElementById('discountapprovalstatus').value = `${savedApprovalStatus}`.toUpperCase();
+      }
 
       const propertySelect = document.getElementById('propertyid');
       if (propertySelect) {
@@ -438,6 +447,106 @@ function setRentExitModeForEdit(rentData) {
   updateRentExitModeVisibility();
   return mode;
 }
+
+function isSaleFeeName(name) {
+  const normalized = `${name || ''}`.trim().toUpperCase();
+  return normalized.startsWith('SALES ') || normalized.startsWith('PROPERTY SALES ');
+}
+
+function getSaleFeeTableRow() {
+  return [...document.querySelectorAll('#rentapropertytable tr')].find((row) => {
+    const feeId = row.querySelector('.feename-select')?.value;
+    const fee = rentFeeDefinitions.find((item) => `${item.id}` === `${feeId}`);
+    return isSaleFeeName(fee?.feename);
+  }) || null;
+}
+
+function setSaleDiscountApprovalStatus(status = 'NOT_REQUIRED') {
+  const normalized = `${status || 'NOT_REQUIRED'}`.trim().toUpperCase();
+  const hidden = document.getElementById('discountapprovalstatus');
+  const required = document.getElementById('approvalrequired');
+  const badge = document.getElementById('saleapprovalstatus');
+  const discount = parseFloat(document.getElementById('salesdiscount')?.value) || 0;
+  const effectiveStatus = discount > 0 && normalized === 'NOT_REQUIRED' ? 'PENDING' : normalized;
+  if (hidden) hidden.value = effectiveStatus;
+  if (required) required.value = discount > 0 ? 'YES' : 'NO';
+  if (!badge) return effectiveStatus;
+  badge.textContent = effectiveStatus === 'APPROVED'
+    ? 'MD approved'
+    : effectiveStatus === 'REJECTED'
+      ? 'Discount rejected'
+      : discount > 0 ? 'Approval pending' : 'No approval needed';
+  badge.className = `sale-approval-status sale-approval-${effectiveStatus.toLowerCase()}`;
+  return effectiveStatus;
+}
+
+function renderSaleInstallments(total, count) {
+  const container = document.getElementById('saleinstallments');
+  const rowsContainer = document.getElementById('saleinstallmentrows');
+  if (!container || !rowsContainer) return;
+  const previous = [...rowsContainer.querySelectorAll('.sale-installment-card')].map((row) => ({
+    dueDate: row.querySelector('.sale-installment-due-date')?.value || '',
+    deposit: row.querySelector('.sale-installment-deposit')?.value || ''
+  }));
+  const safeCount = Math.max(0, Math.min(120, Number.parseInt(count, 10) || 0));
+  if (!safeCount || total <= 0) {
+    rowsContainer.innerHTML = '';
+    container.classList.add('hidden');
+    return;
+  }
+  container.classList.remove('hidden');
+  const baseAmount = Math.floor((total / safeCount) * 100) / 100;
+  rowsContainer.innerHTML = Array.from({ length: safeCount }, (_, index) => {
+    const amount = index === safeCount - 1
+      ? Math.round((total - (baseAmount * (safeCount - 1))) * 100) / 100
+      : baseAmount;
+    const old = previous[index] || {};
+    return `<div class="sale-installment-card" data-installment-index="${index + 1}">
+      <div class="sale-installment-number"><span>Instalment ${index + 1}</span><span>₦${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+      <input type="hidden" class="sale-installment-amount" value="${amount}">
+      <label for="saleinstallmentdate${index + 1}">Due date</label>
+      <input type="date" id="saleinstallmentdate${index + 1}" class="sale-installment-due-date" value="${old.dueDate}" required>
+      ${index === 0 ? `<label for="saleinstallmentdeposit${index + 1}">Deposit to collect</label><input type="number" id="saleinstallmentdeposit${index + 1}" class="sale-installment-deposit" min="0" step="0.01" value="${old.deposit || amount}">` : ''}
+    </div>`;
+  }).join('');
+  rowsContainer.querySelector('.sale-installment-deposit')?.addEventListener('input', (event) => {
+    const saleRow = getSaleFeeTableRow();
+    const deposit = saleRow?.querySelector('.deposit-input');
+    if (deposit) {
+      saleRow.dataset.saleDepositEdited = 'true';
+      deposit.value = event.target.value;
+      updateRentTotalDeposit();
+    }
+  });
+}
+
+function updateSalePlan() {
+  const panel = document.getElementById('saleplan');
+  if (!panel) return;
+  const isSale = getSelectedExitMode() === 'SALE' && !!document.getElementById('unitid')?.value;
+  panel.classList.toggle('hidden', !isSale);
+  if (!isSale) return;
+  const saleRow = getSaleFeeTableRow();
+  const baseAmount = parseFloat(saleRow?.querySelector('.amount-input')?.value) || 0;
+  const amountInput = document.getElementById('salesamount');
+  const discountInput = document.getElementById('salesdiscount');
+  const finalInput = document.getElementById('finalsalestotal');
+  const discount = Math.max(0, Math.min(baseAmount, parseFloat(discountInput?.value) || 0));
+  if (discountInput && discountInput.value !== '' && Number(discountInput.value) !== discount) discountInput.value = discount;
+  const status = setSaleDiscountApprovalStatus(discount > 0
+    ? document.getElementById('discountapprovalstatus')?.value
+    : 'NOT_REQUIRED');
+  const finalTotal = status === 'APPROVED' ? Math.max(baseAmount - discount, 0) : baseAmount;
+  if (amountInput) amountInput.value = baseAmount || '';
+  if (finalInput) finalInput.value = finalTotal || '';
+  const count = document.getElementById('installmentcount')?.value || '';
+  renderSaleInstallments(finalTotal, count);
+  const firstInstallment = document.querySelector('.sale-installment-amount')?.value;
+  const deposit = saleRow?.querySelector('.deposit-input');
+  if (deposit && firstInstallment && saleRow.dataset.saleDepositEdited !== 'true') {
+    deposit.value = firstInstallment;
+  }
+}
   
 /* -------- FETCH & RENDER FEES -------- */
 async function checkrentapropertyunit(el, prefillFees) {
@@ -495,6 +604,7 @@ async function checkrentapropertyunit(el, prefillFees) {
   ensureRentDefaultFlatSelection();
   recalculateRentPercentageRows();
   updateRentTotalDeposit();
+  updateSalePlan();
 }
 
 function normalizeUnitFeeRows(data) {
@@ -570,6 +680,9 @@ function addRentFeeRow(prefill = {}) {
   populateRentFeeSelect(controls.feeSelect, prefill.feeId ? String(prefill.feeId) : '');
   controls.amount.value = prefill.amount ?? '';
   controls.deposit.value = prefill.deposit ?? '';
+  if (prefill.deposit !== undefined && prefill.deposit !== null && `${prefill.deposit}` !== '') {
+    tr.dataset.saleDepositEdited = 'true';
+  }
   controls.discount.value = prefill.discount ?? '';
   controls.renewable.value = (prefill.renewable ?? 'NO').toString().toUpperCase() === 'YES' ? 'YES' : 'NO';
   controls.rental.value = prefill.rentalPeriod ?? '';
@@ -583,7 +696,10 @@ function addRentFeeRow(prefill = {}) {
   controls.amount.addEventListener('keyup', amountHandler);
   controls.amount.addEventListener('change', amountHandler);
 
-  controls.deposit.addEventListener('input', () => handleRentDepositDiscountChange(id, 'deposit'));
+  controls.deposit.addEventListener('input', () => {
+    controls.row.dataset.saleDepositEdited = 'true';
+    handleRentDepositDiscountChange(id, 'deposit');
+  });
   controls.discount.addEventListener('input', () => handleRentDepositDiscountChange(id, 'discount'));
 
   controls.removeButton.addEventListener('click', () => removeRentFeeRow(id));
@@ -846,6 +962,7 @@ function updateRentTotalDeposit() {
     const value = hasAnyDeposit ? depositSum : payableSum;
     amountPaid.value = value ? value.toString() : '';
   }
+  if (getSelectedExitMode() === 'SALE') updateSalePlan();
 }
 
 /* -------- FEE TABLE EVENTS & VALIDATION -------- */
@@ -880,6 +997,38 @@ async function rentapropertysubmit() {
   }
   formData.set('exitmode', exitMode);
 
+  if (exitMode === 'SALE') {
+    updateSalePlan();
+    const saleDiscount = parseFloat(document.getElementById('salesdiscount')?.value) || 0;
+    const approvalStatus = `${document.getElementById('discountapprovalstatus')?.value || 'NOT_REQUIRED'}`.toUpperCase();
+    const installmentCount = Number.parseInt(document.getElementById('installmentcount')?.value || '', 10);
+    const installmentRows = [...document.querySelectorAll('#saleinstallmentrows .sale-installment-card')];
+    if (saleDiscount > 0 && approvalStatus !== 'APPROVED') {
+      return notification('This discount must be approved by the MD or approving officer before completing the sale', 0);
+    }
+    if (!Number.isInteger(installmentCount) || installmentCount < 1 || installmentRows.length !== installmentCount) {
+      return notification('Enter the number of instalments and review the generated schedule', 0);
+    }
+    if (installmentRows.some(row => !row.querySelector('.sale-installment-due-date')?.value)) {
+      return notification('Select a due date for every instalment', 0);
+    }
+    formData.set('salesamount', document.getElementById('salesamount')?.value || '');
+    formData.set('salesdiscount', saleDiscount.toString());
+    formData.set('finalsalestotal', document.getElementById('finalsalestotal')?.value || '');
+    formData.set('discountapprovalstatus', approvalStatus);
+    formData.set('approvalrequired', saleDiscount > 0 ? 'YES' : 'NO');
+    formData.set('numberofinstalments', installmentCount.toString());
+    formData.set('instalmentcount', installmentCount.toString());
+    installmentRows.forEach((row, index) => {
+      const number = index + 1;
+      formData.set(`instalmentamount${number}`, row.querySelector('.sale-installment-amount')?.value || '');
+      formData.set(`instalmentduedate${number}`, row.querySelector('.sale-installment-due-date')?.value || '');
+      if (number === 1) {
+        formData.set('depositamount', row.querySelector('.sale-installment-deposit')?.value || '');
+      }
+    });
+  }
+
   // Dependants
   const deps = [...document.querySelectorAll('#dependantTableBody tr')];
   formData.set('dependentrows', deps.length);
@@ -902,6 +1051,10 @@ async function rentapropertysubmit() {
     return notification('Add at least one fee before submitting', 0);
   }
   formData.set('rowcount', fees.length);
+  const saleFeeRow = exitMode === 'SALE' ? getSaleFeeTableRow() : null;
+  const approvedSaleDiscount = exitMode === 'SALE' && `${document.getElementById('discountapprovalstatus')?.value || ''}`.toUpperCase() === 'APPROVED'
+    ? (document.getElementById('salesdiscount')?.value || '')
+    : '';
   fees.forEach((r, i) => {
     const idx = i + 1;
     formData.set(`feenameid${idx}`, r.querySelector('.feename-select').value);
@@ -909,7 +1062,7 @@ async function rentapropertysubmit() {
 
 
     formData.set(`deposit${idx}`,   r.querySelector('.deposit-input').value.trim());
-    formData.set(`discount${idx}`,  r.querySelector('.discount-input').value.trim());
+    formData.set(`discount${idx}`,  r === saleFeeRow ? approvedSaleDiscount : r.querySelector('.discount-input').value.trim());
     formData.set(`renewable${idx}`, r.querySelector('.renewable-select').value);
   });
 
@@ -943,6 +1096,16 @@ document.addEventListener('input', (e) => {
       recalculateRentPercentageRows();
     }
   }
+}, true);
+
+document.addEventListener('input', (e) => {
+  if (e.target?.id === 'salesdiscount') {
+    const discount = parseFloat(e.target.value) || 0;
+    const approvalStatus = document.getElementById('discountapprovalstatus');
+    if (approvalStatus) approvalStatus.value = discount > 0 ? 'PENDING' : 'NOT_REQUIRED';
+    updateSalePlan();
+  }
+  if (e.target?.id === 'installmentcount') updateSalePlan();
 }, true);
 
 
