@@ -73,7 +73,6 @@ async function updateSalesDiscountApproval(id, status) {
   const controller = status === 'APPROVED' ? 'approvediscount' : 'rejectdiscount';
   const payload = new FormData();
   payload.append('id', id);
-  payload.append('discountapprovalstatus', status);
   if (status === 'REJECTED') {
     const reason = window.prompt('Reason for rejecting this discount:', 'Discount requires correction');
     if (reason === null) return;
