@@ -295,7 +295,7 @@
             </div>
 
             <div id="otherfeesview" class="hidden !my-10" style="margin-top: 50px;">
-                <p class="section-title font-medium text-lg mb-2">Manage Fees</p>
+                <p class="section-title font-medium text-lg mb-2">Payments</p>
                 <hr>
                 <div class="table-content">
                     <table>
