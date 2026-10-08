@@ -132,6 +132,16 @@ const routerTree = {
         startingFunction: 'viewrentapropertyActive',
         scriptName:  './js/viewrentaproperty.js?v=20260725a'
     },
+    pendingdiscountapprovals: {
+        template: 'pendingdiscountapprovals',
+        startingFunction: 'pendingdiscountapprovalsActive',
+        scriptName: './js/pendingdiscountapprovals.js?v=20261008a'
+    },
+    approvesalesdiscounts: {
+        template: 'approvesalesdiscounts',
+        startingFunction: 'approvesalesdiscountsActive',
+        scriptName: './js/approvesalesdiscounts.js?v=20261008a'
+    },
     duerentals: {
         template: 'duerentals',
         startingFunction: 'duerentalsActive',
