@@ -160,13 +160,13 @@
                 <div id="saleplan" class="sale-plan hidden lg:col-span-3">
                     <div class="sale-plan-heading">
                         <div>
-                            <p class="section-title">Sale payment plan</p>
-                            <p class="sale-plan-help">Discounts require approval before this sale can be completed.</p>
+                            <p id="transactionplantitle" class="section-title">Sale payment plan</p>
+                            <p id="transactionplanhelp" class="sale-plan-help">Discounts require approval before this transaction can be completed.</p>
                         </div>
                         <span id="saleapprovalstatus" class="sale-approval-status sale-approval-pending">Approval pending</span>
                     </div>
                     <div class="sale-plan-fields">
-                        <div class="form-group">
+                        <div id="transactionbaseamountgroup" class="form-group">
                             <label for="salesamount" class="control-label">Sale amount</label>
                             <input type="number" id="salesamount" class="form-control" readonly>
                         </div>
@@ -175,10 +175,10 @@
                             <input type="number" id="salesdiscount" class="form-control" min="0" step="0.01" placeholder="Enter discount">
                         </div>
                         <div class="form-group">
-                            <label for="finalsalestotal" class="control-label">Final sales total</label>
+                            <label id="finaltotallabel" for="finalsalestotal" class="control-label">Final total</label>
                             <input type="number" id="finalsalestotal" class="form-control" readonly>
                         </div>
-                        <div class="form-group">
+                        <div id="installmentcountcontainer" class="form-group sale-only-field">
                             <label for="installmentcount" class="control-label">Number of instalments</label>
                             <input type="number" id="installmentcount" class="form-control" min="1" step="1" placeholder="1">
                         </div>
@@ -186,7 +186,7 @@
                     <input type="hidden" id="discountapprovalstatus" value="NOT_REQUIRED">
                     <input type="hidden" id="approvalrequired" value="NO">
                     <input type="hidden" id="discountapprovalsubmitted" value="NO">
-                    <div id="saleinstallments" class="sale-installments hidden">
+                    <div id="saleinstallments" class="sale-installments sale-only-field hidden">
                         <div class="sale-installments-heading">
                             <span>Instalment schedule</span>
                             <small>Set a due date for every instalment. The first amount is copied to Deposit below.</small>

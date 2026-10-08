@@ -553,12 +553,29 @@ function updateSalePlan() {
   const panel = document.getElementById('saleplan');
   if (!panel) return;
   updateRentDurationVisibility();
-  const isSale = getSelectedExitMode() === 'SALE' && !!document.getElementById('unitid')?.value;
+  const transactionMode = getSelectedExitMode();
+  const isSale = transactionMode === 'SALE';
+  const isRental = transactionMode === 'RENT';
+  const hasTransaction = (isSale || isRental) && !!document.getElementById('unitid')?.value;
+  const countContainer = document.getElementById('installmentcountcontainer');
+  const baseAmountContainer = document.getElementById('transactionbaseamountgroup');
+  const installments = document.getElementById('saleinstallments');
+  countContainer?.classList.toggle('hidden', !isSale);
+  baseAmountContainer?.classList.toggle('hidden', !isSale);
+  installments?.classList.toggle('hidden', !isSale);
+  const title = document.getElementById('transactionplantitle');
+  const help = document.getElementById('transactionplanhelp');
+  const finalLabel = document.getElementById('finaltotallabel');
+  if (title) title.textContent = isSale ? 'Sale payment plan' : 'Rental payment summary';
+  if (help) help.textContent = 'Discounts require approval before this transaction can be completed.';
+  if (finalLabel) finalLabel.textContent = isSale ? 'Final sales total' : 'Final rental total';
+  panel.classList.toggle('hidden', !hasTransaction);
+  if (!hasTransaction) return;
   saleInstallmentStartDate = document.getElementById('begindate')?.value || '';
-  panel.classList.toggle('hidden', !isSale);
-  if (!isSale) return;
   const saleRow = getSaleFeeTableRow();
-  const baseAmount = parseFloat(saleRow?.querySelector('.amount-input')?.value) || 0;
+  const baseAmount = isSale
+    ? parseFloat(saleRow?.querySelector('.amount-input')?.value) || 0
+    : [...document.querySelectorAll('#rentapropertytable .amount-input')].reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
   const amountInput = document.getElementById('salesamount');
   const discountInput = document.getElementById('salesdiscount');
   const finalInput = document.getElementById('finalsalestotal');
@@ -581,7 +598,7 @@ function updateSalePlan() {
   if (amountInput) amountInput.value = baseAmount || '';
   if (finalInput) finalInput.value = finalTotal || '';
   const count = document.getElementById('installmentcount')?.value || '';
-  renderSaleInstallments(finalTotal, count);
+  if (isSale) renderSaleInstallments(finalTotal, count);
   const lastInstallmentDate = [...document.querySelectorAll('#saleinstallmentrows .sale-installment-due-date')].at(-1)?.value || '';
   const expirationDate = document.getElementById('expirationdate');
   if (expirationDate && isSale) expirationDate.value = lastInstallmentDate;
@@ -1017,7 +1034,7 @@ function updateRentTotalDeposit() {
     const value = hasAnyDeposit ? depositSum : payableSum;
     amountPaid.value = value ? value.toString() : '';
   }
-  if (getSelectedExitMode() === 'SALE') updateSalePlan();
+  if (['SALE', 'RENT'].includes(getSelectedExitMode())) updateSalePlan();
 }
 
 /* -------- FEE TABLE EVENTS & VALIDATION -------- */
@@ -1051,6 +1068,22 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
     return notification('Select Renting or Selling before choosing a unit', 0);
   }
   formData.set('exitmode', exitMode);
+  updateSalePlan();
+
+  const transactionDiscount = parseFloat(document.getElementById('salesdiscount')?.value) || 0;
+  const transactionApprovalStatus = `${document.getElementById('discountapprovalstatus')?.value || 'NOT_REQUIRED'}`.toUpperCase();
+  if (exitMode === 'RENT') {
+    if (submissionAction === 'COMPLETE' && transactionDiscount > 0 && transactionApprovalStatus !== 'APPROVED') {
+      return notification('This rental discount must be approved by the MD or approving officer before completing the rental', 0);
+    }
+    formData.set('salesdiscount', transactionDiscount.toString());
+    formData.set('discount', transactionDiscount.toString());
+    formData.set('finalsalestotal', document.getElementById('finalsalestotal')?.value || '');
+    formData.set('totalamount', document.getElementById('finalsalestotal')?.value || '');
+    formData.set('discountapprovalstatus', transactionApprovalStatus);
+    formData.set('approvalrequired', transactionDiscount > 0 ? 'YES' : 'NO');
+    formData.set('action', submissionAction);
+  }
 
   if (exitMode === 'SALE') {
     updateSalePlan();
