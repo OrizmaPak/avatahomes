@@ -66,7 +66,7 @@ function renderPendingDiscountApprovals() {
 }
 
 async function fetchPendingDiscountApprovals() {
-  const response = await httpRequest2('../controllers/fetchdiscountapprovals', null, document.getElementById('pendingapprovalrefresh'), 'json');
+  const response = await httpRequest2('../controllers/fetchsalesdraft', null, document.getElementById('pendingapprovalrefresh'), 'json');
   if (!response?.status) {
     pendingDiscountRows = [];
     renderPendingDiscountApprovals();

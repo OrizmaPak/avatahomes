@@ -1129,24 +1129,24 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
 
   // Fees
   const fees = [...document.querySelectorAll('#rentapropertytable tr')];
-  if (!fees.length) {
-    return notification('Add at least one fee before submitting', 0);
+  if (submissionAction !== 'SEND_APPROVAL') {
+    if (!fees.length) {
+      return notification('Add at least one fee before submitting', 0);
+    }
+    formData.set('rowcount', fees.length);
+    const saleFeeRow = exitMode === 'SALE' ? getSaleFeeTableRow() : null;
+    const approvedSaleDiscount = exitMode === 'SALE' && `${document.getElementById('discountapprovalstatus')?.value || ''}`.toUpperCase() === 'APPROVED'
+      ? (document.getElementById('salesdiscount')?.value || '')
+      : '';
+    fees.forEach((r, i) => {
+      const idx = i + 1;
+      formData.set(`feenameid${idx}`, r.querySelector('.feename-select').value);
+      formData.set(`amount${idx}`, r.querySelector('.amount-input').value.trim());
+      formData.set(`deposit${idx}`, r.querySelector('.deposit-input').value.trim());
+      formData.set(`discount${idx}`, r === saleFeeRow ? approvedSaleDiscount : r.querySelector('.discount-input').value.trim());
+      formData.set(`renewable${idx}`, r.querySelector('.renewable-select').value);
+    });
   }
-  formData.set('rowcount', fees.length);
-  const saleFeeRow = exitMode === 'SALE' ? getSaleFeeTableRow() : null;
-  const approvedSaleDiscount = exitMode === 'SALE' && `${document.getElementById('discountapprovalstatus')?.value || ''}`.toUpperCase() === 'APPROVED'
-    ? (document.getElementById('salesdiscount')?.value || '')
-    : '';
-  fees.forEach((r, i) => {
-    const idx = i + 1;
-    formData.set(`feenameid${idx}`, r.querySelector('.feename-select').value);
-    formData.set(`amount${idx}`,    r.querySelector('.amount-input').value.trim());
-
-
-    formData.set(`deposit${idx}`,   r.querySelector('.deposit-input').value.trim());
-    formData.set(`discount${idx}`,  r === saleFeeRow ? approvedSaleDiscount : r.querySelector('.discount-input').value.trim());
-    formData.set(`renewable${idx}`, r.querySelector('.renewable-select').value);
-  });
 
   // if the id tenantid input is empty then set tenant to YES else set it to empty string
   if(document.getElementById('tenantid').value == ""){
@@ -1157,7 +1157,7 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
 
   const btn = document.querySelector(`#rentapropertyform #${submissionAction === 'SEND_APPROVAL' ? 'sendapproval' : 'submit'}`);
   const res = await httpRequest2(
-    submissionAction === 'SEND_APPROVAL' ? '../controllers/senddiscountapproval' : '../controllers/rentapropertyscript',
+    submissionAction === 'SEND_APPROVAL' ? '../controllers/sendsalesforapproval' : '../controllers/rentapropertyscript',
     formData,
     btn
   );

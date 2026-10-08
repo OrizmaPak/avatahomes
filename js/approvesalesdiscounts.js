@@ -76,7 +76,7 @@ async function updateSalesDiscountApproval(id, status) {
 }
 
 async function fetchSalesApprovalRows() {
-  const response = await httpRequest2('../controllers/fetchdiscountapprovals', null, document.getElementById('salesapprovalrefresh'), 'json');
+  const response = await httpRequest2('../controllers/fetchsalesdraft', null, document.getElementById('salesapprovalrefresh'), 'json');
   if (!response?.status) {
     salesApprovalRows = [];
     renderSalesApprovalList();
