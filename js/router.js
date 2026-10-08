@@ -115,7 +115,7 @@ const routerTree = {
     rentaproperty: {
         template: 'rentaproperty',
         startingFunction: 'rentapropertyActive',
-        scriptName:  './js/rentaproperty.js?v=20261008a'
+        scriptName:  './js/rentaproperty.js?v=20261008b'
     },
     viewtenants: {
         template: 'viewtenants',

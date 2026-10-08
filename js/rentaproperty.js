@@ -2,6 +2,7 @@ let rentapropertyid;
 let rentapropertyresult;
 let rentFeeDefinitions = [];
 let rentUnitChoices = null;
+let saleInstallmentStartDate = '';
 const RENT_APPLY_PERCENTAGE_GROUP = 'rentaproperty-apply-percent';
 const RENT_NOT_APPLICABLE_DURATION = 'NOT APPLICABLE';
 const RENT_ALLOWED_UNIT_FEES = ['RENT', 'PROPERTY SALES'];
@@ -91,6 +92,7 @@ function updateRentExitModeVisibility() {
 async function handleRentExitModeChange() {
   const propertySelect = document.getElementById('propertyid');
   if (!propertySelect?.value) return;
+  saleInstallmentStartDate = '';
   const unitSelect = document.getElementById('unitid');
   if (unitSelect) unitSelect.value = '';
   document.querySelectorAll('.remain').forEach(element => element.classList.add('hidden'));
@@ -196,6 +198,12 @@ async function rentapropertyActive() {
       .addEventListener('click', rentapropertysubmit);
   form.querySelector('#sendapproval')
       ?.addEventListener('click', () => rentapropertysubmit('SEND_APPROVAL'));
+  bindSaleInstallmentStartModal();
+  document.getElementById('installmentcount')?.addEventListener('change', () => {
+    if (getSelectedExitMode() === 'SALE' && Number.parseInt(document.getElementById('installmentcount').value, 10) > 0) {
+      openSaleInstallmentStartModal();
+    }
+  });
 
   // Fetch tenants
   const tRes = await httpRequest2('../controllers/fetchtenants', null, null, 'json');
@@ -508,11 +516,14 @@ function renderSaleInstallments(total, count) {
       ? Math.round((total - (baseAmount * (safeCount - 1))) * 100) / 100
       : baseAmount;
     const old = previous[index] || {};
+    const dueDate = saleInstallmentStartDate
+      ? getMonthlyInstallmentDate(saleInstallmentStartDate, index)
+      : old.dueDate;
     return `<div class="sale-installment-card" data-installment-index="${index + 1}">
       <div class="sale-installment-number"><span>Instalment ${index + 1}</span><span>₦${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
       <input type="hidden" class="sale-installment-amount" value="${amount}">
       <label for="saleinstallmentdate${index + 1}">Due date</label>
-      <input type="date" id="saleinstallmentdate${index + 1}" class="sale-installment-due-date" value="${old.dueDate}" required>
+      <input type="date" id="saleinstallmentdate${index + 1}" class="sale-installment-due-date" value="${dueDate}" required>
       ${index === 0 ? `<label for="saleinstallmentdeposit${index + 1}">Deposit to collect</label><input type="number" id="saleinstallmentdeposit${index + 1}" class="sale-installment-deposit" min="0" step="0.01" value="${old.deposit || amount}">` : ''}
     </div>`;
   }).join('');
@@ -524,6 +535,46 @@ function renderSaleInstallments(total, count) {
       deposit.value = event.target.value;
       updateRentTotalDeposit();
     }
+  });
+}
+
+function getMonthlyInstallmentDate(startDate, monthOffset) {
+  const [year, month, day] = `${startDate}`.split('-').map(Number);
+  if (!year || !month || !day) return '';
+  const targetMonth = month - 1 + monthOffset;
+  const targetYear = year + Math.floor(targetMonth / 12);
+  const normalizedMonth = ((targetMonth % 12) + 12) % 12;
+  const lastDay = new Date(Date.UTC(targetYear, normalizedMonth + 1, 0)).getUTCDate();
+  const validDay = Math.min(day, lastDay);
+  return `${targetYear}-${String(normalizedMonth + 1).padStart(2, '0')}-${String(validDay).padStart(2, '0')}`;
+}
+
+function openSaleInstallmentStartModal() {
+  const modal = document.getElementById('saleinstallmentstartmodal');
+  const input = document.getElementById('saleinstallmentstartdate');
+  if (!modal || !input) return;
+  input.value = saleInstallmentStartDate || new Date().toISOString().split('T')[0];
+  modal.classList.remove('hidden');
+  setTimeout(() => input.focus(), 0);
+}
+
+function closeSaleInstallmentStartModal() {
+  document.getElementById('saleinstallmentstartmodal')?.classList.add('hidden');
+}
+
+function confirmSaleInstallmentStartDate() {
+  const value = document.getElementById('saleinstallmentstartdate')?.value || '';
+  if (!value) return notification('Choose the date to start the instalment schedule', 0);
+  saleInstallmentStartDate = value;
+  closeSaleInstallmentStartModal();
+  updateSalePlan();
+}
+
+function bindSaleInstallmentStartModal() {
+  document.getElementById('saleinstallmentstartconfirm')?.addEventListener('click', confirmSaleInstallmentStartDate);
+  document.getElementById('saleinstallmentstartcancel')?.addEventListener('click', closeSaleInstallmentStartModal);
+  document.getElementById('saleinstallmentstartmodal')?.addEventListener('click', (event) => {
+    if (event.target.id === 'saleinstallmentstartmodal') closeSaleInstallmentStartModal();
   });
 }
 
@@ -568,6 +619,7 @@ function updateSalePlan() {
 /* -------- FETCH & RENDER FEES -------- */
 async function checkrentapropertyunit(el, prefillFees) {
   const unitId = el.value;
+  saleInstallmentStartDate = '';
   const tbody = document.getElementById('rentapropertytable');
   if (!tbody) return; 
   tbody.innerHTML = '';
