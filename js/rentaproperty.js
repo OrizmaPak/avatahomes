@@ -524,18 +524,8 @@ function renderSaleInstallments(total, count) {
       <input type="hidden" class="sale-installment-amount" value="${amount}">
       <label for="saleinstallmentdate${index + 1}">Due date</label>
       <input type="date" id="saleinstallmentdate${index + 1}" class="sale-installment-due-date" value="${dueDate}" required>
-      ${index === 0 ? `<label for="saleinstallmentdeposit${index + 1}">Deposit to collect</label><input type="number" id="saleinstallmentdeposit${index + 1}" class="sale-installment-deposit" min="0" step="0.01" value="${old.deposit || amount}">` : ''}
     </div>`;
   }).join('');
-  rowsContainer.querySelector('.sale-installment-deposit')?.addEventListener('input', (event) => {
-    const saleRow = getSaleFeeTableRow();
-    const deposit = saleRow?.querySelector('.deposit-input');
-    if (deposit) {
-      saleRow.dataset.saleDepositEdited = 'true';
-      deposit.value = event.target.value;
-      updateRentTotalDeposit();
-    }
-  });
 }
 
 function getMonthlyInstallmentDate(startDate, monthOffset) {
@@ -1117,7 +1107,7 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
       formData.set(`duedate${number}`, dueDate);
       formData.set(`instalmentduedate${number}`, dueDate);
       if (number === 1) {
-        formData.set('depositamount', row.querySelector('.sale-installment-deposit')?.value || '');
+        formData.set('depositamount', saleFeeRow?.querySelector('.deposit-input')?.value || '');
       }
     });
   }
