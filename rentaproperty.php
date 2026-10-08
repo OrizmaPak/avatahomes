@@ -198,7 +198,7 @@
                         onchange="document.getElementById('duration').value = 'NOT APPLICABLE';document.getElementById('expirationdate').value = ''"
                         class="form-control rentapropertyverify">
                 </div>
-                <div class="form-group remain hidden">
+                <div id="durationcontainer" class="form-group remain hidden">
                     <label for="country" class="control-label">Duration</label>
                     <select class="form-control propertyregistrationverify"
                         onchange="rentapropertydate(this.value, document.getElementById('begindate').value, this)"

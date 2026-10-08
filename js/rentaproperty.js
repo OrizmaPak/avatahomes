@@ -552,6 +552,7 @@ function getMonthlyInstallmentDate(startDate, monthOffset) {
 function updateSalePlan() {
   const panel = document.getElementById('saleplan');
   if (!panel) return;
+  updateRentDurationVisibility();
   const isSale = getSelectedExitMode() === 'SALE' && !!document.getElementById('unitid')?.value;
   panel.classList.toggle('hidden', !isSale);
   if (!isSale) return;
@@ -586,6 +587,13 @@ function updateSalePlan() {
     deposit.value = firstInstallment;
   }
 }
+
+function updateRentDurationVisibility() {
+  const durationContainer = document.getElementById('durationcontainer');
+  if (!durationContainer) return;
+  const isSale = getSelectedExitMode() === 'SALE';
+  durationContainer.classList.toggle('hidden', isSale);
+}
   
 /* -------- FETCH & RENDER FEES -------- */
 async function checkrentapropertyunit(el, prefillFees) {
@@ -605,6 +613,7 @@ async function checkrentapropertyunit(el, prefillFees) {
 
   document.querySelectorAll('.remain')
           .forEach(elm => elm.classList[unitId ? 'remove' : 'add']('hidden'));
+  updateRentDurationVisibility();
   
   if (!unitId) {
     return;
@@ -1063,10 +1072,13 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
     formData.set('action', submissionAction);
     formData.set('numberofinstalments', installmentCount.toString());
     formData.set('instalmentcount', installmentCount.toString());
+    formData.set('numberofinstalment', installmentRows.length.toString());
     installmentRows.forEach((row, index) => {
       const number = index + 1;
       formData.set(`instalmentamount${number}`, row.querySelector('.sale-installment-amount')?.value || '');
-      formData.set(`instalmentduedate${number}`, row.querySelector('.sale-installment-due-date')?.value || '');
+      const dueDate = row.querySelector('.sale-installment-due-date')?.value || '';
+      formData.set(`duedate${number}`, dueDate);
+      formData.set(`instalmentduedate${number}`, dueDate);
       if (number === 1) {
         formData.set('depositamount', row.querySelector('.sale-installment-deposit')?.value || '');
       }
