@@ -195,6 +195,11 @@ async function ensureRentFeeDefinitions(force = false) {
 
 /* -------- INITIALISATION -------- */
 async function rentapropertyActive() {
+  const storedRentPropertyId = sessionStorage.getItem('rentapropertyid');
+  if (storedRentPropertyId) {
+    rentapropertyid = storedRentPropertyId;
+    sessionStorage.removeItem('rentapropertyid');
+  }
   const form = document.querySelector('#rentapropertyform');
   form.querySelector('#submit')
       .addEventListener('click', rentapropertysubmit);
@@ -272,7 +277,7 @@ async function rentapropertyActive() {
       const record = r.data[0];
       populateData(record.rentdata);
       const savedSaleDiscount = record.rentdata.discount ?? '';
-      const savedApprovalStatus = record.rentdata.discountapprovalstatus ?? record.rentdata.approvalstatus ?? '';
+      const savedApprovalStatus = record.rentdata.discountstatus ?? record.rentdata.discountapprovalstatus ?? record.rentdata.approvalstatus ?? '';
       if (document.getElementById('discount') && savedSaleDiscount !== '') {
         document.getElementById('discount').value = savedSaleDiscount;
       }
@@ -295,6 +300,24 @@ async function rentapropertyActive() {
         unitSelect.value = record.rentdata.unitid;
         rentUnitChoices?.setChoiceByValue(String(record.rentdata.unitid));
         await checkrentapropertyunit(unitSelect, record.rentalfees || []);
+      }
+
+      const savedInstallments = record.instalments || record.rentdata.instalments || [];
+      const savedInstallmentCount = Number.parseInt(record.rentdata.numberofinstalment, 10);
+      if (record.rentdata.exitmode?.toUpperCase() === 'SALE' && Number.isInteger(savedInstallmentCount) && savedInstallmentCount > 0) {
+        const installmentCount = document.getElementById('installmentcount');
+        const beginDate = document.getElementById('begindate');
+        if (installmentCount) installmentCount.value = savedInstallmentCount;
+        if (beginDate) saleInstallmentStartDate = beginDate.value = record.rentdata.begindate || '';
+        updateSalePlan();
+        if (Array.isArray(savedInstallments)) {
+          savedInstallments.forEach((saved, index) => {
+            const dueDate = document.querySelectorAll('.sale-installment-due-date')[index];
+            if (dueDate && saved.duedate) dueDate.value = saved.duedate;
+          });
+          const lastDueDate = [...document.querySelectorAll('.sale-installment-due-date')].at(-1)?.value || '';
+          if (lastDueDate) document.getElementById('expirationdate').value = lastDueDate;
+        }
       }
 
       const paymentDate = document.getElementById('paymentdate');

@@ -23,6 +23,7 @@ if(!isset($_SESSION["wuseremail"]))
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <link rel="stylesheet" href="./css/rentaproperty.css?v=20261008a">
     <link rel="stylesheet" href="./css/discountapprovals.css?v=20261008d">
+  <link rel="stylesheet" href="./css/discountapproval-schedule.css?v=20261009a">
      <!-- PWA Manifest --> 
   <link rel="manifest" href="./manifest.json"> 
       <!-- ios support -->

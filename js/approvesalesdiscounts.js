@@ -34,7 +34,7 @@ function renderSalesApprovalList() {
     const id = salesApprovalText(item, 'id', 'saleid', 'rentid');
     const instalments = Array.isArray(item?.instalments) ? item.instalments.length : salesApprovalText(item, 'numberofinstalment');
     return `<tr data-approval-id="${id}"><td>${salesApprovalClient(item)}</td><td>${salesApprovalProperty(item)}</td><td>${salesApprovalUnit(item)}</td><td>${salesApprovalMoney(salesApprovalOriginalAmount(item))}</td><td>${salesApprovalMoney(salesApprovalText(item, 'totalamount'))}</td><td>${salesApprovalMoney(salesApprovalText(item, 'discount'))}</td><td>${instalments || 'N/A'}</td><td>${salesApprovalText(item, 'exitmode') || 'N/A'}</td><td>${salesApprovalStatusMarkup(salesApprovalStatus(item))}</td></tr>`;
-  }).join('') : '<tr><td colspan="8">No pending approvals found.</td></tr>';
+  }).join('') : '<tr><td colspan="9">No pending approvals found.</td></tr>';
   table.querySelectorAll('[data-approval-id]').forEach(row => row.addEventListener('click', () => selectSalesApproval(row.dataset.approvalId)));
 }
 
@@ -54,7 +54,7 @@ function renderSalesApprovalDetail() {
   const item = selectedSalesApproval;
   const id = salesApprovalText(item, 'id', 'saleid', 'rentid');
   const instalments = Array.isArray(item?.instalments) ? item.instalments : [];
-  const instalmentMarkup = instalments.length ? `<div class="approval-installments"><h3>Instalment schedule</h3><div class="approval-installment-list">${instalments.map((row, index) => `<div><span>${index + 1}. ${row.duedate || 'No due date'}</span><strong>${salesApprovalMoney(row.instalmentamount)}</strong></div>`).join('')}</div></div>` : '';
+  const instalmentMarkup = instalments.length ? `<div class="approval-installments"><div class="approval-installments-heading"><div><h3>Instalment schedule</h3><small>${instalments.length} scheduled payments</small></div><span class="material-symbols-outlined">event_repeat</span></div><div class="approval-installment-list">${instalments.map((row, index) => `<div class="approval-installment-row"><span class="approval-installment-index">${index + 1}</span><span class="approval-installment-date"><small>Due date</small><strong>${row.duedate || 'No due date'}</strong></span><span class="approval-installment-amount"><small>Amount</small><strong>${salesApprovalMoney(row.instalmentamount)}</strong></span></div>`).join('')}</div></div>` : '';
   panel.innerHTML = `<div class="approval-detail-header"><div><h2>Discount request</h2><p class="text-sm text-gray-500">Sale reference: ${salesApprovalText(item, 'reference') || id}</p></div>${salesApprovalStatusMarkup(salesApprovalStatus(item))}</div>
     <div class="approval-detail-grid">
       <div class="approval-detail-item"><small>Client</small><strong>${salesApprovalClient(item)}</strong></div>

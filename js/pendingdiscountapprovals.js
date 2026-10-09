@@ -75,12 +75,12 @@ function renderPendingDiscountApprovals() {
       <td>${approvalMoney(approvalValue(item, 'discount'))}</td>
       <td>${instalments || 'N/A'}</td><td>${approvalValue(item, 'exitmode') || 'N/A'}</td>
       <td>${approvalStatusMarkup(approvalStatus(item))}</td>
-      <td><button type="button" class="btn" data-review-approval="${id}">Review</button></td>
+      <td><button type="button" class="btn" data-edit-approval="${id}">Edit</button></td>
     </tr>`;
   }).join('') : '<tr><td colspan="11">No pending discount approvals found.</td></tr>';
-  table.querySelectorAll('[data-review-approval]').forEach(button => button.addEventListener('click', () => {
-    sessionStorage.setItem('approvalSaleId', button.dataset.reviewApproval);
-    document.getElementById('approvesalesdiscounts')?.click();
+  table.querySelectorAll('[data-edit-approval]').forEach(button => button.addEventListener('click', () => {
+    sessionStorage.setItem('rentapropertyid', button.dataset.editApproval);
+    document.getElementById('rentaproperty')?.click();
   }));
 }
 

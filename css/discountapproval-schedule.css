@@ -1,0 +1,11 @@
+.approval-installments{margin-top:1.25rem;padding:1rem;border:1px solid #eadfbd;border-radius:12px;background:linear-gradient(135deg,#fffdf7,#fff9eb)}
+.approval-installments-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding-bottom:.75rem;border-bottom:1px solid #eadfbd;color:#604d17}
+.approval-installments-heading h3{margin:0;font-size:1rem}
+.approval-installments-heading small,.approval-installment-row small{display:block;color:#80651b;font-size:.7rem;text-transform:uppercase;letter-spacing:.04em}
+.approval-installments-heading .material-symbols-outlined{font-size:1.5rem;color:#c9a227}
+.approval-installment-list{display:grid;gap:.55rem;margin-top:.75rem}
+.approval-installment-row{display:grid;grid-template-columns:2rem 1fr auto;align-items:center;gap:.75rem;padding:.7rem .75rem;border:1px solid #f0e4c4;border-radius:9px;background:#fff;box-shadow:0 2px 8px #7a5a120d}
+.approval-installment-index{display:grid;place-items:center;width:1.8rem;height:1.8rem;border-radius:50%;background:#fff3cd;color:#8a6116;font-weight:800;font-size:.8rem}
+.approval-installment-date strong,.approval-installment-amount strong{display:block;margin-top:.15rem;color:#334155;font-size:.85rem}
+.approval-installment-amount{text-align:right}
+@media(max-width:600px){.approval-installment-row{grid-template-columns:2rem 1fr}.approval-installment-amount{grid-column:2;text-align:left}}
