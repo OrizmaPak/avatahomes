@@ -571,7 +571,7 @@ function updateSalePlan() {
   const status = setSaleDiscountApprovalStatus(discount > 0
     ? document.getElementById('discountapprovalstatus')?.value
     : 'NOT_REQUIRED');
-  const finalTotal = status === 'APPROVED' ? Math.max(baseAmount - discount, 0) : baseAmount;
+  const finalTotal = Math.max(baseAmount - discount, 0);
   const submitButton = document.getElementById('submit');
   const approvalButton = document.getElementById('sendapproval');
   const approvalRequired = discount > 0 && status !== 'APPROVED';
@@ -584,6 +584,8 @@ function updateSalePlan() {
   }
   if (amountInput) amountInput.value = baseAmount || '';
   if (finalInput) finalInput.value = finalTotal || '';
+  const finalAmountInput = saleRow?.querySelector('.final-amount-input');
+  if (finalAmountInput) finalAmountInput.value = finalTotal || '';
   const count = document.getElementById('installmentcount')?.value || '';
   if (isSale) renderSaleInstallments(finalTotal, count);
   const lastInstallmentDate = [...document.querySelectorAll('#saleinstallmentrows .sale-installment-due-date')].at(-1)?.value || '';
@@ -702,6 +704,9 @@ function addRentFeeRow(prefill = {}) {
     <td>
       <div class="form-group min-w-[130px]">        <input type="number" id="ra-${id}" class="form-control amount-input" placeholder="Enter Amount">
       </div>
+    </td>
+    <td>
+      <div class="form-group min-w-[130px]"><input type="number" id="fa-${id}" class="form-control final-amount-input" placeholder="0" readonly></div>
     </td>
     <td class="hidden">     <div class="form-group w-[90px]">
         <select id="rp-${id}" class="form-control rental-period-input">${getDurationOptionsMarkup(prefill.rentalPeriod ?? '')}</select>

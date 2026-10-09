@@ -303,6 +303,7 @@
                                 <th>Fee Name</th>
                                 <th>Mode</th> 
                                  <th>Amount</th>
+                                <th>Final amount</th>
                                 <th class="hidden">payment period (months)</th>   
                                 <th>Deposit</th>
                                 <th>Discount</th>
