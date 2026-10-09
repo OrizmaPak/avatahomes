@@ -10,8 +10,8 @@
             </div>
             <div class="table-content approval-table-wrap">
                 <table>
-                    <thead><tr><th>Client</th><th>Property</th><th>Unit</th><th>Final total</th><th>Discount</th><th>Instalments</th><th>Mode</th><th>Status</th></tr></thead>
-                    <tbody id="salesapprovaltable"><tr><td colspan="8">Loading approvals...</td></tr></tbody>
+                    <thead><tr><th>Client</th><th>Property</th><th>Unit</th><th>Sales amount</th><th>Final total</th><th>Discount</th><th>Instalments</th><th>Mode</th><th>Status</th></tr></thead>
+                    <tbody id="salesapprovaltable"><tr><td colspan="9">Loading approvals...</td></tr></tbody>
                 </table>
             </div>
         </div>

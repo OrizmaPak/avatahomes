@@ -39,6 +39,10 @@ function approvalMoney(value) {
   return Number.isFinite(number) ? `₦${number.toLocaleString()}` : '₦0';
 }
 
+function approvalSalesAmount(item) {
+  return (Number(approvalValue(item, 'totalamount')) || 0) + (Number(approvalValue(item, 'discount')) || 0);
+}
+
 function approvalStatusMarkup(status) {
   const normalized = status.toLowerCase().replace(/\s+/g, '_');
   return `<span class="approval-status approval-status-${normalized}">${status.replace(/_/g, ' ')}</span>`;
@@ -66,13 +70,14 @@ function renderPendingDiscountApprovals() {
     const instalments = Array.isArray(item?.instalments) ? item.instalments.length : approvalValue(item, 'numberofinstalment');
     return `<tr>
       <td>${index + 1}</td><td>${approvalClient(item)}</td><td>${approvalProperty(item)}</td><td>${approvalUnit(item)}</td>
+      <td>${approvalMoney(approvalSalesAmount(item))}</td>
       <td>${approvalMoney(approvalValue(item, 'totalamount'))}</td>
       <td>${approvalMoney(approvalValue(item, 'discount'))}</td>
       <td>${instalments || 'N/A'}</td><td>${approvalValue(item, 'exitmode') || 'N/A'}</td>
       <td>${approvalStatusMarkup(approvalStatus(item))}</td>
       <td><button type="button" class="btn" data-review-approval="${id}">Review</button></td>
     </tr>`;
-  }).join('') : '<tr><td colspan="10">No pending discount approvals found.</td></tr>';
+  }).join('') : '<tr><td colspan="11">No pending discount approvals found.</td></tr>';
   table.querySelectorAll('[data-review-approval]').forEach(button => button.addEventListener('click', () => {
     sessionStorage.setItem('approvalSaleId', button.dataset.reviewApproval);
     document.getElementById('approvesalesdiscounts')?.click();

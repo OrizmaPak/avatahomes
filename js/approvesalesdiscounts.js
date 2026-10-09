@@ -21,6 +21,7 @@ function salesApprovalClient(item) { return salesApprovalText(item, 'client', 't
 function salesApprovalUnit(item) { return salesApprovalText(item, 'unit', 'unitname', 'unit_name') || item?.unitdata?.unitname || 'N/A'; }
 function salesApprovalProperty(item) { return salesApprovalText(item, 'property', 'propertyname', 'property_name') || item?.propertydata?.propertyname || 'N/A'; }
 function salesApprovalMoney(value) { const number = Number(value || 0); return Number.isFinite(number) ? `₦${number.toLocaleString()}` : '₦0'; }
+function salesApprovalOriginalAmount(item) { return (Number(salesApprovalText(item, 'totalamount')) || 0) + (Number(salesApprovalText(item, 'discount')) || 0); }
 function salesApprovalStatus(item) { return `${salesApprovalText(item, 'discountstatus', 'discountapprovalstatus', 'approvalstatus', 'status') || 'PENDING'}`.toUpperCase(); }
 function salesApprovalStatusMarkup(status) { return `<span class="approval-status approval-status-${status.toLowerCase().replace(/\s+/g, '_')}">${status.replace(/_/g, ' ')}</span>`; }
 
@@ -32,7 +33,7 @@ function renderSalesApprovalList() {
   table.innerHTML = rows.length ? rows.map((item) => {
     const id = salesApprovalText(item, 'id', 'saleid', 'rentid');
     const instalments = Array.isArray(item?.instalments) ? item.instalments.length : salesApprovalText(item, 'numberofinstalment');
-    return `<tr data-approval-id="${id}"><td>${salesApprovalClient(item)}</td><td>${salesApprovalProperty(item)}</td><td>${salesApprovalUnit(item)}</td><td>${salesApprovalMoney(salesApprovalText(item, 'totalamount'))}</td><td>${salesApprovalMoney(salesApprovalText(item, 'discount'))}</td><td>${instalments || 'N/A'}</td><td>${salesApprovalText(item, 'exitmode') || 'N/A'}</td><td>${salesApprovalStatusMarkup(salesApprovalStatus(item))}</td></tr>`;
+    return `<tr data-approval-id="${id}"><td>${salesApprovalClient(item)}</td><td>${salesApprovalProperty(item)}</td><td>${salesApprovalUnit(item)}</td><td>${salesApprovalMoney(salesApprovalOriginalAmount(item))}</td><td>${salesApprovalMoney(salesApprovalText(item, 'totalamount'))}</td><td>${salesApprovalMoney(salesApprovalText(item, 'discount'))}</td><td>${instalments || 'N/A'}</td><td>${salesApprovalText(item, 'exitmode') || 'N/A'}</td><td>${salesApprovalStatusMarkup(salesApprovalStatus(item))}</td></tr>`;
   }).join('') : '<tr><td colspan="8">No pending approvals found.</td></tr>';
   table.querySelectorAll('[data-approval-id]').forEach(row => row.addEventListener('click', () => selectSalesApproval(row.dataset.approvalId)));
 }
@@ -59,7 +60,7 @@ function renderSalesApprovalDetail() {
       <div class="approval-detail-item"><small>Client</small><strong>${salesApprovalClient(item)}</strong></div>
       <div class="approval-detail-item"><small>Property</small><strong>${salesApprovalProperty(item)}</strong></div>
       <div class="approval-detail-item"><small>Unit</small><strong>${salesApprovalUnit(item)}</strong></div>
-      <div class="approval-detail-item"><small>Sale amount</small><strong>${salesApprovalMoney(salesApprovalText(item, 'amount'))}</strong></div>
+      <div class="approval-detail-item"><small>Sales amount</small><strong>${salesApprovalMoney(salesApprovalOriginalAmount(item))}</strong></div>
       <div class="approval-detail-item"><small>Requested discount</small><strong>${salesApprovalMoney(salesApprovalText(item, 'discount'))}</strong></div>
       <div class="approval-detail-item"><small>Final total</small><strong>${salesApprovalMoney(salesApprovalText(item, 'totalamount'))}</strong></div>
       <div class="approval-detail-item"><small>Instalments</small><strong>${salesApprovalText(item, 'numberofinstalment') || 'N/A'}</strong></div>
