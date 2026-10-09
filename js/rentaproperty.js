@@ -271,10 +271,10 @@ async function rentapropertyActive() {
     if (r.status && r.data.length) {
       const record = r.data[0];
       populateData(record.rentdata);
-      const savedSaleDiscount = record.rentdata.salesdiscount ?? record.rentdata.discountamount ?? '';
+      const savedSaleDiscount = record.rentdata.discount ?? '';
       const savedApprovalStatus = record.rentdata.discountapprovalstatus ?? record.rentdata.approvalstatus ?? '';
-      if (document.getElementById('salesdiscount') && savedSaleDiscount !== '') {
-        document.getElementById('salesdiscount').value = savedSaleDiscount;
+      if (document.getElementById('discount') && savedSaleDiscount !== '') {
+        document.getElementById('discount').value = savedSaleDiscount;
       }
       if (document.getElementById('discountapprovalstatus') && savedApprovalStatus) {
         document.getElementById('discountapprovalstatus').value = `${savedApprovalStatus}`.toUpperCase();
@@ -479,12 +479,10 @@ function getSaleFeeTableRow() {
 function setSaleDiscountApprovalStatus(status = 'NOT_REQUIRED') {
   const normalized = `${status || 'NOT_REQUIRED'}`.trim().toUpperCase();
   const hidden = document.getElementById('discountapprovalstatus');
-  const required = document.getElementById('approvalrequired');
   const badge = document.getElementById('saleapprovalstatus');
-  const discount = parseFloat(document.getElementById('salesdiscount')?.value) || 0;
+  const discount = parseFloat(document.getElementById('discount')?.value) || 0;
   const effectiveStatus = discount > 0 && normalized === 'NOT_REQUIRED' ? 'PENDING' : normalized;
   if (hidden) hidden.value = effectiveStatus;
-  if (required) required.value = discount > 0 ? 'YES' : 'NO';
   if (!badge) return effectiveStatus;
   badge.textContent = effectiveStatus === 'APPROVED'
     ? 'MD approved'
@@ -566,8 +564,8 @@ function updateSalePlan() {
     ? parseFloat(saleRow?.querySelector('.amount-input')?.value) || 0
     : [...document.querySelectorAll('#rentapropertytable .amount-input')].reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
   const amountInput = document.getElementById('salesamount');
-  const discountInput = document.getElementById('salesdiscount');
-  const finalInput = document.getElementById('finalsalestotal');
+  const discountInput = document.getElementById('discount');
+  const finalInput = document.getElementById('totalamount');
   const discount = Math.max(0, Math.min(baseAmount, parseFloat(discountInput?.value) || 0));
   if (discountInput && discountInput.value !== '' && Number(discountInput.value) !== discount) discountInput.value = discount;
   const status = setSaleDiscountApprovalStatus(discount > 0
@@ -1060,24 +1058,19 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
   updateSalePlan();
   const saleFeeRow = exitMode === 'SALE' ? getSaleFeeTableRow() : null;
 
-  const transactionDiscount = parseFloat(document.getElementById('salesdiscount')?.value) || 0;
+  const transactionDiscount = parseFloat(document.getElementById('discount')?.value) || 0;
   const transactionApprovalStatus = `${document.getElementById('discountapprovalstatus')?.value || 'NOT_REQUIRED'}`.toUpperCase();
   if (exitMode === 'RENT') {
     if (submissionAction === 'COMPLETE' && transactionDiscount > 0 && transactionApprovalStatus !== 'APPROVED') {
       return notification('This rental discount must be approved by the MD or approving officer before completing the rental', 0);
     }
-    formData.set('salesdiscount', transactionDiscount.toString());
     formData.set('discount', transactionDiscount.toString());
-    formData.set('finalsalestotal', document.getElementById('finalsalestotal')?.value || '');
-    formData.set('totalamount', document.getElementById('finalsalestotal')?.value || '');
-    formData.set('discountapprovalstatus', transactionApprovalStatus);
-    formData.set('approvalrequired', transactionDiscount > 0 ? 'YES' : 'NO');
-    formData.set('action', submissionAction);
+    formData.set('totalamount', document.getElementById('totalamount')?.value || '');
   }
 
   if (exitMode === 'SALE') {
     updateSalePlan();
-    const saleDiscount = parseFloat(document.getElementById('salesdiscount')?.value) || 0;
+    const saleDiscount = parseFloat(document.getElementById('discount')?.value) || 0;
     const approvalStatus = `${document.getElementById('discountapprovalstatus')?.value || 'NOT_REQUIRED'}`.toUpperCase();
     const installmentCount = Number.parseInt(document.getElementById('installmentcount')?.value || '', 10);
     const installmentRows = [...document.querySelectorAll('#saleinstallmentrows .sale-installment-card')];
@@ -1090,25 +1083,14 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
     if (installmentRows.some(row => !row.querySelector('.sale-installment-due-date')?.value)) {
       return notification('Select a due date for every instalment', 0);
     }
-    formData.set('salesamount', document.getElementById('salesamount')?.value || '');
-    formData.set('salesdiscount', saleDiscount.toString());
-    formData.set('finalsalestotal', document.getElementById('finalsalestotal')?.value || '');
-    formData.set('totalamount', document.getElementById('finalsalestotal')?.value || '');
-    formData.set('discountapprovalstatus', approvalStatus);
-    formData.set('approvalrequired', saleDiscount > 0 ? 'YES' : 'NO');
-    formData.set('action', submissionAction);
-    formData.set('numberofinstalments', installmentCount.toString());
-    formData.set('instalmentcount', installmentCount.toString());
+    formData.set('discount', saleDiscount.toString());
+    formData.set('totalamount', document.getElementById('totalamount')?.value || '');
     formData.set('numberofinstalment', installmentRows.length.toString());
     installmentRows.forEach((row, index) => {
       const number = index + 1;
       formData.set(`instalmentamount${number}`, row.querySelector('.sale-installment-amount')?.value || '');
       const dueDate = row.querySelector('.sale-installment-due-date')?.value || '';
       formData.set(`duedate${number}`, dueDate);
-      formData.set(`instalmentduedate${number}`, dueDate);
-      if (number === 1) {
-        formData.set('depositamount', saleFeeRow?.querySelector('.deposit-input')?.value || '');
-      }
     });
   }
 
@@ -1136,7 +1118,7 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
     }
     formData.set('rowcount', fees.length);
     const approvedSaleDiscount = exitMode === 'SALE' && `${document.getElementById('discountapprovalstatus')?.value || ''}`.toUpperCase() === 'APPROVED'
-      ? (document.getElementById('salesdiscount')?.value || '')
+      ? (document.getElementById('discount')?.value || '')
       : '';
     fees.forEach((r, i) => {
       const idx = i + 1;
@@ -1192,7 +1174,7 @@ document.addEventListener('input', (e) => {
 }, true);
 
 document.addEventListener('input', (e) => {
-  if (e.target?.id === 'salesdiscount') {
+  if (e.target?.id === 'discount') {
     const discount = parseFloat(e.target.value) || 0;
     const approvalStatus = document.getElementById('discountapprovalstatus');
     const approvalSubmitted = document.getElementById('discountapprovalsubmitted');

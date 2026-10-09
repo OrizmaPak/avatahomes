@@ -27,7 +27,7 @@ function renderSalesApprovalList() {
   const rows = salesApprovalRows.filter(item => `${salesApprovalClient(item)} ${salesApprovalProperty(item)} ${salesApprovalUnit(item)} ${salesApprovalText(item, 'reference', 'id')}`.toLowerCase().includes(query));
   table.innerHTML = rows.length ? rows.map((item) => {
     const id = salesApprovalText(item, 'id', 'saleid', 'rentid');
-    return `<tr data-approval-id="${id}"><td>${salesApprovalClient(item)}</td><td>${salesApprovalUnit(item)}</td><td>${salesApprovalMoney(salesApprovalText(item, 'salesdiscount', 'discount', 'discountamount'))}</td><td>${salesApprovalStatusMarkup(salesApprovalStatus(item))}</td></tr>`;
+    return `<tr data-approval-id="${id}"><td>${salesApprovalClient(item)}</td><td>${salesApprovalUnit(item)}</td><td>${salesApprovalMoney(salesApprovalText(item, 'discount'))}</td><td>${salesApprovalStatusMarkup(salesApprovalStatus(item))}</td></tr>`;
   }).join('') : '<tr><td colspan="4">No pending approvals found.</td></tr>';
   table.querySelectorAll('[data-approval-id]').forEach(row => row.addEventListener('click', () => selectSalesApproval(row.dataset.approvalId)));
 }
@@ -59,9 +59,9 @@ function renderSalesApprovalDetail() {
       <div class="approval-detail-item"><small>Property</small><strong>${salesApprovalProperty(item)}</strong></div>
       <div class="approval-detail-item"><small>Unit</small><strong>${salesApprovalUnit(item)}</strong></div>
       <div class="approval-detail-item"><small>Original sale amount</small><strong>${salesApprovalMoney(salesApprovalText(item, 'salesamount', 'originalamount', 'amount'))}</strong></div>
-      <div class="approval-detail-item"><small>Requested discount</small><strong>${salesApprovalMoney(salesApprovalText(item, 'salesdiscount', 'discount', 'discountamount'))}</strong></div>
-      <div class="approval-detail-item"><small>Final total</small><strong>${salesApprovalMoney(salesApprovalText(item, 'totalamount', 'finalsalestotal', 'finaltotal'))}</strong></div>
-      <div class="approval-detail-item"><small>Instalments</small><strong>${salesApprovalText(item, 'numberofinstalments', 'instalmentcount') || 'N/A'}</strong></div>
+      <div class="approval-detail-item"><small>Requested discount</small><strong>${salesApprovalMoney(salesApprovalText(item, 'discount'))}</strong></div>
+      <div class="approval-detail-item"><small>Final total</small><strong>${salesApprovalMoney(salesApprovalText(item, 'totalamount'))}</strong></div>
+      <div class="approval-detail-item"><small>Instalments</small><strong>${salesApprovalText(item, 'numberofinstalment') || 'N/A'}</strong></div>
       <div class="approval-detail-item"><small>Submitted by</small><strong>${salesApprovalText(item, 'user', 'username', 'createdby') || 'N/A'}</strong></div>
     </div>
     <div class="approval-action-row"><button type="button" class="approval-reject" id="rejectsalesdiscount">Reject</button><button type="button" class="approval-approve" id="approvesalesdiscount">Approve Discount</button></div>`;

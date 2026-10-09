@@ -61,8 +61,8 @@ function renderPendingDiscountApprovals() {
     const id = approvalValue(item, 'id', 'saleid', 'rentid');
     return `<tr>
       <td>${index + 1}</td><td>${approvalClient(item)}</td><td>${approvalProperty(item)}</td><td>${approvalUnit(item)}</td>
-      <td>${approvalMoney(approvalValue(item, 'totalamount', 'finalsalestotal', 'finaltotal'))}</td>
-      <td>${approvalMoney(approvalValue(item, 'salesdiscount', 'discount', 'discountamount'))}</td>
+      <td>${approvalMoney(approvalValue(item, 'totalamount'))}</td>
+      <td>${approvalMoney(approvalValue(item, 'discount'))}</td>
       <td>${approvalStatusMarkup(approvalStatus(item))}</td>
       <td><button type="button" class="btn" data-review-approval="${id}">Review</button></td>
     </tr>`;

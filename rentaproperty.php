@@ -171,12 +171,12 @@
                             <input type="number" id="salesamount" class="form-control" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="salesdiscount" class="control-label">Discount</label>
-                            <input type="number" id="salesdiscount" class="form-control" min="0" step="0.01" placeholder="Enter discount">
+                            <label for="discount" class="control-label">Discount</label>
+                            <input type="number" id="discount" class="form-control" min="0" step="0.01" placeholder="Enter discount">
                         </div>
                         <div class="form-group">
-                            <label id="finaltotallabel" for="finalsalestotal" class="control-label">Final total</label>
-                            <input type="number" id="finalsalestotal" class="form-control" readonly>
+                            <label id="finaltotallabel" for="totalamount" class="control-label">Final total</label>
+                            <input type="number" id="totalamount" class="form-control" readonly>
                         </div>
                         <div id="installmentcountcontainer" class="form-group sale-only-field">
                             <label for="installmentcount" class="control-label">Number of instalments</label>
@@ -184,7 +184,6 @@
                         </div>
                     </div>
                     <input type="hidden" id="discountapprovalstatus" value="NOT_REQUIRED">
-                    <input type="hidden" id="approvalrequired" value="NO">
                     <input type="hidden" id="discountapprovalsubmitted" value="NO">
                     <div id="saleinstallments" class="sale-installments sale-only-field hidden">
                         <div class="sale-installments-heading">
