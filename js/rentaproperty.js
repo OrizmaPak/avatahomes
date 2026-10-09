@@ -1058,6 +1058,7 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
   }
   formData.set('exitmode', exitMode);
   updateSalePlan();
+  const saleFeeRow = exitMode === 'SALE' ? getSaleFeeTableRow() : null;
 
   const transactionDiscount = parseFloat(document.getElementById('salesdiscount')?.value) || 0;
   const transactionApprovalStatus = `${document.getElementById('discountapprovalstatus')?.value || 'NOT_REQUIRED'}`.toUpperCase();
@@ -1134,7 +1135,6 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
       return notification('Add at least one fee before submitting', 0);
     }
     formData.set('rowcount', fees.length);
-    const saleFeeRow = exitMode === 'SALE' ? getSaleFeeTableRow() : null;
     const approvedSaleDiscount = exitMode === 'SALE' && `${document.getElementById('discountapprovalstatus')?.value || ''}`.toUpperCase() === 'APPROVED'
       ? (document.getElementById('salesdiscount')?.value || '')
       : '';
