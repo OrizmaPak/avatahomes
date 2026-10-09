@@ -563,7 +563,7 @@ function updateSalePlan() {
   const baseAmount = isSale
     ? parseFloat(saleRow?.querySelector('.amount-input')?.value) || 0
     : [...document.querySelectorAll('#rentapropertytable .amount-input')].reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
-  const amountInput = document.getElementById('salesamount');
+  const amountInput = document.getElementById('baseamount');
   const discountInput = document.getElementById('discount');
   const finalInput = document.getElementById('totalamount');
   const discount = Math.max(0, Math.min(baseAmount, parseFloat(discountInput?.value) || 0));

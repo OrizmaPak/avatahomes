@@ -167,8 +167,8 @@
                     </div>
                     <div class="sale-plan-fields">
                         <div id="transactionbaseamountgroup" class="form-group">
-                            <label for="salesamount" class="control-label">Sale amount</label>
-                            <input type="number" id="salesamount" class="form-control" readonly>
+                            <label for="baseamount" class="control-label">Sale amount</label>
+                            <input type="number" id="baseamount" class="form-control" readonly>
                         </div>
                         <div class="form-group">
                             <label for="discount" class="control-label">Discount</label>

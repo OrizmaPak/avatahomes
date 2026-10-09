@@ -58,7 +58,7 @@ function renderSalesApprovalDetail() {
       <div class="approval-detail-item"><small>Client</small><strong>${salesApprovalClient(item)}</strong></div>
       <div class="approval-detail-item"><small>Property</small><strong>${salesApprovalProperty(item)}</strong></div>
       <div class="approval-detail-item"><small>Unit</small><strong>${salesApprovalUnit(item)}</strong></div>
-      <div class="approval-detail-item"><small>Original sale amount</small><strong>${salesApprovalMoney(salesApprovalText(item, 'salesamount', 'originalamount', 'amount'))}</strong></div>
+      <div class="approval-detail-item"><small>Sale amount</small><strong>${salesApprovalMoney(salesApprovalText(item, 'amount'))}</strong></div>
       <div class="approval-detail-item"><small>Requested discount</small><strong>${salesApprovalMoney(salesApprovalText(item, 'discount'))}</strong></div>
       <div class="approval-detail-item"><small>Final total</small><strong>${salesApprovalMoney(salesApprovalText(item, 'totalamount'))}</strong></div>
       <div class="approval-detail-item"><small>Instalments</small><strong>${salesApprovalText(item, 'numberofinstalment') || 'N/A'}</strong></div>
