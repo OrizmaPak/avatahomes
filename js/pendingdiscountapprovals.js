@@ -75,8 +75,6 @@ function renderPendingDiscountApprovals() {
 
 async function fetchPendingDiscountApprovals() {
   const payload = new FormData();
-  payload.append('status', pendingApprovalStatusFilter);
-  payload.append('approvalstatus', pendingApprovalStatusFilter);
   payload.append('startdate', document.getElementById('pendingapprovalstartdate')?.value || '');
   payload.append('enddate', document.getElementById('pendingapprovalenddate')?.value || '');
   const response = await httpRequest2('../controllers/fetchsalesdraft', payload, document.getElementById('pendingapprovalrefresh'), 'json');
