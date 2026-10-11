@@ -80,6 +80,16 @@ function floorplansSalesUnitId(item) {
     return `${item?.rentdata?.unitid ?? item?.unitid ?? item?.unit?.id ?? ''}`;
 }
 
+function floorplansMoney(value) {
+    const amount = Number(value || 0);
+    return Number.isFinite(amount) ? amount.toLocaleString() : '0';
+}
+
+function floorplansTransactionLabel(transaction) {
+    const mode = `${transaction?.rentdata?.exitmode ?? transaction?.exitmode ?? ''}`.trim().toUpperCase();
+    return mode === 'SALE' ? 'Sold' : mode === 'RENT' ? 'Rented' : 'Transaction recorded';
+}
+
 function floorplansStatus(unit, propertyId) {
     const transaction = floorplansState.sales.find(item => floorplansSalesPropertyId(item) === propertyId && floorplansSalesUnitId(item) === floorplansUnitId(unit));
     if (transaction) {
@@ -251,7 +261,11 @@ function floorplansRenderDetails(units) {
     if (!panel || !selected) { if (panel) panel.innerHTML = '<div class="floorplans-empty-detail"><span class="material-symbols-outlined">touch_app</span><p>Select an apartment to view its details.</p></div>'; return; }
     const transaction = floorplansState.sales.find(item => floorplansSalesPropertyId(item) === selected._propertyId && floorplansSalesUnitId(item) === floorplansUnitId(selected));
     const detailStatusClass = { AVAILABLE: 'available', TAKEN: 'taken', NEEDS_REVIEW: 'review', UNCONFIRMED: 'unconfirmed' }[selected._status.key] || 'unconfirmed';
-    panel.innerHTML = `<h3>${floorplansEscape(floorplansText(selected.unitname))}</h3><span class="floorplans-detail-status ${detailStatusClass}">${floorplansStatusMarkup(selected._status)}</span><dl class="floorplans-detail-grid"><div><dt>Floor</dt><dd>${floorplansEscape(floorplansFloor(selected))}</dd></div><div><dt>Fee name</dt><dd>${floorplansEscape(floorplansText(selected.feename))}</dd></div><div><dt>Description</dt><dd>${floorplansEscape(floorplansText(selected.description))}</dd></div><div><dt>Listed amount</dt><dd>${floorplansEscape(floorplansText(selected.amount ?? selected.rent))}</dd></div>${transaction ? `<div><dt>Payment status</dt><dd>Recorded transaction</dd></div><div><dt>Client</dt><dd>${floorplansEscape(floorplansText(transaction.tenant, 'Restricted'))}</dd></div>` : ''}</dl><p class="floorplans-detail-note">Availability is determined separately from payment amount and expiration date.</p>`;
+    const rentData = transaction?.rentdata || {};
+    const instalments = Array.isArray(transaction?.instalments) ? transaction.instalments : [];
+    const salesAmount = (Number(rentData.totalamount) || 0) + (Number(rentData.discount) || 0);
+    const transactionDetails = transaction ? `<div class="floorplans-transaction-details"><div class="floorplans-transaction-heading"><h4>${floorplansEscape(floorplansTransactionLabel(transaction))} details</h4><span>${floorplansEscape(`${rentData.exitmode || ''}`.toUpperCase())}</span></div><dl class="floorplans-detail-grid"><div><dt>Client</dt><dd>${floorplansEscape(floorplansText(transaction.tenant, 'Restricted'))}</dd></div><div><dt>Transaction status</dt><dd>${floorplansEscape(floorplansText(rentData.status))}</dd></div><div><dt>Payment date</dt><dd>${floorplansEscape(floorplansText(rentData.paymentdate ? `${rentData.paymentdate}`.split(' ')[0] : ''))}</dd></div><div><dt>Begin date</dt><dd>${floorplansEscape(floorplansText(rentData.begindate))}</dd></div><div><dt>Expiry date</dt><dd>${floorplansEscape(floorplansText(rentData.expirationdate))}</dd></div><div><dt>Amount paid</dt><dd>₦${floorplansMoney(rentData.amountpaid)}</dd></div>${rentData.exitmode === 'SALE' ? `<div><dt>Sales amount</dt><dd>₦${floorplansMoney(salesAmount)}</dd></div><div><dt>Discount</dt><dd>₦${floorplansMoney(rentData.discount)}</dd></div><div><dt>Final total</dt><dd>₦${floorplansMoney(rentData.totalamount)}</dd></div>` : ''}</dl>${instalments.length ? `<div class="floorplans-installments"><h4>Payment months</h4>${instalments.map((instalment, index) => `<div class="floorplans-installment-row"><span>${index + 1}</span><strong>${floorplansEscape(floorplansText(instalment.duedate))}</strong><em>₦${floorplansMoney(instalment.instalmentamount)}</em><small>${floorplansEscape(floorplansText(instalment.status))}</small></div>`).join('')}</div>` : '<p class="floorplans-detail-note">No instalment schedule was saved for this transaction.</p>'}</div>` : '';
+    panel.innerHTML = `<h3>${floorplansEscape(floorplansText(selected.unitname))}</h3><span class="floorplans-detail-status ${detailStatusClass}">${floorplansStatusMarkup(selected._status)}</span><dl class="floorplans-detail-grid"><div><dt>Floor</dt><dd>${floorplansEscape(floorplansFloor(selected))}</dd></div><div><dt>Fee name</dt><dd>${floorplansEscape(floorplansText(selected.feename))}</dd></div><div><dt>Description</dt><dd>${floorplansEscape(floorplansText(selected.description))}</dd></div><div><dt>Listed amount</dt><dd>₦${floorplansMoney(selected.amount ?? selected.rent)}</dd></div></dl>${transactionDetails}<p class="floorplans-detail-note">Availability is determined separately from payment amount and expiration date.</p>`;
 }
 
 function floorplansRenderList(properties) {
