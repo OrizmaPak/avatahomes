@@ -8,26 +8,6 @@ const admin_user = [
     "SELECT USER"
 ]
 
-const content_user = [
-    "LOGO",
-    "NAVIGATION",
-    "BANNER",
-    "OTHER INFO",
-    "COPYRIGHT",
-    "PARTNERS",
-    "SEAT CATEGORY",
-    "SOCIAL MEDIA LINKS",
-    "STATIC AD BANNER",
-    "VISA PROCESSING COUNTRIES",
-    "TAB PROMOTION",
-    "ADD SLIDER",
-    "TRENDING FLIGHT DEALS",
-    "POPULAR HOTELS",
-    "TRAVELS AND TOURS NEWSLETTER",
-    "FOOTER QUICK LINKS",
-    "SEARCH"
-]
-
 const property_user = [
     "REGISTER PROPERTY",
     "VIEW PROPERTY",
@@ -75,7 +55,6 @@ const settings_user = [
 
 const access_array = [
                         ['admin_user', 'ADMIN', admin_user], 
-                        ['content_user', 'CONTENT', content_user], 
                         ['property_user', 'PROPERTY', property_user], 
                         ['tenancy_rental', 'CLIENTS/SALES', tenancy_rental],
                         ['transaction_user', 'OTHER TRANSACTION', transaction_user],
