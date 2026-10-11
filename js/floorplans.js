@@ -84,12 +84,12 @@ function floorplansStatus(unit, propertyId) {
     const transaction = floorplansState.sales.find(item => floorplansSalesPropertyId(item) === propertyId && floorplansSalesUnitId(item) === floorplansUnitId(unit));
     if (transaction) {
         const exitMode = `${transaction?.rentdata?.exitmode ?? transaction?.exitmode ?? ''}`.trim().toUpperCase();
-        const transactionLabel = exitMode === 'SALE' ? 'Sold' : exitMode === 'RENT' ? 'Rented' : 'Taken';
+        const transactionLabel = exitMode === 'SALE' ? 'Sold' : exitMode === 'RENT' ? 'Rented' : 'Sold';
         return { key: 'TAKEN', label: transactionLabel, icon: 'lock' };
     }
 
     const occupied = `${unit?.rented ?? unit?.isrented ?? unit?.occupied ?? ''}`.trim().toUpperCase();
-    if (['YES', 'TRUE', '1', 'SOLD', 'RENTED', 'TAKEN', 'OCCUPIED', 'ALLOCATED'].includes(occupied)) return { key: 'TAKEN', label: 'Taken', icon: 'lock' };
+    if (['YES', 'TRUE', '1', 'SOLD', 'RENTED', 'TAKEN', 'OCCUPIED', 'ALLOCATED'].includes(occupied)) return { key: 'TAKEN', label: occupied === 'RENTED' ? 'Rented' : 'Sold', icon: 'lock' };
     if (occupied && !['NO', 'FALSE', '0', 'AVAILABLE', 'OPEN', 'VACANT'].includes(occupied)) return { key: 'NEEDS_REVIEW', label: 'Needs review', icon: 'help' };
     return { key: 'AVAILABLE', label: 'Available', icon: 'check_circle' };
 }
@@ -203,7 +203,7 @@ function floorplansRender() {
 function floorplansBuildingCard(item) {
     const units = floorplansDecoratedUnits(item); const summary = floorplansSummary(units); const selected = floorplansPropertyId(item) === floorplansState.selectedPropertyId;
     const total = units.length || 1;
-    return `<article class="floorplans-building-card ${selected ? 'selected' : ''}" data-floorplans-property="${floorplansEscape(floorplansPropertyId(item))}"><h3>${floorplansEscape(floorplansPropertyName(item))}</h3><p>${floorplansEscape(floorplansText(item?.property?.location ?? item?.property?.address, 'Location not specified'))}</p><div class="floorplans-stats"><div><strong>${units.length}</strong><span>Units</span></div><div><strong>${summary.AVAILABLE}</strong><span>Available</span></div><div><strong>${summary.TAKEN}</strong><span>Taken</span></div></div><div class="floorplans-bar"><i class="available" style="width:${summary.AVAILABLE / total * 100}%"></i><i class="taken" style="width:${summary.TAKEN / total * 100}%"></i><i class="review" style="width:${summary.NEEDS_REVIEW / total * 100}%"></i><i class="unconfirmed" style="width:${summary.UNCONFIRMED / total * 100}%"></i></div></article>`;
+    return `<article class="floorplans-building-card ${selected ? 'selected' : ''}" data-floorplans-property="${floorplansEscape(floorplansPropertyId(item))}"><h3>${floorplansEscape(floorplansPropertyName(item))}</h3><p>${floorplansEscape(floorplansText(item?.property?.location ?? item?.property?.address, 'Location not specified'))}</p><div class="floorplans-stats"><div><strong>${units.length}</strong><span>Units</span></div><div><strong>${summary.AVAILABLE}</strong><span>Available</span></div><div><strong>${summary.TAKEN}</strong><span>Sold / Rented</span></div></div><div class="floorplans-bar"><i class="available" style="width:${summary.AVAILABLE / total * 100}%"></i><i class="taken" style="width:${summary.TAKEN / total * 100}%"></i><i class="review" style="width:${summary.NEEDS_REVIEW / total * 100}%"></i><i class="unconfirmed" style="width:${summary.UNCONFIRMED / total * 100}%"></i></div></article>`;
 }
 
 function floorplansRenderExplorer() {
@@ -215,7 +215,7 @@ function floorplansRenderExplorer() {
     const floorSelect = document.getElementById('floorplansFloor');
     if (floorSelect) floorSelect.innerHTML = `<option value="">All floors</option>${floors.map(floor => `<option value="${floorplansEscape(floor)}" ${floor === floorplansState.selectedFloor ? 'selected' : ''}>${floorplansEscape(floor)}</option>`).join('')}`;
     const rail = document.getElementById('floorplansFloorRail');
-    if (rail) rail.innerHTML = `<h3>Floors</h3>${floors.map(floor => { const floorUnits = units.filter(unit => floorplansFloor(unit) === floor); const summary = floorplansSummary(floorUnits); return `<button type="button" class="floorplans-floor-button ${floor === floorplansState.selectedFloor ? 'selected' : ''}" data-floorplans-floor="${floorplansEscape(floor)}"><strong>${floorplansEscape(floor)}</strong><small>${summary.AVAILABLE} available · ${summary.TAKEN} taken</small></button>`; }).join('')}`;
+    if (rail) rail.innerHTML = `<h3>Floors</h3>${floors.map(floor => { const floorUnits = units.filter(unit => floorplansFloor(unit) === floor); const summary = floorplansSummary(floorUnits); return `<button type="button" class="floorplans-floor-button ${floor === floorplansState.selectedFloor ? 'selected' : ''}" data-floorplans-floor="${floorplansEscape(floor)}"><strong>${floorplansEscape(floor)}</strong><small>${summary.AVAILABLE} available · ${summary.TAKEN} sold/rented</small></button>`; }).join('')}`;
     rail?.querySelectorAll('[data-floorplans-floor]').forEach(button => button.addEventListener('click', () => { floorplansState.selectedFloor = button.dataset.floorplansFloor; floorplansState.selectedUnitId = ''; floorplansRenderExplorer(); }));
     const floorUnits = units.filter(unit => floorplansFloor(unit) === floorplansState.selectedFloor);
     document.getElementById('floorplansSelectedBuilding').textContent = floorplansPropertyName(item);

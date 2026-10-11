@@ -11,13 +11,13 @@
         <label>Search buildings or units<input id="floorplansSearch" type="search" class="form-control" placeholder="Search by name or unit"></label>
         <label>Building<select id="floorplansBuilding" class="form-control"><option value="">All buildings</option></select></label>
         <label>Floor<select id="floorplansFloor" class="form-control"><option value="">All floors</option></select></label>
-        <label>Status<select id="floorplansStatus" class="form-control"><option value="ALL">All statuses</option><option value="AVAILABLE">Available</option><option value="TAKEN">Taken</option><option value="NEEDS_REVIEW">Needs review</option><option value="UNCONFIRMED">Unconfirmed</option></select></label>
+        <label>Status<select id="floorplansStatus" class="form-control"><option value="ALL">All statuses</option><option value="AVAILABLE">Available</option><option value="TAKEN">Sold / Rented</option><option value="NEEDS_REVIEW">Needs review</option><option value="UNCONFIRMED">Unconfirmed</option></select></label>
         <div class="floorplans-view-toggle" role="group" aria-label="View mode"><button type="button" class="is-active" data-floorplans-view="plan">Plan</button><button type="button" data-floorplans-view="list">List</button></div>
     </div>
 
     <div class="floorplans-legend" aria-label="Apartment status legend">
         <span><i class="floorplans-dot available"></i>Available</span>
-        <span><i class="floorplans-dot taken"></i>Taken</span>
+        <span><i class="floorplans-dot taken"></i>Sold / Rented</span>
         <span><i class="floorplans-dot review"></i>Needs review</span>
         <span><i class="floorplans-dot unconfirmed"></i>Unconfirmed</span>
         <span class="floorplans-updated" id="floorplansUpdated">Not loaded</span>
