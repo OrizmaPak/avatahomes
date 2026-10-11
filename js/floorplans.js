@@ -87,7 +87,6 @@ function floorplansStatus(unit, propertyId) {
     const occupied = `${unit?.rented ?? unit?.isrented ?? unit?.occupied ?? ''}`.trim().toUpperCase();
     if (['YES', 'TRUE', '1', 'SOLD', 'RENTED', 'TAKEN', 'OCCUPIED', 'ALLOCATED'].includes(occupied)) return { key: 'TAKEN', label: 'Taken', icon: 'lock' };
     if (occupied && !['NO', 'FALSE', '0', 'AVAILABLE', 'OPEN', 'VACANT'].includes(occupied)) return { key: 'NEEDS_REVIEW', label: 'Needs review', icon: 'help' };
-    if (!floorplansState.salesLoaded) return { key: 'UNCONFIRMED', label: 'Unconfirmed', icon: 'help' };
     return { key: 'AVAILABLE', label: 'Available', icon: 'check_circle' };
 }
 
@@ -158,7 +157,7 @@ async function floorplansLoad() {
         floorplansState.selectedFloor = '';
         floorplansState.selectedUnitId = '';
         document.getElementById('floorplansUpdated').textContent = `Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-        if (message) message.textContent = floorplansState.salesLoaded ? 'Availability is based on registered property and sales records.' : 'Sales records could not be checked. Apartments are marked Unconfirmed until the data is available.';
+        if (message) message.textContent = floorplansState.salesLoaded ? 'Availability is based on registered property and sales records.' : 'Units without a saved transaction or occupied value are marked Available.';
         floorplansRender();
     } catch (error) {
         floorplansState.properties = [];
