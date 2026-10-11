@@ -108,6 +108,37 @@ async function checkfornotifications() {
             // badge.classList.add('hidden')   
         }
     }
+
+    const currentUser = the_user || {};
+    const savedPermissions = `${currentUser.permissions || ''}`.toUpperCase();
+    const canApproveDiscounts = currentUser.role === 'SUPERADMIN'
+        || savedPermissions.split('|').map(permission => permission.trim()).some(permission => [
+            'APPROVE SALES DISCOUNTS',
+            'APPROVAL SALES DISCOUNTS',
+            'APPROVEDISCOUNT'
+        ].includes(permission));
+    if (!canApproveDiscounts) return;
+
+    const salesDraftPayload = new FormData();
+    salesDraftPayload.append('startdate', '');
+    salesDraftPayload.append('enddate', '');
+    const salesDraftResponse = await httpRequest2('../controllers/fetchsalesdraft', salesDraftPayload, null, 'json');
+    if (!salesDraftResponse?.status) return;
+    const salesDrafts = Array.isArray(salesDraftResponse.data)
+        ? salesDraftResponse.data
+        : Array.isArray(salesDraftResponse.data?.data) ? salesDraftResponse.data.data : [];
+    const pendingDiscounts = salesDrafts.filter(record => {
+        const sale = record?.rentdata || record || {};
+        const status = `${sale.discountstatus || sale.discountapprovalstatus || sale.approvalstatus || 'PENDING'}`.trim().toUpperCase();
+        return !['APPROVED', 'REJECTED', 'DENIED'].includes(status) && Number(sale.discount || 0) > 0;
+    });
+    if (pendingDiscounts.length) {
+        notificationarray.push({
+            location: 'approvesalesdiscounts',
+            header: 'Discount approvals',
+            description: `You have ${pendingDiscounts.length} property discount ${pendingDiscounts.length === 1 ? 'approval' : 'approvals'} to review.`
+        });
+    }
 } 
 
 function notificationpanel() {
