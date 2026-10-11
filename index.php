@@ -24,6 +24,7 @@ if(!isset($_SESSION["wuseremail"]))
     <link rel="stylesheet" href="./css/rentaproperty.css?v=20261008a">
     <link rel="stylesheet" href="./css/discountapprovals.css?v=20261008d">
   <link rel="stylesheet" href="./css/discountapproval-schedule.css?v=20261009a">
+  <link rel="stylesheet" href="./css/viewrentaproperty.css?v=20261011a">
      <!-- PWA Manifest --> 
   <link rel="manifest" href="./manifest.json"> 
       <!-- ios support -->

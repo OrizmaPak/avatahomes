@@ -19,6 +19,36 @@ function formatViewRentNumber(value) {
     return formatNumber(numericValue);
 }
 
+function viewRentExitMode(item) {
+    return `${item?.rentdata?.exitmode || 'RENT'}`.trim().toUpperCase();
+}
+
+function viewRentSalesAmount(item) {
+    const rentData = item?.rentdata || {};
+    return (Number(rentData.totalamount) || 0) + (Number(rentData.discount) || 0);
+}
+
+function viewRentInstallments(item) {
+    return Array.isArray(item?.instalments) ? item.instalments : [];
+}
+
+function showViewRentInstallments(item) {
+    const rentData = item?.rentdata || {};
+    const installments = viewRentInstallments(item);
+    const mode = viewRentExitMode(item);
+    let modal = document.getElementById('viewrentinstallmentmodal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'viewrentinstallmentmodal';
+        modal.className = 'view-rent-modal hidden';
+        document.body.appendChild(modal);
+    }
+    const rows = installments.length ? installments.map((installment, index) => `<div class="view-rent-installment-row"><span class="view-rent-installment-index">${index + 1}</span><div><small>Due date</small><strong>${formatDate(installment.duedate)}</strong></div><div class="view-rent-installment-amount"><small>Amount</small><strong>${formatViewRentNumber(installment.instalmentamount)}</strong></div><span class="view-rent-installment-status">${installment.status || 'N/A'}</span></div>`).join('') : '<div class="view-rent-empty-schedule">No instalment schedule was saved for this transaction.</div>';
+    modal.innerHTML = `<div class="view-rent-modal-backdrop" data-close-view-rent-modal></div><div class="view-rent-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="viewrentinstallmenttitle"><div class="view-rent-modal-header"><div><span class="view-rent-modal-eyebrow">${mode} transaction</span><h2 id="viewrentinstallmenttitle">Instalment schedule</h2><p>${item?.property || 'N/A'} · ${item?.unitname || 'N/A'}</p></div><button type="button" class="view-rent-modal-close" data-close-view-rent-modal aria-label="Close">×</button></div><div class="view-rent-modal-summary"><div><small>Client</small><strong>${item?.tenant || 'N/A'}</strong></div><div><small>Sales amount</small><strong>${formatViewRentNumber(viewRentSalesAmount(item))}</strong></div><div><small>Discount</small><strong>${formatViewRentNumber(rentData.discount)}</strong></div><div><small>Final total</small><strong>${formatViewRentNumber(rentData.totalamount)}</strong></div><div><small>Amount paid</small><strong>${formatViewRentNumber(rentData.amountpaid)}</strong></div><div><small>Status</small><strong>${rentData.status || 'N/A'}</strong></div></div><div class="view-rent-schedule-list">${rows}</div></div>`;
+    modal.classList.remove('hidden');
+    modal.querySelectorAll('[data-close-view-rent-modal]').forEach(element => element.addEventListener('click', () => modal.classList.add('hidden')));
+}
+
 function escapeReceiptValue(value) {
     return `${value ?? ''}`
         .replace(/&/g, '&amp;')
@@ -57,6 +87,9 @@ function generateReceiptHTML(data) {
     const beginDate = rentData.begindate ? formatDate(rentData.begindate) : 'N/A';
     const expiryDate = rentData.expirationdate ? formatDate(`${rentData.expirationdate}`.split(' ')[0]) : 'N/A';
     const amountPaid = formatViewRentNumber(rentData.amountpaid || 0);
+    const exitMode = viewRentExitMode(data);
+    const discount = formatViewRentNumber(rentData.discount || 0);
+    const finalTotal = formatViewRentNumber(rentData.totalamount || 0);
     const otherFees = formatViewRentNumber(rentData.otherfees || 0);
     const receiptDate = formatDate(new Date().toISOString().split('T')[0]);
     const feeRows = fees.length
@@ -80,7 +113,7 @@ function generateReceiptHTML(data) {
         </header>
 
         <section class="title-block">
-            <h2>PROPERTY SALES PAYMENT RECEIPT</h2>
+            <h2>${exitMode} PAYMENT RECEIPT</h2>
             <p>Official Payment Confirmation</p>
         </section>
 
@@ -90,6 +123,7 @@ function generateReceiptHTML(data) {
             <p><span class="label">Property:</span> ${escapeReceiptValue(property)}</p>
             <p><span class="label">Payment Date:</span> ${paymentDate}</p>
             <p><span class="label">Unit:</span> ${escapeReceiptValue(unit)}</p>
+            <p><span class="label">Transaction:</span> ${exitMode}</p>
             <p><span class="label">Receipt Date:</span> ${receiptDate}</p>
             <p><span class="label">Begin Date:</span> ${beginDate}</p>
             <p><span class="label">Expiry Date:</span> ${expiryDate}</p>
@@ -108,6 +142,16 @@ function generateReceiptHTML(data) {
                 <tr class="total-row">
                     <td>Other Fees</td>
                     <td class="amount">${otherFees}</td>
+                    <td></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Discount</td>
+                    <td class="amount">${discount}</td>
+                    <td></td>
+                </tr>
+                <tr class="total-row">
+                    <td>Final Total</td>
+                    <td class="amount">${finalTotal}</td>
                     <td></td>
                 </tr>
                 <tr class="total-row">
@@ -190,6 +234,7 @@ async function onviewrentapropertyTableDataSignal() {
         <td>${item.property}</td>
         <td>${item.tenant}</td>
         <td>${item.unitname}</td>
+        <td><span class="view-rent-mode view-rent-mode-${viewRentExitMode(item).toLowerCase()}">${viewRentExitMode(item)}</span></td>
         <td class="text-right">${formatViewRentNumber(item.rentdata.amountpaid)}</td>
         <td class="hidden text-right">${formatViewRentNumber(item.rentdata.otherfees)}</td>
         <td class="text-right">${formatViewRentNumber(item.rentdata.otherfees)}</td>
@@ -208,7 +253,7 @@ async function onviewrentapropertyTableDataSignal() {
                     </tr>
                 </thead>
                 <tbody>
-                    ${item.rentalfees.map(fee => `
+                    ${(Array.isArray(item.rentalfees) ? item.rentalfees : []).map(fee => `
                         <tr>
                             <td>${fee.feename || 'N/A'}</td>
                             <td class="text-right">${formatViewRentNumber(fee.amount)}</td>
@@ -219,6 +264,7 @@ async function onviewrentapropertyTableDataSignal() {
             </table> 
             </div>
         </td>
+        <td><button type="button" class="view-rent-schedule-button" data-view-installments="${item.rentdata.id}">${viewRentInstallments(item).length ? `View (${viewRentInstallments(item).length})` : 'No schedule'}</button></td>
         <td class="d-flex align-items-center gap-3">
            <button title="Edit row entry" onclick="document.getElementById('rentaproperty').click();rentapropertyid = ${item.rentdata.id}" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
             <button title="Delete row entry"s onclick="v#ewrentapropertyremove('${item.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">delete</button>
@@ -229,6 +275,10 @@ async function onviewrentapropertyTableDataSignal() {
     </tr>`).join('');
     
     injectPaginatatedTable(rows);
+    document.querySelectorAll('#tabledata [data-view-installments]').forEach(button => button.addEventListener('click', () => {
+        const record = getSignaledDatasource().find(item => `${item?.rentdata?.id}` === `${button.dataset.viewInstallments}`);
+        if (record) showViewRentInstallments(record);
+    }));
 }
 
 

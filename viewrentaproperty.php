@@ -60,6 +60,7 @@
             <th>Product</th>
             <th>Client</th>
             <th>Unit</th>
+            <th>Exit Mode</th>
             <th>Amount Paid</th>
             <th class="hidden">Rent</th>
             <th>Other Fees</th>
@@ -68,6 +69,7 @@
             <th>Payment Date</th>
             <th>Reference</th>
             <th>Sales Fees</th>
+            <th>Instalments</th>
             <th>Actions</th>
         </tr>
     </thead>
