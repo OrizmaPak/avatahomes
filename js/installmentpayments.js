@@ -4,12 +4,15 @@ function installmentPaymentText(value, fallback = 'N/A') { const text = `${value
 function installmentPaymentMoney(value) { const amount = Number(value || 0); return Number.isFinite(amount) ? `₦${amount.toLocaleString()}` : '₦0'; }
 function installmentPaymentMode(record) { return `${record?.rentdata?.exitmode || ''}`.toUpperCase() === 'RENT' ? 'Rented' : 'Sold'; }
 function installmentPaymentRowsFromResponse(response) { return Array.isArray(response?.data) ? response.data : Array.isArray(response?.data?.data) ? response.data.data : []; }
+function installmentPaymentStatus(value) { return `${value ?? ''}`.trim().toUpperCase().replace(/[_-]+/g, ' '); }
+function installmentPaymentIsClosed(value) { return ['PAID', 'FULLY PAID', 'COMPLETED', 'SETTLED', 'CANCELLED', 'VOID'].includes(installmentPaymentStatus(value)); }
+function installmentPaymentStatusLabel(value) { return installmentPaymentStatus(value) || 'PENDING'; }
 
 function buildInstallmentPaymentRows(records) {
     return records.flatMap(record => {
         const sale = record?.rentdata || {};
         const schedules = Array.isArray(record?.instalments) ? record.instalments : [];
-        const remaining = schedules.filter(item => !['PAID', 'COMPLETED', 'SETTLED', 'CANCELLED'].includes(`${item?.status || ''}`.toUpperCase()));
+        const remaining = schedules.filter(item => !installmentPaymentIsClosed(item?.status));
         const nextId = remaining.slice().sort((a, b) => `${a?.duedate || ''}`.localeCompare(`${b?.duedate || ''}`))[0]?.id;
         return schedules.map((schedule, index) => ({
             record,
@@ -28,7 +31,7 @@ function renderInstallmentPayments() {
     const rows = installmentPaymentRows.filter(row => (filter === 'ALL' || row.remaining) && `${row.record?.tenant || ''} ${row.record?.property || ''} ${row.record?.unitname || ''}`.toLowerCase().includes(query));
     const table = document.getElementById('installmentPaymentsTable');
     if (!table) return;
-    table.innerHTML = rows.length ? rows.map((row, index) => `<tr><td>${index + 1}</td><td>${installmentPaymentText(row.record?.tenant)}</td><td>${installmentPaymentText(row.record?.property)}</td><td>${installmentPaymentText(row.record?.unitname)}</td><td><span class="installment-mode ${installmentPaymentMode(row.record).toLowerCase()}">${installmentPaymentMode(row.record)}</span></td><td>${row.index + 1}</td><td>${installmentPaymentText(row.schedule?.duedate)}</td><td class="text-right">${installmentPaymentMoney(row.schedule?.instalmentamount)}</td><td><span class="installment-status ${row.remaining ? 'pending' : 'paid'}">${installmentPaymentText(row.schedule?.status)}</span></td><td>${row.isNext && row.remaining ? `<button type="button" class="installment-record-button" data-installment-payment="${row.sale.id}">Make Payments</button>` : row.remaining ? '<span class="installment-next-note">Complete earlier payment first</span>' : '—'}</td></tr>`).join('') : '<tr><td colspan="10">No installment payments found.</td></tr>';
+    table.innerHTML = rows.length ? rows.map((row, index) => `<tr><td>${index + 1}</td><td>${installmentPaymentText(row.record?.tenant)}</td><td>${installmentPaymentText(row.record?.property)}</td><td>${installmentPaymentText(row.record?.unitname)}</td><td><span class="installment-mode ${installmentPaymentMode(row.record).toLowerCase()}">${installmentPaymentMode(row.record)}</span></td><td>${row.index + 1}</td><td>${installmentPaymentText(row.schedule?.duedate)}</td><td class="text-right">${installmentPaymentMoney(row.schedule?.instalmentamount)}</td><td><span class="installment-status ${row.remaining ? 'pending' : 'paid'}">${installmentPaymentStatusLabel(row.schedule?.status)}</span></td><td>${row.isNext && row.remaining ? `<button type="button" class="installment-record-button" data-installment-payment="${row.sale.id}">Make Payments</button>` : row.remaining ? '<span class="installment-next-note">Complete earlier payment first</span>' : '—'}</td></tr>`).join('') : '<tr><td colspan="10">No installment payments found.</td></tr>';
     table.querySelectorAll('[data-installment-payment]').forEach(button => button.addEventListener('click', () => {
         const row = installmentPaymentRows.find(item => item.isNext && item.remaining && `${item.sale.id}` === `${button.dataset.installmentPayment}`);
         if (row) openInstallmentPaymentDialog(row);
@@ -52,11 +55,22 @@ function openInstallmentPaymentDialog(row) {
         detail.placeholder = method.value === 'TRANSFER' ? 'Bank name and account details' : method.value === 'CHECK' ? 'Cheque number and bank details' : 'Optional payment information';
     };
     method.addEventListener('change', updatePaymentDetailRequirement);
-    modal.querySelector('form').addEventListener('submit', event => {
+    modal.querySelector('form').addEventListener('submit', async event => {
         event.preventDefault();
         const payload = new FormData(event.currentTarget);
         payload.set('id', row.sale.id);
         window.pendingInstallmentPaymentPayload = payload;
+        if (typeof window.saveInstallmentPayment === 'function') {
+            const response = await window.saveInstallmentPayment(payload);
+            if (!response?.status) {
+                notification(response?.message || 'Unable to save payment.', 0);
+                return;
+            }
+            close();
+            await refreshInstallmentPaymentsAfterSave();
+            notification(response.message || 'Payment saved successfully.', 1);
+            return;
+        }
         notification('Payment details are ready. The save controller is still pending.', 0);
     });
 }
@@ -79,3 +93,9 @@ async function fetchInstallmentPayments() {
     renderInstallmentPayments();
     if (message) message.textContent = `${installmentPaymentRows.filter(row => row.remaining).length} remaining installment payment(s).`;
 }
+
+async function refreshInstallmentPaymentsAfterSave() {
+    await fetchInstallmentPayments();
+}
+
+window.refreshInstallmentPayments = refreshInstallmentPaymentsAfterSave;
