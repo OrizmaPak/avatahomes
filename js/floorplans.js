@@ -82,7 +82,10 @@ function floorplansSalesUnitId(item) {
 
 function floorplansStatus(unit, propertyId) {
     const transaction = floorplansState.sales.find(item => floorplansSalesPropertyId(item) === propertyId && floorplansSalesUnitId(item) === floorplansUnitId(unit));
-    if (transaction) return { key: 'TAKEN', label: 'Taken', icon: 'lock' };
+    if (transaction) {
+        const exitMode = `${transaction?.rentdata?.exitmode ?? transaction?.exitmode ?? ''}`.trim().toUpperCase();
+        return { key: 'TAKEN', label: exitMode || 'Taken', icon: 'lock' };
+    }
 
     const occupied = `${unit?.rented ?? unit?.isrented ?? unit?.occupied ?? ''}`.trim().toUpperCase();
     if (['YES', 'TRUE', '1', 'SOLD', 'RENTED', 'TAKEN', 'OCCUPIED', 'ALLOCATED'].includes(occupied)) return { key: 'TAKEN', label: 'Taken', icon: 'lock' };
