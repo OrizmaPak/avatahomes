@@ -147,6 +147,11 @@ const routerTree = {
         startingFunction: 'duerentalsActive',
         scriptName:  './js/duerentals.js?v=20260618a'
     },
+    installmentpayments: {
+        template: 'installmentpayments',
+        startingFunction: 'installmentpaymentsActive',
+        scriptName: './js/installmentpayments.js?v=20261011a'
+    },
     otherpayments: {
         template: 'otherpayments',
         startingFunction: 'otherpaymentsActive',

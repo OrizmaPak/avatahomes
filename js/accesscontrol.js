@@ -24,6 +24,7 @@ const tenancy_rental = [
     "APPROVEDISCOUNT",
     "APPROVE SALES DISCOUNTS",
     "DUE PROPERTY PAYMENTS",
+    "INSTALLMENT PAYMENTS",
     "MORE DOCUMENTS"
   ]
   
