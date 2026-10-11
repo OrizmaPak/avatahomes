@@ -84,7 +84,8 @@ function floorplansStatus(unit, propertyId) {
     const transaction = floorplansState.sales.find(item => floorplansSalesPropertyId(item) === propertyId && floorplansSalesUnitId(item) === floorplansUnitId(unit));
     if (transaction) {
         const exitMode = `${transaction?.rentdata?.exitmode ?? transaction?.exitmode ?? ''}`.trim().toUpperCase();
-        return { key: 'TAKEN', label: exitMode || 'Taken', icon: 'lock' };
+        const transactionLabel = exitMode === 'SALE' ? 'Sold' : exitMode === 'RENT' ? 'Rented' : 'Taken';
+        return { key: 'TAKEN', label: transactionLabel, icon: 'lock' };
     }
 
     const occupied = `${unit?.rented ?? unit?.isrented ?? unit?.occupied ?? ''}`.trim().toUpperCase();
