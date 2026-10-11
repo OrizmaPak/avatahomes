@@ -32,6 +32,11 @@ function viewRentInstallments(item) {
     return Array.isArray(item?.instalments) ? item.instalments : [];
 }
 
+function viewRentInstallmentsById(id) {
+    const record = (typeof datasource !== 'undefined' ? datasource : []).find(item => `${item?.rentdata?.id}` === `${id}`);
+    if (record) showViewRentInstallments(record);
+}
+
 function showViewRentInstallments(item) {
     const rentData = item?.rentdata || {};
     const installments = viewRentInstallments(item);
@@ -244,7 +249,7 @@ async function onviewrentapropertyTableDataSignal() {
         <td>${item.rentdata.reference}</td>
         <td>
         <div class="table-content">
-            <table class="mb-0">
+            <table class="mb-0 view-rent-fees-table">
                 <thead>
                     <tr style="background:#64748b !important; color: white !important;">
                         <th>Fee Name</th>
@@ -264,7 +269,7 @@ async function onviewrentapropertyTableDataSignal() {
             </table> 
             </div>
         </td>
-        <td><button type="button" class="view-rent-schedule-button" data-view-installments="${item.rentdata.id}">${viewRentInstallments(item).length ? `View (${viewRentInstallments(item).length})` : 'No schedule'}</button></td>
+        <td><button type="button" class="view-rent-schedule-button" onclick="viewRentInstallmentsById('${item.rentdata.id}')">${viewRentInstallments(item).length ? `View (${viewRentInstallments(item).length})` : 'No schedule'}</button></td>
         <td class="d-flex align-items-center gap-3">
            <button title="Edit row entry" onclick="document.getElementById('rentaproperty').click();rentapropertyid = ${item.rentdata.id}" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
             <button title="Delete row entry"s onclick="v#ewrentapropertyremove('${item.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">delete</button>
@@ -275,10 +280,6 @@ async function onviewrentapropertyTableDataSignal() {
     </tr>`).join('');
     
     injectPaginatatedTable(rows);
-    document.querySelectorAll('#tabledata [data-view-installments]').forEach(button => button.addEventListener('click', () => {
-        const record = getSignaledDatasource().find(item => `${item?.rentdata?.id}` === `${button.dataset.viewInstallments}`);
-        if (record) showViewRentInstallments(record);
-    }));
 }
 
 
