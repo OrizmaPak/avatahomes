@@ -7,6 +7,16 @@ function installmentPaymentRowsFromResponse(response) { return Array.isArray(res
 function installmentPaymentStatus(value) { return `${value ?? ''}`.trim().toUpperCase().replace(/[_-]+/g, ' '); }
 function installmentPaymentIsClosed(value) { return ['PAID', 'FULLY PAID', 'COMPLETED', 'SETTLED', 'CANCELLED', 'VOID'].includes(installmentPaymentStatus(value)); }
 function installmentPaymentStatusLabel(value) { return installmentPaymentStatus(value) || 'PENDING'; }
+function installmentPaymentFeeId(row) {
+    const directId = row.schedule?.feenameid ?? row.sale?.feenameid ?? row.record?.feenameid ?? row.record?.rentdata?.feenameid;
+    if (directId !== undefined && directId !== null && `${directId}`.trim()) return directId;
+    const feeRows = Array.isArray(row.record?.rentalfees) ? row.record.rentalfees : [];
+    const saleFee = feeRows.find(fee => {
+        const name = `${fee?.feename ?? fee?.feename_name ?? fee?.name ?? ''}`.trim().toUpperCase();
+        return name.startsWith('SALES ') || name.startsWith('PROPERTY SALES ');
+    });
+    return saleFee?.feenameid ?? saleFee?.feeid ?? saleFee?.id ?? '';
+}
 
 function buildInstallmentPaymentRows(records) {
     return records.flatMap(record => {
@@ -57,21 +67,22 @@ function openInstallmentPaymentDialog(row) {
     method.addEventListener('change', updatePaymentDetailRequirement);
     modal.querySelector('form').addEventListener('submit', async event => {
         event.preventDefault();
-        const payload = new FormData(event.currentTarget);
-        payload.set('id', row.sale.id);
-        window.pendingInstallmentPaymentPayload = payload;
-        if (typeof window.saveInstallmentPayment === 'function') {
-            const response = await window.saveInstallmentPayment(payload);
-            if (!response?.status) {
-                notification(response?.message || 'Unable to save payment.', 0);
-                return;
-            }
-            close();
-            await refreshInstallmentPaymentsAfterSave();
-            notification(response.message || 'Payment saved successfully.', 1);
+        const feeNameId = installmentPaymentFeeId(row);
+        if (!feeNameId) {
+            notification('The fetched installment data is missing feenameid, which is required to record this payment.', 0);
             return;
         }
-        notification('Payment details are ready. The save controller is still pending.', 0);
+        const payload = new FormData();
+        payload.append('id', row.sale.id);
+        payload.append('amountpaid', modal.querySelector('#installmentPaymentAmount').value);
+        payload.append('transactiondate', modal.querySelector('#installmentPaymentDate').value);
+        payload.append('feenameid', feeNameId);
+        window.pendingInstallmentPaymentPayload = payload;
+        const response = await httpRequest2('../controllers/paysalesschedule', payload, event.submitter, 'json');
+        if (!response?.status) return notification(response?.message || 'Unable to save payment.', 0);
+        close();
+        await refreshInstallmentPaymentsAfterSave();
+        notification(response.message || 'Payment saved successfully.', 1);
     });
 }
 

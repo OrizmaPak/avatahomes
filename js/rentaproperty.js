@@ -1119,6 +1119,7 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
       formData.set(`instalmentamount${number}`, row.querySelector('.sale-installment-amount')?.value || '');
       const dueDate = row.querySelector('.sale-installment-due-date')?.value || '';
       formData.set(`duedate${number}`, dueDate);
+      formData.set(`whichinstalment${number}`, number.toString());
     });
   }
 

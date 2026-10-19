@@ -76,14 +76,9 @@ function renderSalesApprovalDetail() {
 }
 
 async function updateSalesDiscountApproval(id, status) {
-  const controller = status === 'APPROVED' ? 'approvediscount' : 'rejectdiscount';
+  const controller = status === 'APPROVED' ? 'approvediscount' : 'declinediscount';
   const payload = new FormData();
   payload.append('id', id);
-  if (status === 'REJECTED') {
-    const reason = window.prompt('Reason for rejecting this discount:', 'Discount requires correction');
-    if (reason === null) return;
-    payload.append('reason', reason);
-  }
   const response = await httpRequest2(`../controllers/${controller}`, payload, null, 'json');
   if (!response?.status) return notification(response?.message || `Unable to ${status.toLowerCase()} discount`, 0);
   notification(status === 'APPROVED' ? 'Discount approved' : 'Discount rejected', 1);
