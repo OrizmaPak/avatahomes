@@ -60,11 +60,12 @@ function normalizeUnitAmount(unit) {
 
 function isRentPropertyUnitEligible(unit) {
   const feeName = normalizeUnitFeeName(unit);
-  const rentedValue = `${unit?.rented ?? unit?.isrented ?? ''}`.trim().toUpperCase();
+  const occupancyValue = `${unit?.rented ?? unit?.isrented ?? unit?.occupied ?? ''}`.trim().toUpperCase();
   const isSalesFee = feeName.startsWith('SALES ') || feeName.startsWith('PROPERTY SALES ');
   const exitMode = getSelectedExitMode();
   const isRentFee = RENT_ALLOWED_UNIT_FEES.includes(feeName);
-  return (exitMode === 'SALE' ? isSalesFee : exitMode === 'RENT' ? isRentFee : false) && rentedValue !== 'YES';
+  const unavailable = ['YES', 'TRUE', '1', 'SOLD', 'RENTED', 'TAKEN', 'OCCUPIED', 'ALLOCATED'].includes(occupancyValue);
+  return (exitMode === 'SALE' ? isSalesFee : exitMode === 'RENT' ? isRentFee : false) && !unavailable;
 }
 
 function getSelectedExitMode() {
