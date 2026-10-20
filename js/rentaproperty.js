@@ -442,13 +442,22 @@ async function checkrentapropertyproperty(el) {
     document.getElementById('unitt').classList.add('hidden');
     return;
   }
-  const payload = new FormData();
-  payload.append('id', pid);
-  payload.append('exitmode', getSelectedExitMode());
-  const r = await httpRequest2('../controllers/fetchrenewableunits', payload, null, 'json');
-  const units = mergePropertySalesUnits(pid, Array.isArray(r?.data) ? r.data : []);
-  if ((!r?.status && !units.length) || !units.length) {
-    notification(r.message||'No units found', 0);
+  const exitMode = getSelectedExitMode();
+  let response = { status: true, data: [] };
+  let units = [];
+
+  if (exitMode === 'SALE') {
+    units = mergePropertySalesUnits(pid);
+  } else if (exitMode === 'RENT') {
+    const payload = new FormData();
+    payload.append('id', pid);
+    payload.append('exitmode', 'RENT');
+    response = await httpRequest2('../controllers/fetchrenewableunits', payload, null, 'json');
+    units = mergePropertySalesUnits(pid, Array.isArray(response?.data) ? response.data : []);
+  }
+
+  if ((!response?.status && !units.length) || !units.length) {
+    notification(response?.message || 'No units found', 0);
     document.getElementById('unitt').classList.add('hidden');
     return;
   }
