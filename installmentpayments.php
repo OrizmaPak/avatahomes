@@ -8,5 +8,5 @@
         <label>Payment status<select id="installmentPaymentsStatus" class="form-control"><option value="REMAINING">Remaining payments</option><option value="ALL">All instalments</option></select></label>
     </div>
     <div id="installmentPaymentsMessage" class="installment-payments-message" role="status">Loading installment schedules...</div>
-    <div class="table-content installment-payments-table-wrap"><table><thead><tr><th>S/N</th><th>Client</th><th>Property</th><th>Unit</th><th>Mode</th><th>Instalment</th><th>Due date</th><th>Scheduled amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="installmentPaymentsTable"><tr><td colspan="10">Loading...</td></tr></tbody></table></div>
+    <div class="table-content installment-payments-table-wrap"><table><thead><tr><th>S/N</th><th>Client</th><th>Property</th><th>Unit</th><th>Mode</th><th>Instalment</th><th>Due date</th><th>Scheduled amount</th><th>Amount paid</th><th>Status</th><th>Action</th></tr></thead><tbody id="installmentPaymentsTable"><tr><td colspan="11">Loading...</td></tr></tbody></table></div>
 </section>
