@@ -1,10 +1,5 @@
 <section class="animate__animated animate__fadeIn approval-page">
     <p class="page-title"><span>Discount Approvals</span></p>
-    <div class="approval-tabs" role="tablist" aria-label="Discount approval status">
-        <button type="button" class="approval-tab active" data-approval-status="PENDING">Pending approval</button>
-        <button type="button" class="approval-tab" data-approval-status="APPROVED">Approved</button>
-        <button type="button" class="approval-tab" data-approval-status="REJECTED">Denied</button>
-    </div>
     <div class="approval-toolbar">
         <input id="pendingapprovalsearch" class="form-control" type="search" placeholder="Search client, property, unit or reference">
         <input id="pendingapprovalstartdate" class="form-control" type="date" aria-label="Start date">

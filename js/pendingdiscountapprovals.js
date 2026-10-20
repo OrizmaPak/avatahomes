@@ -1,5 +1,4 @@
 let pendingDiscountRows = [];
-let pendingApprovalStatusFilter = 'PENDING';
 
 function approvalValue(item, ...keys) {
   const sale = item?.rentdata || {};
@@ -50,12 +49,8 @@ function approvalStatusMarkup(status) {
 
 function pendingApprovalMatches(item, query) {
   const status = approvalStatus(item);
-  const matchesStatus = pendingApprovalStatusFilter === 'PENDING'
-    ? !['APPROVED', 'REJECTED', 'DENIED'].includes(status)
-    : pendingApprovalStatusFilter === 'REJECTED'
-      ? ['REJECTED', 'DENIED'].includes(status)
-      : status === pendingApprovalStatusFilter;
-  return matchesStatus && `${approvalClient(item)} ${approvalProperty(item)} ${approvalUnit(item)} ${approvalValue(item, 'reference', 'id')}`.toLowerCase().includes(query);
+  if (['APPROVED', 'REJECTED', 'DENIED'].includes(status)) return false;
+  return `${approvalClient(item)} ${approvalProperty(item)} ${approvalUnit(item)} ${approvalValue(item, 'reference', 'id')}`.toLowerCase().includes(query);
 }
 
 function renderPendingDiscountApprovals() {
@@ -63,7 +58,8 @@ function renderPendingDiscountApprovals() {
   const rows = pendingDiscountRows.filter(item => pendingApprovalMatches(item, query));
   const table = document.getElementById('pendingapprovaltable');
   const count = document.getElementById('pendingapprovalcount');
-  if (count) count.textContent = `${pendingDiscountRows.length} pending request${pendingDiscountRows.length === 1 ? '' : 's'}`;
+  const pendingRows = pendingDiscountRows.filter(item => !['APPROVED', 'REJECTED', 'DENIED'].includes(approvalStatus(item)));
+  if (count) count.textContent = `${pendingRows.length} pending request${pendingRows.length === 1 ? '' : 's'}`;
   if (!table) return;
   table.innerHTML = rows.length ? rows.map((item, index) => {
     const id = approvalValue(item, 'id', 'saleid', 'rentid');
@@ -101,11 +97,6 @@ async function fetchPendingDiscountApprovals() {
 async function pendingdiscountapprovalsActive() {
   document.getElementById('pendingapprovalsearch')?.addEventListener('input', renderPendingDiscountApprovals);
   document.getElementById('pendingapprovalrefresh')?.addEventListener('click', fetchPendingDiscountApprovals);
-  document.querySelectorAll('[data-approval-status]').forEach(tab => tab.addEventListener('click', () => {
-    pendingApprovalStatusFilter = tab.dataset.approvalStatus;
-    document.querySelectorAll('[data-approval-status]').forEach(item => item.classList.toggle('active', item === tab));
-    fetchPendingDiscountApprovals();
-  }));
   document.getElementById('pendingapprovalstartdate')?.addEventListener('change', fetchPendingDiscountApprovals);
   document.getElementById('pendingapprovalenddate')?.addEventListener('change', fetchPendingDiscountApprovals);
   await fetchPendingDiscountApprovals();
