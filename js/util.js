@@ -14,6 +14,7 @@ async function httpRequest(url, payload=null, button=null) {
         }
 
         if(payload) {
+            normalizeMoneyPayload(payload)
             result = await fetch(url, {method:'POST', body: payload, headers: new Headers()})
             if(result) {
                 res = await result.json()
@@ -58,6 +59,7 @@ async function httpRequest2(url, payload=null, button=null, type="text") {
         }
 
         if(payload) {
+            normalizeMoneyPayload(payload)
             console.log('payload', payload)
             result = await fetch(url, {method:'POST', body: payload, headers: new Headers()})
             if(result) {
@@ -116,6 +118,68 @@ function notification(message, type=undefined, timeout=5000) {
 
     setTimeout(() => document.getElementById('toast')?.remove(), timeout)
 }
+
+const moneyFieldPattern = /(^|_)(amount|price|rent|discount|deposit|debit|credit|charge|total|instalment)(\d*)$/i
+
+function isMoneyFieldName(name) {
+    const normalized = `${name || ''}`.toLowerCase()
+    if (/(^|_)(number|no_of|count|quantity|unit|floor|reference|date|period)/i.test(normalized)) return false
+    return moneyFieldPattern.test(normalized) || /(^|_)(amount|price|rent|discount|deposit|debit|credit|charge|total|instalment)/i.test(normalized)
+}
+
+function parseMoneyValue(value) {
+    const numeric = Number(`${value ?? ''}`.replace(/,/g, '').trim())
+    return Number.isFinite(numeric) ? numeric : 0
+}
+
+function formatMoneyInputValue(value) {
+    const raw = `${value ?? ''}`.replace(/,/g, '').replace(/[^0-9.-]/g, '')
+    if (!raw || raw === '-' || raw === '.') return raw
+    const negative = raw.startsWith('-') ? '-' : ''
+    const unsigned = raw.replace(/^-/, '')
+    const parts = unsigned.split('.')
+    const integer = parts[0].replace(/^0+(?=\d)/, '') || '0'
+    const fraction = parts.length > 1 ? `.${parts.slice(1).join('').slice(0, 2)}` : ''
+    return `${negative}${Number(integer).toLocaleString('en-US')}${fraction}`
+}
+
+function normalizeMoneyPayload(payload) {
+    if (!(payload instanceof FormData)) return payload
+    const entries = []
+    payload.forEach((value, key) => {
+        if (typeof value === 'string' && isMoneyFieldName(key)) entries.push([key, value.replace(/,/g, '')])
+    })
+    entries.forEach(([key, value]) => payload.set(key, value))
+    return payload
+}
+
+function initializeMoneyInput(input) {
+    if (!input || input.dataset.moneyFormatted === 'true') return
+    const name = input.name || input.id || input.className
+    if (!isMoneyFieldName(name) && !input.classList.contains('money-input')) return
+    input.dataset.moneyFormatted = 'true'
+    input.type = 'text'
+    input.inputMode = 'decimal'
+    input.value = formatMoneyInputValue(input.value)
+}
+
+function initializeMoneyInputs(root = document) {
+    root.querySelectorAll?.('input').forEach(initializeMoneyInput)
+}
+
+document.addEventListener('input', event => {
+    const input = event.target
+    if (!(input instanceof HTMLInputElement)) return
+    const name = input.name || input.id || input.className
+    if (!isMoneyFieldName(name) && !input.classList.contains('money-input')) return
+    initializeMoneyInput(input)
+    const start = input.selectionStart
+    const before = input.value
+    input.value = formatMoneyInputValue(before)
+    if (start !== null) input.setSelectionRange(input.value.length, input.value.length)
+})
+
+document.addEventListener('focusin', event => initializeMoneyInput(event.target))
 
 const PROPERTY_SALES_FEE_NAME = 'PROPERTY SALES'
 let propertySalesFeeEnsurePromise = null
@@ -229,6 +293,7 @@ const loadScript = function (resource) {
 
 function getFormData(form) {
     let formdata = new FormData(form)
+    normalizeMoneyPayload(formdata)
     return formdata
 }
 
@@ -466,6 +531,7 @@ if (typeof window.getFormData2 !== 'function') {
                 formdata.set(`${additional[i][0]}`, additional[i][1]);
             }
         }
+        normalizeMoneyPayload(formdata)
         return formdata;
     };
 }

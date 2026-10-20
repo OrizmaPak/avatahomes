@@ -18,7 +18,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="country" class="control-label">Amount</label>
-                                            <input type="number" name="debit" id="debit" class="form-control expensesverify">
+                                            <input type="text" inputmode="decimal" name="debit" id="debit" class="form-control expensesverify money-input">
                                         </div>
                                         <div class="form-group">
                                             <label for="country" class="control-label">fee</label>

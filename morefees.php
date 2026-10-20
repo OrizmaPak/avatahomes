@@ -19,7 +19,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="country" class="control-label">amount</label>
-                                            <input type="number" name="amount" id="amount" class="form-control">
+                                            <input type="text" inputmode="decimal" name="amount" id="amount" class="form-control money-input">
                                         </div>
                                     </div>
                         

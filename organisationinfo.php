@@ -157,7 +157,7 @@
                                 </div>
                                 <div class="form-group-auth mt-5">
                                     <label for="location_name" class="text-gray-500 font-normal capitalize text-2xs font-heebo">SMS Charge<span class="text-[red]">*</span></label>
-                                    <input  id="smscharge" type="number" name="smscharge" class="font-semibold text-sm focus:outline-none focus:ring-0 comp bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
+                                    <input  id="smscharge" type="text" inputmode="decimal" name="smscharge" class="font-semibold text-sm focus:outline-none focus:ring-0 comp money-input bg-transparent border-b-2 border-gray-300 focus:border-primary-g transition ease-linear duration-300 w-full">
                                 </div>
                                 <div class="form-group-auth mt-5">
                                     <label for="dateofbirth" class="text-gray-500 font-normal capitalize text-2xs font-heebo">SMS Charge Account<span class="text-[red]">*</span></label>

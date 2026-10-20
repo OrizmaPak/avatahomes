@@ -208,7 +208,7 @@ function addPropertyRegistrationRow(prefill = {}) {
         <td>
             <div class="form-group">
                 <p class="hidden">Amount</p>
-                <input type="number" id="ar-${id}" class="form-control propertyregistrationverify" placeholder="Enter Amount">
+                <input type="text" inputmode="decimal" id="ar-${id}" class="form-control propertyregistrationverify money-input" placeholder="Enter Amount">
                 <input type="hidden" id="uid-${id}">
             </div>
         </td>
@@ -248,6 +248,7 @@ function addPropertyRegistrationRow(prefill = {}) {
         initialAmount: prefill.amount,
         autoSelectSource: prefill.autoSelectSource === true
     })
+    initializeMoneyInput(controls.amount)
 
     updatePropertyRegistrationCounts()
 
@@ -339,7 +340,7 @@ function handleFeeChange(rowId, options = {}) {
             controls.modeDisplay.textContent = 'FLAT'
         }
         if (controls.amount) {
-            const defaultAmount = parseFloat(fee.amount)
+            const defaultAmount = parseMoneyValue(fee.amount)
             if (initialAmount !== null && initialAmount !== undefined && initialAmount !== '') {
                 controls.amount.value = initialAmount
             } else if (!Number.isNaN(defaultAmount)) {
@@ -362,7 +363,7 @@ function handleFeeChange(rowId, options = {}) {
             radio.addEventListener('change', () => recalculatePercentageRows())
         }
     } else if (feeMode === 'PERCENTAGE') {
-        const rate = parseFloat(fee.amount)
+        const rate = parseMoneyValue(fee.amount)
         controls.row.dataset.percentageRate = Number.isFinite(rate) ? rate : ''
         if (controls.modeDisplay) {
             controls.modeDisplay.textContent = Number.isFinite(rate) ? `${rate}%` : 'PERCENTAGE'

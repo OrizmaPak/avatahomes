@@ -33,7 +33,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="logoname" class="control-label">Amount</label>
-                                            <input type="number" name="gltcreditamount" id="creditamount_0" onchange="allcreditamount()" class="form-control comp" placeholder="Enter Amount">
+                                            <input type="text" inputmode="decimal" name="gltcreditamount" id="creditamount_0" onchange="allcreditamount()" class="form-control comp money-input" placeholder="Enter Amount">
                                         </div>
                                         <div class="form-group flex flex-row cp items-end">
                                             <div title="Add row" onclick="gltaddcreditrow()" onmouseover="this.nextElementSibling.classList.add('!w-[100px]');" onmouseleave="this.nextElementSibling.classList.remove('!w-[100px]');" class="mb-1 material-symbols-outlined rounded-full bg-green-700 h-8 w-8 text-white drop-shadow-md text-xs flex justify-center items-center" style="font-size: 18px;">add</div>
@@ -66,7 +66,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="logoname" class="control-label">Amount</label>
-                                            <input type="number" name="gltdebitamount" id="debitamount_0" onchange="alldebitamount()" class="form-control comp" placeholder="Enter Amount">
+                                            <input type="text" inputmode="decimal" name="gltdebitamount" id="debitamount_0" onchange="alldebitamount()" class="form-control comp money-input" placeholder="Enter Amount">
                                         </div>
                                         <div class="form-group flex flex-row cp items-end">
                                             <div title="Add row" onclick="gltadddebitrow()" onmouseover="this.nextElementSibling.classList.add('!w-[100px]');" onmouseleave="this.nextElementSibling.classList.remove('!w-[100px]');" class="mb-1 material-symbols-outlined rounded-full bg-green-700 h-8 w-8 text-white drop-shadow-md text-xs flex justify-center items-center" style="font-size: 18px;">add</div>

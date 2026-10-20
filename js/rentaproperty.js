@@ -504,7 +504,7 @@ function setSaleDiscountApprovalStatus(status = 'NOT_REQUIRED') {
   const normalized = `${status || 'NOT_REQUIRED'}`.trim().toUpperCase();
   const hidden = document.getElementById('discountapprovalstatus');
   const badge = document.getElementById('saleapprovalstatus');
-  const discount = parseFloat(document.getElementById('discount')?.value) || 0;
+  const discount = parseMoneyValue(document.getElementById('discount')?.value);
   const effectiveStatus = discount > 0 && normalized === 'NOT_REQUIRED' ? 'PENDING' : normalized;
   if (hidden) hidden.value = effectiveStatus;
   if (!badge) return effectiveStatus;
@@ -585,13 +585,14 @@ function updateSalePlan() {
   saleInstallmentStartDate = document.getElementById('begindate')?.value || '';
   const saleRow = getSaleFeeTableRow();
   const baseAmount = isSale
-    ? parseFloat(saleRow?.querySelector('.amount-input')?.value) || 0
-    : [...document.querySelectorAll('#rentapropertytable .amount-input')].reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+    ? parseMoneyValue(saleRow?.querySelector('.amount-input')?.value)
+    : [...document.querySelectorAll('#rentapropertytable .amount-input')].reduce((sum, input) => sum + parseMoneyValue(input.value), 0);
   const amountInput = document.getElementById('baseamount');
   const discountInput = document.getElementById('discount');
   const finalInput = document.getElementById('totalamount');
-  const discount = Math.max(0, Math.min(baseAmount, parseFloat(discountInput?.value) || 0));
-  if (discountInput && discountInput.value !== '' && Number(discountInput.value) !== discount) discountInput.value = discount;
+  initializeMoneyInputs(panel);
+  const discount = Math.max(0, Math.min(baseAmount, parseMoneyValue(discountInput?.value)));
+  if (discountInput && discountInput.value !== '' && parseMoneyValue(discountInput.value) !== discount) discountInput.value = formatMoneyInputValue(discount);
   const status = setSaleDiscountApprovalStatus(discount > 0
     ? document.getElementById('discountapprovalstatus')?.value
     : 'NOT_REQUIRED');
@@ -606,10 +607,10 @@ function updateSalePlan() {
     approvalButton.disabled = submitted;
     approvalButton.querySelector('span').textContent = submitted ? 'Awaiting Approval' : 'Send for Approval';
   }
-  if (amountInput) amountInput.value = baseAmount || '';
-  if (finalInput) finalInput.value = finalTotal || '';
+  if (amountInput) amountInput.value = formatMoneyInputValue(baseAmount || '');
+  if (finalInput) finalInput.value = formatMoneyInputValue(finalTotal || '');
   const finalAmountInput = saleRow?.querySelector('.final-amount-input');
-  if (finalAmountInput) finalAmountInput.value = finalTotal || '';
+  if (finalAmountInput) finalAmountInput.value = formatMoneyInputValue(finalTotal || '');
   const count = document.getElementById('installmentcount')?.value || '';
   if (isSale) renderSaleInstallments(finalTotal, count);
   const lastInstallmentDate = [...document.querySelectorAll('#saleinstallmentrows .sale-installment-due-date')].at(-1)?.value || '';
@@ -726,11 +727,11 @@ function addRentFeeRow(prefill = {}) {
       <span id="mo-${id}" class="font-semibold uppercase"></span>
     </td>
     <td>
-      <div class="form-group min-w-[130px]">        <input type="number" id="ra-${id}" class="form-control amount-input" placeholder="Enter Amount">
+      <div class="form-group min-w-[130px]">        <input type="text" inputmode="decimal" id="ra-${id}" class="form-control amount-input money-input" placeholder="Enter Amount">
       </div>
     </td>
     <td>
-      <div class="form-group min-w-[130px]"><input type="number" id="fa-${id}" class="form-control final-amount-input" placeholder="0" readonly></div>
+      <div class="form-group min-w-[130px]"><input type="text" inputmode="decimal" id="fa-${id}" class="form-control final-amount-input money-input" placeholder="0" readonly></div>
     </td>
     <td class="hidden">     <div class="form-group w-[90px]">
         <select id="rp-${id}" class="form-control rental-period-input">${getDurationOptionsMarkup(prefill.rentalPeriod ?? '')}</select>
@@ -738,12 +739,12 @@ function addRentFeeRow(prefill = {}) {
     </td>
     <td>
       <div class="form-group min-w-[115px]">
-        <input type="number" id="de-${id}" class="form-control deposit-input" placeholder="0">
+        <input type="text" inputmode="decimal" id="de-${id}" class="form-control deposit-input money-input" placeholder="0">
       </div>
     </td>
     <td>
       <div class="form-group min-w-[115px]">
-        <input type="number" id="di-${id}" class="form-control discount-input" placeholder="0">
+        <input type="text" inputmode="decimal" id="di-${id}" class="form-control discount-input money-input" placeholder="0">
       </div>
     </td>
     <td class="text-center" id="ap-${id}"></td>
@@ -975,7 +976,7 @@ function recalculateRentPercentageRows() {
   if (checkedRadio) {
     const baseControls = getRentFeeRowControls(checkedRadio.value);
     if (baseControls.amount) {
-      const parsed = parseFloat(baseControls.amount.value);
+      const parsed = parseMoneyValue(baseControls.amount.value);
       if (!Number.isNaN(parsed)) {
         baseAmount = parsed;
       }
@@ -1014,9 +1015,9 @@ function removeRentFeeRow(rowId) {
 function handleRentDepositDiscountChange(rowId, field) {
   const controls = getRentFeeRowControls(rowId);
   if (!controls.row) return;
-  const amount = parseFloat(controls.amount.value) || 0;
-  let deposit = parseFloat(controls.deposit.value) || 0;
-  let discount = parseFloat(controls.discount.value) || 0;
+  const amount = parseMoneyValue(controls.amount.value);
+  let deposit = parseMoneyValue(controls.deposit.value);
+  let discount = parseMoneyValue(controls.discount.value);
   if (deposit + discount > amount) {
     notification('Deposit + discount cannot exceed fee amount', 0);
     if (field === 'deposit') {
@@ -1024,8 +1025,8 @@ function handleRentDepositDiscountChange(rowId, field) {
     } else if (field === 'discount') {
       controls.discount.value = '';
     }
-    deposit = parseFloat(controls.deposit.value) || 0;
-    discount = parseFloat(controls.discount.value) || 0;
+    deposit = parseMoneyValue(controls.deposit.value);
+    discount = parseMoneyValue(controls.discount.value);
   }
   updateRentTotalDeposit();
 }
@@ -1037,9 +1038,9 @@ function updateRentTotalDeposit() {
   let hasAnyDeposit = false;
 
   rows.forEach((row) => {
-    const amount = parseFloat(row.querySelector('.amount-input')?.value) || 0;
-    const deposit = parseFloat(row.querySelector('.deposit-input')?.value) || 0;
-    const discount = parseFloat(row.querySelector('.discount-input')?.value) || 0;
+    const amount = parseMoneyValue(row.querySelector('.amount-input')?.value);
+    const deposit = parseMoneyValue(row.querySelector('.deposit-input')?.value);
+    const discount = parseMoneyValue(row.querySelector('.discount-input')?.value);
     depositSum += deposit;
     payableSum += Math.max(amount - discount, 0);
     if (deposit > 0) hasAnyDeposit = true;
@@ -1087,7 +1088,7 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
   updateSalePlan();
   const saleFeeRow = exitMode === 'SALE' ? getSaleFeeTableRow() : null;
 
-  const transactionDiscount = parseFloat(document.getElementById('discount')?.value) || 0;
+  const transactionDiscount = parseMoneyValue(document.getElementById('discount')?.value);
   const transactionApprovalStatus = `${document.getElementById('discountapprovalstatus')?.value || 'NOT_REQUIRED'}`.toUpperCase();
   if (exitMode === 'RENT') {
     if (submissionAction === 'COMPLETE' && transactionDiscount > 0 && transactionApprovalStatus !== 'APPROVED') {
@@ -1099,7 +1100,7 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
 
   if (exitMode === 'SALE') {
     updateSalePlan();
-    const saleDiscount = parseFloat(document.getElementById('discount')?.value) || 0;
+    const saleDiscount = parseMoneyValue(document.getElementById('discount')?.value);
     const approvalStatus = `${document.getElementById('discountapprovalstatus')?.value || 'NOT_REQUIRED'}`.toUpperCase();
     const installmentCount = Number.parseInt(document.getElementById('installmentcount')?.value || '', 10);
     const installmentRows = [...document.querySelectorAll('#saleinstallmentrows .sale-installment-card')];

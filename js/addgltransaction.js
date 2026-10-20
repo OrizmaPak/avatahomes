@@ -57,7 +57,7 @@ function gltaddcreditrow(){
                 </div>
                 <div class="form-group">
                     <label for="logoname" class="control-label">Amount</label>
-                    <input type="number" name="gltcreditamount" id="creditamount_${id}" onchange="allcreditamount()" class="form-control comp" placeholder="Enter Amount">
+                    <input type="text" inputmode="decimal" name="gltcreditamount" id="creditamount_${id}" onchange="allcreditamount()" class="form-control comp money-input" placeholder="Enter Amount">
                 </div>
                 <div id="deletecredit_${id}" onclick="deletecreditglt(${id})" class="form-group flex flex-row cp items-end">
                     <div title="Add row" onclick="" onmouseover="this.nextElementSibling.classList.add('!w-[100px]');" onmouseleave="this.nextElementSibling.classList.remove('!w-[100px]');" class="mb-1 material-symbols-outlined rounded-full bg-red-700 h-8 w-8 text-white drop-shadow-md text-xs flex justify-center items-center" style="font-size: 18px;">delete</div>
@@ -82,7 +82,7 @@ function gltadddebitrow(){
                 </div>
                 <div class="form-group">
                     <label for="logoname" class="control-label">Amount</label>
-                    <input type="number" name="gltdebitamount" id="debitamount_${id}" onchange="alldebitamount()" class="comp form-control" placeholder="Enter Amount">
+                    <input type="text" inputmode="decimal" name="gltdebitamount" id="debitamount_${id}" onchange="alldebitamount()" class="comp form-control money-input" placeholder="Enter Amount">
                 </div>
                 <div id="deletedebit_${id}" onclick="deletedebitglt(${id})" class="form-group flex flex-row cp items-end">
                     <div title="Add row" onclick="" onmouseover="this.nextElementSibling.classList.add('!w-[100px]');" onmouseleave="this.nextElementSibling.classList.remove('!w-[100px]');" class="mb-1 material-symbols-outlined rounded-full bg-red-700 h-8 w-8 text-white drop-shadow-md text-xs flex justify-center items-center" style="font-size: 18px;">delete</div>
@@ -99,7 +99,7 @@ function deletedebitglt(id){
 	        let count = 0
 	    for(let i=0; i<document.getElementsByName('gltdebitamount').length; i++){ 
 	       // console.log(document.getElementsByName('gltdebitamount')[i].value, 'i', i); 
-	        count = count + parseInt(document.getElementsByName('gltdebitamount')[i].value ? document.getElementsByName('gltdebitamount')[i].value : 0);
+	        count = count + parseMoneyValue(document.getElementsByName('gltdebitamount')[i].value ? document.getElementsByName('gltdebitamount')[i].value : 0);
 	   // alert(count)
 	    }
 	        document.getElementById('glttotaldebit').value = window.formatCurrency(count); 
@@ -110,7 +110,7 @@ function deletedebitglt(id){
 	        let count = 0
 	    for(let i=0; i<document.getElementsByName('gltcreditamount').length; i++){
 	       // console.log(document.getElementsByName('gltcreditamount')[i].value, 'i', i);
-	        count = count + parseInt(document.getElementsByName('gltcreditamount')[i].value ? document.getElementsByName('gltcreditamount')[i].value : 0);
+	        count = count + parseMoneyValue(document.getElementsByName('gltcreditamount')[i].value ? document.getElementsByName('gltcreditamount')[i].value : 0);
 	   // alert(count)
 	    }
 	        document.getElementById('glttotalcredit').value = window.formatCurrency(count);

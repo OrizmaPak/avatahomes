@@ -168,15 +168,15 @@
                     <div class="sale-plan-fields">
                         <div id="transactionbaseamountgroup" class="form-group">
                             <label for="baseamount" class="control-label">Sale amount</label>
-                            <input type="number" id="baseamount" class="form-control" readonly>
+                            <input type="text" inputmode="decimal" id="baseamount" class="form-control money-input" readonly>
                         </div>
                         <div class="form-group">
                             <label for="discount" class="control-label">Discount</label>
-                            <input type="number" id="discount" class="form-control" min="0" step="0.01" placeholder="Enter discount">
+                            <input type="text" inputmode="decimal" id="discount" class="form-control money-input" min="0" step="0.01" placeholder="Enter discount">
                         </div>
                         <div class="form-group">
                             <label id="finaltotallabel" for="totalamount" class="control-label">Final total</label>
-                            <input type="number" id="totalamount" class="form-control" readonly>
+                            <input type="text" inputmode="decimal" id="totalamount" class="form-control money-input" readonly>
                         </div>
                         <div id="installmentcountcontainer" class="form-group sale-only-field">
                             <label for="installmentcount" class="control-label">Number of instalments</label>
@@ -244,7 +244,7 @@
                 </div>
                 <div class="form-group remain hidden">
                     <label for="country" class="control-label">amount paid</label>
-                    <input type="number" name="amountpaid" id="amountpaid" readonly class="form-control rentapropertyverify">
+                    <input type="text" inputmode="decimal" name="amountpaid" id="amountpaid" readonly class="form-control rentapropertyverify money-input">
                 </div>
                 <div class="form-group hidden">
                     <label for="country" class="control-label">reference</label>
