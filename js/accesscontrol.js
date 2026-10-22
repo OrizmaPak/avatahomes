@@ -145,8 +145,14 @@ function permissionMatches(savedPermissions, permissionName) {
 
 async function accesscontrolActive() {
     const form = document.querySelector('#accesscontrolsform')
-    if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', accesscontrolFormSubmitHandler)
     if(document.getElementById('accesssave'))document.getElementById('accesssave').addEventListener('click', submitaccesssettings)
+    const personnel = document.getElementById('email')
+    personnel?.addEventListener('change', accesscontrolPersonnelChange)
+    personnel?.addEventListener('input', () => {
+        if (!personnel.value.trim()) accessboard(personnel)
+    })
+    elementWithId('accesssave').classList.add('hidden')
+    accessappendboard({ permissions: '' })
     let request2 = await httpRequest2('../controllers/fetchusers', null, null, 'json')
     if(request2.status) {
             if(request2.data.length) {
@@ -173,23 +179,28 @@ async function submitaccesssettings(){
     if(request.status) {
         notification('Record saved successfully!', 1);
         elementWithId('email').value = ''
+        elementWithId('role').value = ''
         elementWithId('accesssave').classList.add('hidden')
-        elementWithId('accessctrl_container').innerHTML = ''
-        // fetchaccesscontrols();
+        accessappendboard({ permissions: '' })
         return
     }
     document.querySelector('#accesscontrolsform').reset();
-    // fetchaccesscontrols();
+    elementWithId('accesssave').classList.add('hidden')
+    accessappendboard({ permissions: '' })
     return notification(request.message, 0);
 }
  
 function accessboard(element){
     if(!element.value){
         elementWithId('accesssave').classList.add('hidden')
-        elementWithId('accessctrl_container').innerHTML = ''}
+        elementWithId('role').value = ''
+        elementWithId('accessctrl_container').innerHTML = ''
+        accessappendboard({ permissions: '' })
+    }
 }
 
 function accessappendboard(res){
+    elementWithId('accessctrl_container').innerHTML = ''
     for(let i=0;i<access_array.length;i++){
         let element = document.createElement('div')
         element.setAttribute('id', access_array[i][0])
@@ -294,4 +305,24 @@ async function accesscontrolFormSubmitHandler() {
     document.querySelector('#accesscontrolform').reset();
     // fetchaccesscontrols();
     return notification(request.message, 0);
+}
+
+async function accesscontrolPersonnelChange() {
+    const personnel = document.getElementById('email')
+    if (!personnel?.value.trim()) {
+        accessboard(personnel)
+        return
+    }
+    if (!checkdatalist(personnel)) return
+    const email = personnel.value.split('||')[1]?.trim()
+    if (!email) return notification('Select a personnel entry from the list.', 0)
+    const payload = new FormData()
+    payload.append('email', email)
+    const response = await httpRequest2('../controllers/fetchuserprofile', payload, null, 'json')
+    if (!response?.status) {
+        accessappendboard({ permissions: '' })
+        elementWithId('accesssave').classList.add('hidden')
+        return notification(response?.message || 'Unable to retrieve personnel permissions.', 0)
+    }
+    populateaccesscontrolboard(response)
 }

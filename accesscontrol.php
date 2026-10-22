@@ -21,7 +21,7 @@ if($_SESSION["role"] !== "SUPERADMIN"){
                                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                         <div class="form-group">
                                             <label for="logoname" class="control-label">Personel</label>
-                                            <input type="text" name="email" id="email" list="userslist" class="form-control" onchange="checkdatalist(this);accessboard(this)">
+                                            <input type="text" name="email" id="email" list="userslist" class="form-control">
                                         </div>
                                         <div class="form-group">
                                             <label for="logoname" class="control-label">Role</label>
@@ -32,12 +32,6 @@ if($_SESSION["role"] !== "SUPERADMIN"){
                                                 <option value="SUPERADMIN">SUPER ADMIN</option>
                                             </select>
                                         </div> 
-                                        <div>
-                                             <button style="background:#e55757" id="submit" type="button" class="w-full md:w-max rounded-md text-white text-sm capitalize bg-gradient-to-tr bg-red-400  from-blue-400 via-blue-500 to-primary-g px-8  py-3 lg:py-2 shadow-md font-medium hover:opacity-75 transition duration-300 ease-in-out flex items-center justify-center gap-3">
-                                            <div class="btnloader" style="display: none;"></div>
-                                            <span>Submit</span>
-                                        </button>
-                                    </div> 
                                     </div>
                                     </div>
                         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
