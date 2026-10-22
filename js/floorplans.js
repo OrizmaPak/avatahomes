@@ -92,8 +92,14 @@ function floorplansTransactionLabel(transaction) {
     return mode === 'SALE' ? 'Sold' : mode === 'RENT' ? 'Rented' : 'Transaction recorded';
 }
 
+function floorplansIsPendingDiscount(transaction) {
+    const rentData = transaction?.rentdata || {};
+    const discountStatus = `${rentData.discountstatus ?? rentData.discountapprovalstatus ?? rentData.approvalstatus ?? ''}`.trim().toUpperCase();
+    return Number(rentData.discount || 0) > 0 && ['PENDING', 'PENDING_APPROVAL', 'PENDING APPROVAL'].includes(discountStatus);
+}
+
 function floorplansStatus(unit, propertyId) {
-    const transaction = floorplansState.sales.find(item => floorplansSalesPropertyId(item) === propertyId && floorplansSalesUnitId(item) === floorplansUnitId(unit));
+    const transaction = floorplansState.sales.find(item => !floorplansIsPendingDiscount(item) && floorplansSalesPropertyId(item) === propertyId && floorplansSalesUnitId(item) === floorplansUnitId(unit));
     if (transaction) {
         const exitMode = `${transaction?.rentdata?.exitmode ?? transaction?.exitmode ?? ''}`.trim().toUpperCase();
         if (!['SALE', 'RENT'].includes(exitMode)) return { key: 'NEEDS_REVIEW', label: 'Needs review', icon: 'help' };
@@ -103,6 +109,7 @@ function floorplansStatus(unit, propertyId) {
 
     const occupied = `${unit?.rented ?? unit?.isrented ?? unit?.occupied ?? ''}`.trim().toUpperCase();
     if (['SOLD', 'RENTED'].includes(occupied)) return { key: 'TAKEN', label: occupied === 'RENTED' ? 'Rented' : 'Sold', icon: 'lock' };
+    if (occupied === 'HOLD') return { key: 'NEEDS_REVIEW', label: 'Pending approval', icon: 'hourglass_top' };
     if (occupied && !['NO', 'FALSE', '0', 'AVAILABLE', 'OPEN', 'VACANT'].includes(occupied)) return { key: 'NEEDS_REVIEW', label: 'Needs review', icon: 'help' };
     if (!floorplansState.salesLoaded) return { key: 'UNCONFIRMED', label: 'Unconfirmed', icon: 'help' };
     return { key: 'AVAILABLE', label: 'Available', icon: 'check_circle' };
@@ -296,7 +303,7 @@ function floorplansRenderDetails(units) {
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
     const permissions = `${currentUser.permissions || ''}`.toUpperCase().split('|').map(value => value.trim());
     const canViewSales = currentUser.role === 'SUPERADMIN' || permissions.some(value => ['VIEW PROPERTY SALES', 'VIEW RENTED PROPERTY'].includes(value));
-    const transaction = canViewSales ? floorplansState.sales.find(item => floorplansSalesPropertyId(item) === selected._propertyId && floorplansSalesUnitId(item) === floorplansUnitId(selected)) : null;
+    const transaction = canViewSales ? floorplansState.sales.find(item => !floorplansIsPendingDiscount(item) && floorplansSalesPropertyId(item) === selected._propertyId && floorplansSalesUnitId(item) === floorplansUnitId(selected)) : null;
     const detailStatusClass = { AVAILABLE: 'available', TAKEN: 'taken', NEEDS_REVIEW: 'review', UNCONFIRMED: 'unconfirmed' }[selected._status.key] || 'unconfirmed';
     const rentData = transaction?.rentdata || {};
     const instalments = Array.isArray(transaction?.instalments) ? transaction.instalments : [];

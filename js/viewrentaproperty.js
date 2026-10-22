@@ -23,6 +23,16 @@ function viewRentExitMode(item) {
     return `${item?.rentdata?.exitmode || 'RENT'}`.trim().toUpperCase();
 }
 
+function viewRentIsPendingDiscount(item) {
+    const rentData = item?.rentdata || {};
+    const discountStatus = `${rentData.discountstatus ?? rentData.discountapprovalstatus ?? rentData.approvalstatus ?? ''}`.trim().toUpperCase();
+    return Number(rentData.discount || 0) > 0 && ['PENDING', 'PENDING_APPROVAL', 'PENDING APPROVAL'].includes(discountStatus);
+}
+
+function viewRentCompletedRecords(records) {
+    return (Array.isArray(records) ? records : []).filter(item => !viewRentIsPendingDiscount(item));
+}
+
 function viewRentSalesAmount(item) {
     const rentData = item?.rentdata || {};
     return (Number(rentData.totalamount) || 0) + (Number(rentData.discount) || 0);
@@ -195,8 +205,9 @@ async function fetchviewrentapropertys(id) {
     if(request.status) {
         if(!id){
             if(request.data.length) {
-                datasource = request.data
-                resolvePagination(datasource, onviewrentapropertyTableDataSignal)
+                datasource = viewRentCompletedRecords(request.data)
+                if (datasource.length) resolvePagination(datasource, onviewrentapropertyTableDataSignal)
+                else document.getElementById('tabledata').innerHTML = `No completed property sales or rentals found`
             }
         }else{
              viewrentapropertyid = request.data[0].id
@@ -382,8 +393,9 @@ async function viewrentapropertyFormSubmitHandler(payloadd='') {
     // request = JSON.parse(request)
     if(request.status == true) {
             if(request.data.length) {
-                datasource = request.data
-                resolvePagination(datasource, onviewrentapropertyTableDataSignal)
+                datasource = viewRentCompletedRecords(request.data)
+                if (datasource.length) resolvePagination(datasource, onviewrentapropertyTableDataSignal)
+                else document.getElementById('tabledata').innerHTML = `No completed property sales or rentals found`
             }else document.getElementById('tabledata').innerHTML = `No records retrieved`
     }
     else return notification(request.message)
