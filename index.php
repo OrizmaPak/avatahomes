@@ -20,6 +20,7 @@ if(!isset($_SESSION["wuseremail"]))
     <link rel="stylesheet" href="./css/index.css?v=20260219c">
     <link rel="stylesheet" href="./css/css_vanilla.css?v=20260219c">
     <link rel="stylesheet" href="./css/floorplans.css?v=20261007b">
+    <link rel="stylesheet" href="./css/dashboard.css?v=20261022a">
   <link rel="stylesheet" href="./css/floorplans-data.css?v=20261011a">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <link rel="stylesheet" href="./css/rentaproperty.css?v=20261008a">
@@ -125,13 +126,14 @@ if(!isset($_SESSION["wuseremail"]))
                                         <span class="material-symbols-outlined group-hover:text-primary-g"
                                             style="font-size: 20px;">person</span>
                                         <span class="group-hover:text-primary-g">
-                                            <span>user</span>
+                                            <span>Administration</span>
                                             <span class="material-symbols-outlined" style="font-size: 15px;">chevron_right</span>
                                         </span>
                                     </span>
                                     <ul class="ml-14 gap-y-4 flex flex-col">
                                         <!-- <li class="navitem-child" id="profile">Profile</li>     -->
                                         <!-- <li class="navitem-child" id="user/select">Select User</li> -->
+                                        <li class="navitem-child" id="dashboard">Dashboard</li>
                                         <li class="navitem-child" id="access_control">Access Control</li>
                                         <li class="navitem-child" id="user/deactivate">Deactivate User</li>
 
@@ -251,7 +253,7 @@ if(!isset($_SESSION["wuseremail"]))
         <div class="modal-content" id="modal-content"></div>
     </div>
     <script src="./js/util.js?v=20260613a"></script>
-    <script src="./js/router.js?v=20261006a"></script>
+    <script src="./js/router.js?v=20261022a"></script>
     <script src="./js/index.js?v=20260618a"></script>
     <script src="./js/oreutil.js?v=20260726a"></script>
 </body>

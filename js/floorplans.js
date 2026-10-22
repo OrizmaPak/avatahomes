@@ -1,5 +1,6 @@
 let floorplansState = {
     properties: [],
+    propertiesLoaded: false,
     sales: [],
     salesLoaded: false,
     selectedPropertyId: '',
@@ -7,6 +8,7 @@ let floorplansState = {
     selectedUnitId: '',
     view: 'plan'
 };
+let floorplansLoadSequence = 0;
 
 const floorplansLayout = {
     A: {
@@ -94,13 +96,15 @@ function floorplansStatus(unit, propertyId) {
     const transaction = floorplansState.sales.find(item => floorplansSalesPropertyId(item) === propertyId && floorplansSalesUnitId(item) === floorplansUnitId(unit));
     if (transaction) {
         const exitMode = `${transaction?.rentdata?.exitmode ?? transaction?.exitmode ?? ''}`.trim().toUpperCase();
-        const transactionLabel = exitMode === 'SALE' ? 'Sold' : exitMode === 'RENT' ? 'Rented' : 'Sold';
+        if (!['SALE', 'RENT'].includes(exitMode)) return { key: 'NEEDS_REVIEW', label: 'Needs review', icon: 'help' };
+        const transactionLabel = exitMode === 'SALE' ? 'Sold' : 'Rented';
         return { key: 'TAKEN', label: transactionLabel, icon: 'lock' };
     }
 
     const occupied = `${unit?.rented ?? unit?.isrented ?? unit?.occupied ?? ''}`.trim().toUpperCase();
-    if (['YES', 'TRUE', '1', 'SOLD', 'RENTED', 'TAKEN', 'OCCUPIED', 'ALLOCATED'].includes(occupied)) return { key: 'TAKEN', label: occupied === 'RENTED' ? 'Rented' : 'Sold', icon: 'lock' };
+    if (['SOLD', 'RENTED'].includes(occupied)) return { key: 'TAKEN', label: occupied === 'RENTED' ? 'Rented' : 'Sold', icon: 'lock' };
     if (occupied && !['NO', 'FALSE', '0', 'AVAILABLE', 'OPEN', 'VACANT'].includes(occupied)) return { key: 'NEEDS_REVIEW', label: 'Needs review', icon: 'help' };
+    if (!floorplansState.salesLoaded) return { key: 'UNCONFIRMED', label: 'Unconfirmed', icon: 'help' };
     return { key: 'AVAILABLE', label: 'Available', icon: 'check_circle' };
 }
 
@@ -136,7 +140,7 @@ function floorplansBindEvents() {
     document.getElementById('floorplansFloor')?.addEventListener('change', event => {
         floorplansState.selectedFloor = event.target.value;
         floorplansState.selectedUnitId = '';
-        floorplansRenderExplorer();
+        floorplansRender();
     });
     document.getElementById('floorplansStatus')?.addEventListener('change', floorplansRender);
     page.querySelectorAll('[data-floorplans-view]').forEach(button => button.addEventListener('click', () => {
@@ -147,38 +151,60 @@ function floorplansBindEvents() {
 }
 
 async function floorplansLoad() {
+    const page = document.getElementById('floorplansPage');
+    if (!page) return;
+    const sequence = ++floorplansLoadSequence;
+    const isCurrent = () => page === document.getElementById('floorplansPage') && sequence === floorplansLoadSequence;
     const message = document.getElementById('floorplansMessage');
     if (message) { message.className = 'floorplans-message'; message.textContent = 'Loading property data...'; }
     try {
         const propertyResponse = await httpRequest2('../controllers/fetchproperty', null, null, 'json');
-        if (!propertyResponse?.status || !Array.isArray(propertyResponse.data)) throw new Error(propertyResponse?.message || 'Property data could not be loaded.');
-        floorplansState.properties = propertyResponse.data;
+        if (!isCurrent()) return;
+        const properties = floorplansResponseRows(propertyResponse);
+        if (!properties) throw new Error('Complete property data could not be loaded. Please refresh.');
+        floorplansState.properties = properties;
+        floorplansState.propertiesLoaded = true;
         floorplansState.sales = [];
         floorplansState.salesLoaded = false;
 
         try {
             const salesResponse = await httpRequest2('../controllers/fetchrentaproperty', null, null, 'json');
-            if (salesResponse?.status && Array.isArray(salesResponse.data)) {
-                floorplansState.sales = salesResponse.data;
+            if (!isCurrent()) return;
+            const sales = floorplansResponseRows(salesResponse);
+            if (sales) {
+                floorplansState.sales = sales;
                 floorplansState.salesLoaded = true;
             }
         } catch (error) {
             console.warn('Floor plan sales data unavailable', error);
         }
+        if (!isCurrent()) return;
 
         const propertyIds = floorplansState.properties.map(floorplansPropertyId);
         if (!propertyIds.includes(floorplansState.selectedPropertyId)) floorplansState.selectedPropertyId = propertyIds[0] || '';
         floorplansState.selectedFloor = '';
         floorplansState.selectedUnitId = '';
         document.getElementById('floorplansUpdated').textContent = `Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-        if (message) message.textContent = floorplansState.salesLoaded ? 'Availability is based on registered property and sales records.' : 'Units without a saved transaction or occupied value are marked Available.';
+        if (message) message.textContent = floorplansState.salesLoaded ? 'Availability is based on registered property and sales records.' : 'Sales records could not be checked. Units without an occupied flag are Unconfirmed. Refresh to try again.';
         floorplansRender();
     } catch (error) {
+        if (!isCurrent()) return;
         floorplansState.properties = [];
+        floorplansState.propertiesLoaded = false;
+        floorplansState.sales = [];
+        floorplansState.salesLoaded = false;
         const message = document.getElementById('floorplansMessage');
         if (message) { message.className = 'floorplans-message error'; message.textContent = error.message || 'Unable to load floor plan data.'; }
         floorplansRender();
     }
+}
+
+function floorplansResponseRows(response) {
+    if (!response?.status) return null;
+    const rows = Array.isArray(response.data) ? response.data : response.data?.data;
+    const metadata = Array.isArray(response.data) ? response : response.data;
+    if (!Array.isArray(rows) || Number(metadata?.totalpages || 1) > 1 || Number(metadata?.total || 0) > rows.length) return null;
+    return rows;
 }
 
 function floorplansFilteredProperties() {
@@ -195,6 +221,7 @@ function floorplansRender() {
     const buildingSelect = document.getElementById('floorplansBuilding');
     if (buildingSelect) buildingSelect.innerHTML = `<option value="">All buildings</option>${properties.map(item => `<option value="${floorplansEscape(floorplansPropertyId(item))}" ${floorplansPropertyId(item) === floorplansState.selectedPropertyId ? 'selected' : ''}>${floorplansEscape(floorplansPropertyName(item))}</option>`).join('')}`;
     const overview = document.getElementById('floorplansOverview');
+    if (overview) overview.hidden = Boolean(document.getElementById('avataDashboard') && floorplansState.selectedPropertyId);
     if (overview) overview.innerHTML = properties.map(item => floorplansBuildingCard(item)).join('') || '<div class="floorplans-message">No buildings match your search.</div>';
     overview?.querySelectorAll('[data-floorplans-property]').forEach(card => card.addEventListener('click', () => {
         floorplansState.selectedPropertyId = card.dataset.floorplansProperty;
@@ -207,7 +234,14 @@ function floorplansRender() {
     document.getElementById('floorplansExplorer')?.classList.toggle('hidden', !selected || floorplansState.view !== 'plan');
     document.getElementById('floorplansList')?.classList.toggle('hidden', floorplansState.view !== 'list');
     if (floorplansState.view === 'plan') floorplansRenderExplorer();
-    else floorplansRenderList(properties);
+    else {
+        const listProperties = properties.filter(item => !floorplansState.selectedPropertyId || floorplansPropertyId(item) === floorplansState.selectedPropertyId);
+        const floors = [...new Set(listProperties.flatMap(item => floorplansUnits(item).map(floorplansFloor)))].sort((first, second) => floorplansFloorSort(second) - floorplansFloorSort(first));
+        if (!floors.includes(floorplansState.selectedFloor)) floorplansState.selectedFloor = '';
+        const floorSelect = document.getElementById('floorplansFloor');
+        if (floorSelect) floorSelect.innerHTML = `<option value="">All floors</option>${floors.map(floor => `<option value="${floorplansEscape(floor)}" ${floor === floorplansState.selectedFloor ? 'selected' : ''}>${floorplansEscape(floor)}</option>`).join('')}`;
+        floorplansRenderList(listProperties);
+    }
 }
 
 function floorplansBuildingCard(item) {
@@ -246,7 +280,7 @@ function floorplansFloorSort(value) { const number = `${value}`.match(/\d+/); re
 
 function floorplansUnitMatchesFilters(unit) {
     const search = `${document.getElementById('floorplansSearch')?.value || ''}`.trim().toLowerCase(); const status = document.getElementById('floorplansStatus')?.value || 'ALL';
-    return (!search || `${unit.unitname || ''} ${unit.description || ''}`.toLowerCase().includes(search)) && (status === 'ALL' || unit._status.key === status);
+    return (!floorplansState.selectedFloor || floorplansFloor(unit) === floorplansState.selectedFloor) && (!search || `${unit.unitname || ''} ${unit.description || ''}`.toLowerCase().includes(search)) && (status === 'ALL' || unit._status.key === status);
 }
 
 function floorplansUnitMarkup(unit, code, floorUnits) {
@@ -259,7 +293,10 @@ function floorplansUnitMarkup(unit, code, floorUnits) {
 function floorplansRenderDetails(units) {
     const selected = units.find(unit => floorplansUnitId(unit) === floorplansState.selectedUnitId); const panel = document.getElementById('floorplansDetails');
     if (!panel || !selected) { if (panel) panel.innerHTML = '<div class="floorplans-empty-detail"><span class="material-symbols-outlined">touch_app</span><p>Select an apartment to view its details.</p></div>'; return; }
-    const transaction = floorplansState.sales.find(item => floorplansSalesPropertyId(item) === selected._propertyId && floorplansSalesUnitId(item) === floorplansUnitId(selected));
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const permissions = `${currentUser.permissions || ''}`.toUpperCase().split('|').map(value => value.trim());
+    const canViewSales = currentUser.role === 'SUPERADMIN' || permissions.some(value => ['VIEW PROPERTY SALES', 'VIEW RENTED PROPERTY'].includes(value));
+    const transaction = canViewSales ? floorplansState.sales.find(item => floorplansSalesPropertyId(item) === selected._propertyId && floorplansSalesUnitId(item) === floorplansUnitId(selected)) : null;
     const detailStatusClass = { AVAILABLE: 'available', TAKEN: 'taken', NEEDS_REVIEW: 'review', UNCONFIRMED: 'unconfirmed' }[selected._status.key] || 'unconfirmed';
     const rentData = transaction?.rentdata || {};
     const instalments = Array.isArray(transaction?.instalments) ? transaction.instalments : [];

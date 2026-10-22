@@ -1,6 +1,7 @@
 let accesscontrolid
 
 const admin_user = [
+    "DASHBOARD",
     "ACCESS CONTROL",
     "CHANGE PASSWORD",
     "DEACTIVATE USER",
@@ -55,7 +56,7 @@ const settings_user = [
   
 
 const access_array = [
-                        ['admin_user', 'ADMIN', admin_user], 
+                        ['admin_user', 'ADMINISTRATION', admin_user],
                         ['property_user', 'PROPERTY', property_user], 
                         ['tenancy_rental', 'CLIENTS/SALES', tenancy_rental],
                         ['transaction_user', 'OTHER TRANSACTION', transaction_user],

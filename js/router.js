@@ -7,6 +7,12 @@
 
 const routerTree = {
 
+    dashboard: {
+        template: 'dashboard',
+        startingFunction: 'dashboardActive',
+        scriptName: './js/dashboard.js?v=20261022a'
+    },
+
     logo: {
         template: 'logo',
         startingFunction: 'logoRouteActive',
@@ -105,7 +111,7 @@ const routerTree = {
     floorplans: {
         template: 'floorplans',
         startingFunction: 'floorplansActive',
-        scriptName: './js/floorplans.js?v=20261007c'
+        scriptName: './js/floorplans.js?v=20261022a'
     },
     registeratenant: {
         template: 'registeratenant',
