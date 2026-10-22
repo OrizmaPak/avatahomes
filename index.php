@@ -138,6 +138,8 @@ if(!isset($_SESSION["wuseremail"]))
                                         <li class="navitem-child" id="user/deactivate">Deactivate User</li>
 
                                         <li class="navitem-child" id="password">Change Password</li>
+                                        <li class="navitem-child" id="organisationinfo">Organisation Info</li>
+                                        <li class="navitem-child" id="morefees">More Fees</li>
                                     </ul>
                                 </li>
                                 <li class="nav-item">
@@ -214,21 +216,6 @@ if(!isset($_SESSION["wuseremail"]))
                                         <li class="navitem-child" id="trialbalance">Trial Balance</li>
                                         <li class="navitem-child" id="incomestatement">Income Statement</li>
                                         <li class="navitem-child" id="balancesheet">Balance Sheet</li>
-                                    </ul>
-                                </li>
-                                <li class="nav-item"> 
-                                    <span class="navitem-title group">
-                                        <span class="material-symbols-outlined group-hover:text-primary-g"
-                                            style="font-size: 20px;">settings</span>
-                                        <span class="group-hover:text-primary-g">
-                                            <span>settings</span>
-                                            <span class="material-symbols-outlined" style="font-size: 15px;">chevron_right</span>
-                                        </span>
-                                    </span>
-                                    <ul class="ml-14 gap-y-4 flex flex-col">
-                                        <li class="navitem-child" id="organisationinfo">Organisation Info</li>
-                                        <li class="navitem-child" id="morefees">More Fees</li>
-                                        <!-- <li class="navitem-child" id="viewmorefees">View More Fees</li> -->
                                     </ul>
                                 </li>
                                 

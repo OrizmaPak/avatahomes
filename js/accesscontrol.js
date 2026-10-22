@@ -6,7 +6,9 @@ const admin_user = [
     "CHANGE PASSWORD",
     "DEACTIVATE USER",
     "PROFILE",
-    "SELECT USER"
+    "SELECT USER",
+    "ORGANISATION INFO",
+    "MORE FEES"
 ]
 
 const property_user = [
@@ -48,20 +50,12 @@ const accounts_user = [
     "BALANCE SHEET"
   ]
 
-const settings_user = [
-    "ORGANISATION INFO",
-    "MORE FEES"
-  ] 
-  
-  
-
 const access_array = [
                         ['admin_user', 'ADMINISTRATION', admin_user],
                         ['property_user', 'PROPERTY', property_user], 
                         ['tenancy_rental', 'CLIENTS/SALES', tenancy_rental],
                         ['transaction_user', 'OTHER TRANSACTION', transaction_user],
                         ['accounts_user', 'ACCOUNTS', accounts_user],
-                        ['settings_user', 'SETTINGS', settings_user],
                     ]
 
 function permissionDisplayName(permission) {
