@@ -125,7 +125,7 @@ function renderTablePage() {
             onclick="printReceipt('${item.id}')"   class="material-symbols-outlined rounded-full h-8 w-8 text-white text-xs">print</button>
           <button style="background:teal"   title="Download receipt"
             onclick="downloadReceipt('${item.id}')" class="material-symbols-outlined rounded-full h-8 w-8 text-white text-xs">download</button>
-            <button title="Delete row entry" onclick="paymenthistoryremove('${item.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">delete</button>
+            <button title="Delete row entry" onclick="paymenthistoryremove('${item.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px; display: none;">delete</button>
        
         </td>
       </tr>
