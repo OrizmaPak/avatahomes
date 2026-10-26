@@ -299,7 +299,9 @@ function showActiveRoute() {
     document.querySelectorAll('#navigation .navitem-child-active').forEach( item => item.classList.remove('navitem-child-active'))
     if(menu.classList.contains('navitem-child')) {
         menu.classList.add('navitem-child-active')
-        menu.parentElement.previousElementSibling.classList.add('active')
+        const parentTitle = menu.parentElement.previousElementSibling
+        if(parentTitle) parentTitle.classList.add('active')
+        else menu.classList.add('active')
     }
     else menu.classList.add('active')
     

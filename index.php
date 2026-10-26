@@ -121,6 +121,12 @@ if(!isset($_SESSION["wuseremail"]))
                     <nav id="navigation" class="dashboard-nav fixed top-0 left-0 z-40 lg:relative lg:z-0 w-4/5 xl:w-[250px] h-full bg-white border-r border-gray-200/50 pb-14">
                         <div class="overflow-y-auto overflow-x-hidden h-full">
                             <ul class="font-poppins mt-5">
+                                <li class="nav-item">
+                                    <span class="navitem-title navitem-child group" id="dashboard">
+                                        <span class="material-symbols-outlined group-hover:text-primary-g" style="font-size: 20px;">dashboard</span>
+                                        <span class="group-hover:text-primary-g">Dashboard</span>
+                                    </span>
+                                </li>
                                   <li class="nav-item">
                                     <span class="navitem-title group">
                                         <span class="material-symbols-outlined group-hover:text-primary-g"
@@ -133,7 +139,6 @@ if(!isset($_SESSION["wuseremail"]))
                                     <ul class="ml-14 gap-y-4 flex flex-col">
                                         <!-- <li class="navitem-child" id="profile">Profile</li>     -->
                                         <!-- <li class="navitem-child" id="user/select">Select User</li> -->
-                                        <li class="navitem-child" id="dashboard">Dashboard</li>
                                         <li class="navitem-child" id="access_control">Access Control</li>
                                         <li class="navitem-child" id="user/deactivate">Deactivate User</li>
 
