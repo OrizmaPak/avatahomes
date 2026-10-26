@@ -248,7 +248,7 @@ if(!isset($_SESSION["wuseremail"]))
     <script src="./js/util.js?v=20260613a"></script>
     <script src="./js/router.js?v=20261022a"></script>
     <script src="./js/index.js?v=20260618a"></script>
-    <script src="./js/oreutil.js?v=20260726a"></script>
+    <script src="./js/oreutil.js?v=20261026a"></script>
 </body>
 
 </html> 

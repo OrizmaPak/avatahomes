@@ -322,6 +322,7 @@ async function openRoute(url) {
             </div>
         `
         document.getElementById('workspace').innerHTML = await httpRequest(url)
+        if (typeof addFrontendTableTools === 'function') addFrontendTableTools()
         intializePageJavascript()
     } catch (error) {
         console.log(error)

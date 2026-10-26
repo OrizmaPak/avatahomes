@@ -322,25 +322,37 @@ function getOrdinalSuffix(day) {
 
 // TO PRINT
 
-function printTable() {
-    const tableContent = document.querySelector('.table-content');
-    if (!tableContent) {
-        console.error('Table content not found.');
-        return;
+function getFrontendTable(tableTarget = null) {
+    if (tableTarget instanceof HTMLTableElement) return tableTarget;
+    if (typeof tableTarget === 'string') {
+        const target = document.getElementById(tableTarget);
+        if (target) return target.tagName?.toLowerCase() === 'table' ? target : target.querySelector('table');
     }
+    return document.querySelector('.table-content table') || document.querySelector('#workspace table');
+}
 
-    const clonedContent = tableContent.cloneNode(true);
-    clonedContent.querySelectorAll('.hidden').forEach(element => element.remove());
-
-    const headers = clonedContent.querySelectorAll('thead th');
+function removeTableActionColumn(table) {
+    const headers = table.querySelectorAll('thead th');
     const lastHeader = headers[headers.length - 1];
     const lastHeaderText = lastHeader?.textContent.trim().toLowerCase();
     if (lastHeader && ['action', 'actions'].includes(lastHeaderText)) {
         lastHeader.remove();
-        clonedContent.querySelectorAll('tbody tr').forEach(row => {
+        table.querySelectorAll('tbody tr').forEach(row => {
             row.querySelector('td:last-child')?.remove();
         });
     }
+}
+
+function printTable(tableTarget = null, title = 'AVATA HOMES Report') {
+    const table = getFrontendTable(tableTarget);
+    if (!table) {
+        notification('No table is available to print.', 0);
+        return;
+    }
+
+    const clonedTable = table.cloneNode(true);
+    clonedTable.querySelectorAll('.hidden, .table-tools').forEach(element => element.remove());
+    removeTableActionColumn(clonedTable);
 
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
@@ -352,7 +364,7 @@ function printTable() {
     printWindow.document.write(`
         <html>
             <head>
-                <title>Print</title>
+                <title>${title}</title>
                 <link rel="stylesheet" href="./css/index.css">
                 <link rel="stylesheet" href="./css/css_vanilla.css">
                 <style>
@@ -363,7 +375,7 @@ function printTable() {
                     @media print { body { padding: 0; } }
                 </style>
             </head>
-            <body>${clonedContent.outerHTML}</body>
+            <body><h1 style="font-size:18px;margin:0 0 16px;">${title}</h1>${clonedTable.outerHTML}</body>
         </html>
     `);
     printWindow.document.close();
@@ -376,33 +388,17 @@ function printTable() {
 
 // TO EXPORT TO EXCEL
 function exportToExcel(tableId = null, filename = 'table-export') {
-    let tableElement = null;
-    if (tableId && typeof tableId === 'string') {
-        const maybeTable = document.getElementById(tableId);
-        if (maybeTable) tableElement = maybeTable.tagName?.toLowerCase() === 'table' ? maybeTable : maybeTable.querySelector('table');
-    }
+    const tableElement = getFrontendTable(tableId);
     if (!tableElement) {
-        tableElement = document.querySelector('.table-content table');
-    }
-    if (!tableElement) {
-        console.error('Table content not found.');
+        notification('No table is available to export.', 0);
         return;
     }
 
     const clonedTable = tableElement.cloneNode(true);
-    const headers = clonedTable.querySelectorAll('thead th');
-    const lastHeader = headers[headers.length - 1];
-    if (lastHeader && lastHeader.textContent.trim().toLowerCase() === 'action') {
-        lastHeader.parentNode.removeChild(lastHeader);
-        const dataRows = clonedTable.querySelectorAll('tbody tr');
-        dataRows.forEach(row => {
-            const lastCell = row.querySelector('td:last-child');
-            if (lastCell) lastCell.parentNode.removeChild(lastCell);
-        });
-    }
+    removeTableActionColumn(clonedTable);
 
     const csvContent = Array.from(clonedTable.querySelectorAll('tr'))
-        .map(row => Array.from(row.children).map(cell => `"${cell.textContent.trim()}"`).join(','))
+        .map(row => Array.from(row.children).map(cell => `"${cell.textContent.trim().replace(/"/g, '""')}"`).join(','))
         .join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -412,6 +408,32 @@ function exportToExcel(tableId = null, filename = 'table-export') {
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
+    window.setTimeout(() => URL.revokeObjectURL(downloadLink.href), 0);
+}
+
+function frontendTableFilename(table) {
+    const route = new URLSearchParams(window.location.search).get('r') || 'report';
+    const tableName = table.getAttribute('data-export-name') || table.id || route;
+    return `avata-homes-${tableName}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+function addFrontendTableTools(root = document.getElementById('workspace')) {
+    if (!root) return;
+    root.querySelectorAll('table').forEach((table, index) => {
+        if (table.closest('td, #receiptTemplate, .sales-report-fees-table, [data-no-table-tools]')) return;
+        const section = table.closest('section') || root;
+        const visibleTables = Array.from(section.querySelectorAll('table')).filter(item => !item.closest('td, #receiptTemplate, .sales-report-fees-table, [data-no-table-tools]'));
+        const hasExistingControls = section.querySelector('button[onclick*="printTable"]') && section.querySelector('button[onclick*="exportToExcel"]');
+        if (visibleTables.length === 1 && hasExistingControls) return;
+        if (!table.id) table.id = `frontend-table-${Date.now()}-${index}`;
+        if (table.previousElementSibling?.classList.contains('table-tools')) return;
+        const tools = document.createElement('div');
+        tools.className = 'table-tools flex justify-end gap-2 mb-3';
+        tools.innerHTML = `<button type="button" class="btn table-print-action" title="Print this table" style="background:#006E7093"><span class="material-symbols-outlined" style="font-size:17px">print</span><span>Print</span></button><button type="button" class="btn table-export-action" title="Export this table" style="background:#00703293"><span class="material-symbols-outlined" style="font-size:17px">download</span><span>Export</span></button>`;
+        tools.querySelector('.table-print-action').addEventListener('click', () => printTable(table.id, 'AVATA HOMES Report'));
+        tools.querySelector('.table-export-action').addEventListener('click', () => exportToExcel(table.id, frontendTableFilename(table)));
+        table.parentElement.insertBefore(tools, table);
+    });
 }
 
 async function exportToPDF(id, vertical = false) {
@@ -451,6 +473,7 @@ if (typeof window !== 'undefined') {
         if (typeof checkdatalist === 'function') window.checkdatalist = checkdatalist;
         if (typeof formatCurrency === 'function') window.formatCurrency = formatCurrency;
         if (typeof exportToExcel === 'function') window.exportToExcel = exportToExcel;
+        if (typeof addFrontendTableTools === 'function') window.addFrontendTableTools = addFrontendTableTools;
         if (typeof exportToPDF === 'function') window.exportToPDF = exportToPDF;
     } catch (e) {
         console.log('utility export bridge failed', e);
