@@ -40,15 +40,34 @@ function salesReportFees(record) {
         return name.startsWith('SALES ') || name.startsWith('PROPERTY SALES');
     });
     const displayFees = salesFees.length ? salesFees : fees;
-    return displayFees.length
-        ? displayFees.map(fee => `<div><strong>${salesReportEscape(salesReportText(fee.feename, 'Sales fee'))}</strong><small>₦${salesReportMoney(fee.amount)}</small></div>`).join('')
-        : '—';
+    if (!displayFees.length) return '—';
+    return `<table class="sales-report-fees-table"><thead><tr><th>Fee name</th><th>Currency</th><th>Amount</th></tr></thead><tbody>${displayFees.map(fee => {
+        const currency = salesReportText(fee.currency || fee.currencycode || fee.currency_code, 'NGN');
+        return `<tr><td>${salesReportEscape(salesReportText(fee.feename, 'Sales fee'))}</td><td class="sales-report-fee-currency">${salesReportEscape(currency)}</td><td class="sales-report-fee-amount">₦${salesReportMoney(fee.amount)}</td></tr>`;
+    }).join('')}</tbody></table>`;
 }
 
 function salesReportInstallments(record) {
     const installments = Array.isArray(record?.instalments) ? record.instalments : [];
-    if (!installments.length) return '—';
-    return `${installments.length} schedule${installments.length === 1 ? '' : 's'}`;
+    const saleId = record?.rentdata?.id;
+    if (!installments.length || !saleId) return '<span class="sales-report-no-schedule">No schedule</span>';
+    return `<button type="button" class="sales-report-schedule-button" data-sales-report-schedule="${salesReportEscape(saleId)}">View (${installments.length})</button>`;
+}
+
+function salesReportShowInstallments(record) {
+    const sale = record?.rentdata || {};
+    const installments = Array.isArray(record?.instalments) ? record.instalments : [];
+    let modal = document.getElementById('salesreportinstallmentmodal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'salesreportinstallmentmodal';
+        modal.className = 'sales-report-modal hidden';
+        document.body.appendChild(modal);
+    }
+    const rows = installments.map((installment, index) => `<div class="sales-report-installment-row"><span class="sales-report-installment-index">${index + 1}</span><div><small>Due date</small><strong>${salesReportDate(installment.duedate)}</strong></div><div><small>Scheduled amount</small><strong>₦${salesReportMoney(installment.instalmentamount)}</strong></div><div><small>Amount paid</small><strong>₦${salesReportMoney(installment.amountpaid)}</strong></div><span class="sales-report-installment-status">${salesReportEscape(salesReportText(installment.status, 'Pending'))}</span></div>`).join('');
+    modal.innerHTML = `<div class="sales-report-modal-backdrop" data-close-sales-report-modal></div><div class="sales-report-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="salesreportinstallmenttitle"><div class="sales-report-modal-header"><div><span class="sales-report-modal-eyebrow">Sale transaction</span><h2 id="salesreportinstallmenttitle">Instalment schedule</h2><p>${salesReportEscape(salesReportText(record?.property))} · ${salesReportEscape(salesReportText(record?.unitname))}</p></div><button type="button" class="sales-report-modal-close" data-close-sales-report-modal aria-label="Close">×</button></div><div class="sales-report-modal-summary"><div><small>Client</small><strong>${salesReportEscape(salesReportText(record?.tenant))}</strong></div><div><small>Sales amount</small><strong>₦${salesReportMoney((Number(sale.totalamount) || 0) + (Number(sale.discount) || 0))}</strong></div><div><small>Discount</small><strong>₦${salesReportMoney(sale.discount)}</strong></div><div><small>Final total</small><strong>₦${salesReportMoney(sale.totalamount)}</strong></div><div><small>Amount paid</small><strong>₦${salesReportMoney(sale.amountpaid)}</strong></div><div><small>Status</small><strong>${salesReportEscape(salesReportText(sale.status))}</strong></div></div><div class="sales-report-schedule-list">${rows}</div></div>`;
+    modal.classList.remove('hidden');
+    modal.querySelectorAll('[data-close-sales-report-modal]').forEach(element => element.addEventListener('click', () => modal.classList.add('hidden')));
 }
 
 function salesReportPageSize() {
@@ -88,6 +107,10 @@ function salesReportRender() {
     const numbers = document.getElementById('salesreportpagenumbers');
     if (numbers) numbers.innerHTML = Array.from({ length: totalPages }, (_, index) => `<button type="button" class="${index + 1 === salesReportPage ? 'pagination-number active' : 'pagination-number'}" data-sales-report-page="${index + 1}">${index + 1}</button>`).join('');
     document.querySelectorAll('[data-sales-report-page]').forEach(button => button.addEventListener('click', () => { salesReportPage = Number(button.dataset.salesReportPage); salesReportRender(); }));
+    document.querySelectorAll('[data-sales-report-schedule]').forEach(button => button.addEventListener('click', () => {
+        const record = salesReportRows.find(item => `${item?.rentdata?.id}` === button.dataset.salesReportSchedule);
+        if (record) salesReportShowInstallments(record);
+    }));
 }
 
 async function salesreportActive() {
