@@ -2,6 +2,7 @@ let the_user = JSON.parse(localStorage.getItem('user'));
 let userpermission
 let notificationarray = []  
 window.onload = async   function() {
+    if(typeof startFrontendTableToolsObserver === 'function') startFrontendTableToolsObserver()
     resolveUrlPage() 
     runPermissions()
     checkAccountForVerification()

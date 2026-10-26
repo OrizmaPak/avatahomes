@@ -426,14 +426,35 @@ function addFrontendTableTools(root = document.getElementById('workspace')) {
         const hasExistingControls = section.querySelector('button[onclick*="printTable"]') && section.querySelector('button[onclick*="exportToExcel"]');
         if (visibleTables.length === 1 && hasExistingControls) return;
         if (!table.id) table.id = `frontend-table-${Date.now()}-${index}`;
-        if (table.previousElementSibling?.classList.contains('table-tools')) return;
+        const tableWrapper = table.closest('.table-content');
+        const toolsParent = tableWrapper?.parentElement || table.parentElement;
+        const toolsReference = tableWrapper || table;
+        if (toolsReference.previousElementSibling?.classList.contains('table-tools')) return;
         const tools = document.createElement('div');
         tools.className = 'table-tools flex justify-end gap-2 mb-3';
+        tools.dataset.tableToolsFor = table.id;
         tools.innerHTML = `<button type="button" class="btn table-print-action" title="Print this table" style="background:#006E7093"><span class="material-symbols-outlined" style="font-size:17px">print</span><span>Print</span></button><button type="button" class="btn table-export-action" title="Export this table" style="background:#00703293"><span class="material-symbols-outlined" style="font-size:17px">download</span><span>Export</span></button>`;
         tools.querySelector('.table-print-action').addEventListener('click', () => printTable(table.id, 'AVATA HOMES Report'));
         tools.querySelector('.table-export-action').addEventListener('click', () => exportToExcel(table.id, frontendTableFilename(table)));
-        table.parentElement.insertBefore(tools, table);
+        toolsParent.insertBefore(tools, toolsReference);
     });
+}
+
+function startFrontendTableToolsObserver() {
+    const workspace = document.getElementById('workspace');
+    if (!workspace || workspace.dataset.tableToolsObserved) return;
+    workspace.dataset.tableToolsObserved = '1';
+    let queued = false;
+    const refreshTableTools = () => {
+        queued = false;
+        addFrontendTableTools(workspace);
+    };
+    new MutationObserver(() => {
+        if (queued) return;
+        queued = true;
+        window.requestAnimationFrame(refreshTableTools);
+    }).observe(workspace, { childList: true, subtree: true });
+    addFrontendTableTools(workspace);
 }
 
 async function exportToPDF(id, vertical = false) {
@@ -474,6 +495,7 @@ if (typeof window !== 'undefined') {
         if (typeof formatCurrency === 'function') window.formatCurrency = formatCurrency;
         if (typeof exportToExcel === 'function') window.exportToExcel = exportToExcel;
         if (typeof addFrontendTableTools === 'function') window.addFrontendTableTools = addFrontendTableTools;
+        if (typeof startFrontendTableToolsObserver === 'function') window.startFrontendTableToolsObserver = startFrontendTableToolsObserver;
         if (typeof exportToPDF === 'function') window.exportToPDF = exportToPDF;
     } catch (e) {
         console.log('utility export bridge failed', e);
