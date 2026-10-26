@@ -60,7 +60,7 @@ function gltaddcreditrow(){
                     <input type="text" inputmode="decimal" name="gltcreditamount" id="creditamount_${id}" onchange="allcreditamount()" class="form-control comp money-input" placeholder="Enter Amount">
                 </div>
                 <div id="deletecredit_${id}" onclick="deletecreditglt(${id})" class="form-group flex flex-row cp items-end">
-                    <div title="Add row" onclick="" onmouseover="this.nextElementSibling.classList.add('!w-[100px]');" onmouseleave="this.nextElementSibling.classList.remove('!w-[100px]');" class="mb-1 material-symbols-outlined rounded-full bg-red-700 h-8 w-8 text-white drop-shadow-md text-xs flex justify-center items-center" style="font-size: 18px;">delete</div>
+                    <div title="Remove unsaved credit line" onclick="" onmouseover="this.nextElementSibling.classList.add('!w-[100px]');" onmouseleave="this.nextElementSibling.classList.remove('!w-[100px]');" class="mb-1 material-symbols-outlined rounded-full bg-red-700 h-8 w-8 text-white drop-shadow-md text-xs flex justify-center items-center" style="font-size: 18px;">delete</div>
                     <div class="mb-3 text-xs text-red-600 w-[0px] overflow-hidden trasition-all duration-[0.3s] h-[3]"><p class="px-1 w-[100px]">Click&nbsp;to&nbsp; Delete</p></div>
                 </div>`
     element.innerHTML = x
@@ -85,7 +85,7 @@ function gltadddebitrow(){
                     <input type="text" inputmode="decimal" name="gltdebitamount" id="debitamount_${id}" onchange="alldebitamount()" class="comp form-control money-input" placeholder="Enter Amount">
                 </div>
                 <div id="deletedebit_${id}" onclick="deletedebitglt(${id})" class="form-group flex flex-row cp items-end">
-                    <div title="Add row" onclick="" onmouseover="this.nextElementSibling.classList.add('!w-[100px]');" onmouseleave="this.nextElementSibling.classList.remove('!w-[100px]');" class="mb-1 material-symbols-outlined rounded-full bg-red-700 h-8 w-8 text-white drop-shadow-md text-xs flex justify-center items-center" style="font-size: 18px;">delete</div>
+                    <div title="Remove unsaved debit line" onclick="" onmouseover="this.nextElementSibling.classList.add('!w-[100px]');" onmouseleave="this.nextElementSibling.classList.remove('!w-[100px]');" class="mb-1 material-symbols-outlined rounded-full bg-red-700 h-8 w-8 text-white drop-shadow-md text-xs flex justify-center items-center" style="font-size: 18px;">delete</div>
                     <div class="mb-3 text-xs text-red-600 w-[0px] overflow-hidden trasition-all duration-[0.3s] h-[3]"><p class="px-1 w-[100px]">Click&nbsp;to&nbsp; Delete</p></div>
                 </div>`
     element.innerHTML = x
@@ -187,7 +187,6 @@ async function onaddgltransactionTableDataSignal() {
         <td>${item.productdescription}</td>
         <td class="flex items-center gap-3">
             <button title="Edit row entry" onclick="fetchaddgltransaction('${item.id}')" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
-            <button title="Delete row entry"s onclick="removeaddgltransaction('${item.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">delete</button>
         </td>
     </tr>`
     )

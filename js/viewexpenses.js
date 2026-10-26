@@ -73,7 +73,6 @@ async function onviewexpensesTableDataSignal() {
         <td>${formatNumber(item.debit)}</td>
         <td class="fle x items-center gap-3 hidden">
             <button title="Edit row entry" onclick="document.getElementById('otherpayments').click();otherpaymentsid = ${item.id}" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
-            <button title="Delete row entry" onclick="viewexpensesremove('${item.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">delete</button>
         </td>
     </tr>`
     )

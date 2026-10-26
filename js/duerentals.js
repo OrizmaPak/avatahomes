@@ -144,7 +144,7 @@ async function onduerentalsTableDataSignal() {
         <td>${item.rentstatus || 'N/A'}</td>
         <td class="flex items-center gap-3">
             <button title="Edit row entry" onclick="duerentalpay(${item.unitid})" class="bg-[green]-g h-8 w-fit text-white drop-shadow-md text-sm px-4 rounded-md" style="background: green;font-size: 18px;padding-left: 14px;padding-right: 14px;border-radius: 6px;font-size: small">Record Payment</button>
-            <button title="Delete row entry"s onclick="duerentalsvacate('${item.unitid}')" class="bg-red-600 h-8 w-fit text-white drop-shadow-md text-sm px-4 rounded-md" style="font-size: 18px;padding-left: 14px;padding-right: 14px;border-radius: 6px;font-size: small">Vacate</button>
+            <button title="Vacate unit" onclick="duerentalsvacate('${item.unitid}')" class="bg-red-600 h-8 w-fit text-white drop-shadow-md text-sm px-4 rounded-md" style="font-size: 18px;padding-left: 14px;padding-right: 14px;border-radius: 6px;font-size: small">Vacate</button>
         </td>
     </tr>`
     )

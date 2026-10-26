@@ -283,7 +283,6 @@ async function onviewrentapropertyTableDataSignal() {
         <td><button type="button" class="view-rent-schedule-button" onclick="viewRentInstallmentsById('${item.rentdata.id}')">${viewRentInstallments(item).length ? `View (${viewRentInstallments(item).length})` : 'No schedule'}</button></td>
         <td class="d-flex align-items-center gap-3">
            <button title="Edit row entry" onclick="document.getElementById('rentaproperty').click();rentapropertyid = ${item.rentdata.id}" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
-            <button title="Delete row entry"s onclick="v#ewrentapropertyremove('${item.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">delete</button>
                 <button title="Print Receipt" onclick="generateReceipt(${JSON.stringify(item).replace(/"/g, '&quot;')})" 
               class="material-symbols-outlined rounded-full !bg-blue-600 h-8 w-8 text-white drop-shadow-md text-xs" 
               style="font-size: 18px;background:#0000ff87">receipt</button>

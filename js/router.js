@@ -151,7 +151,7 @@ const routerTree = {
     duerentals: {
         template: 'duerentals',
         startingFunction: 'duerentalsActive',
-        scriptName:  './js/duerentals.js?v=20260618a'
+        scriptName:  './js/duerentals.js?v=20261026a'
     },
     installmentpayments: {
         template: 'installmentpayments',
@@ -166,7 +166,7 @@ const routerTree = {
     paymenthistory: {
         template: 'paymenthistory',
         startingFunction: 'paymenthistoryActive',
-        scriptName:  './js/paymenthistory.js?v=20260618a'
+        scriptName:  './js/paymenthistory.js?v=20261026a'
     },
     addglaccount: {
         template: 'addglaccount',
@@ -181,7 +181,7 @@ const routerTree = {
     addgltransaction: {
         template: 'addgltransaction',
         startingFunction: 'addgltransactionActive',
-        scriptName: './js/addgltransaction.js?v=20260613d'
+        scriptName: './js/addgltransaction.js?v=20261026a'
     },
     gltransactionhistory: {
         template: 'gltransactionhistory',
@@ -191,17 +191,17 @@ const routerTree = {
     trialbalance: {
         template: 'trialbalance',
         startingFunction: 'trialbalanceActive',
-        scriptName: './js/trialbalance.js?v=20260219b'
+        scriptName: './js/trialbalance.js?v=20261026a'
     },
     incomestatement: {
         template: 'incomestatement',
         startingFunction: 'incomestatementActive',
-        scriptName: './js/incomestatement.js?v=20260219b'
+        scriptName: './js/incomestatement.js?v=20261026a'
     },
     balancesheet: {
         template: 'balancesheet',
         startingFunction: 'balancesheetActive',
-        scriptName: './js/balancesheet.js?v=20260219b'
+        scriptName: './js/balancesheet.js?v=20261026a'
     },
     morefees: {
         template: 'morefees',
@@ -216,7 +216,7 @@ const routerTree = {
     viewexpenses: { 
         template: 'viewexpenses',
         startingFunction: 'viewexpensesActive',
-        scriptName:  './js/viewexpenses.js'
+        scriptName:  './js/viewexpenses.js?v=20261026a'
     },
     moredocuments: {
         template: 'moredocuments',
