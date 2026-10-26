@@ -179,6 +179,7 @@ if(!isset($_SESSION["wuseremail"]))
                                         <li class="navitem-child" id="viewenquires">View enquires</li>
                                         <li class="navitem-child" id="rentaproperty">Property Sales</li>
                                         <li class="navitem-child" id="viewrentaproperty">View Property Sales</li>
+                                        <li class="navitem-child" id="salesreport">Sales</li>
                                         <li class="navitem-child" id="pendingdiscountapprovals">Discount Approvals</li>
                                         <li class="navitem-child" id="approvesalesdiscounts">Approve Sales Discounts</li>
                                         <li class="navitem-child" id="duerentals">Due Property Payments</li>
