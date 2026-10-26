@@ -45,14 +45,13 @@
                         <th>Client</th>
                         <th>Unit</th>
                         <th>Amount Paid</th>
-                        <th>Other Fees</th>
                         <th>Date</th>
                         <th>Reference</th>
                         <th>Instalments</th>
                     </tr>
                 </thead>
                 <tbody id="salesreporttabledata">
-                    <tr><td colspan="10">Choose a date range and generate the sales report.</td></tr>
+                    <tr><td colspan="9">Choose a date range and generate the sales report.</td></tr>
                 </tbody>
             </table>
         </div>

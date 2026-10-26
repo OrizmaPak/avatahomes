@@ -91,12 +91,11 @@ function salesReportRender() {
             <td>${salesReportEscape(salesReportText(record.tenant))}</td>
             <td>${salesReportEscape(salesReportText(record.unitname))}</td>
             <td class="text-right">₦${salesReportMoney(sale.amountpaid)}</td>
-            <td class="text-right">₦${salesReportMoney(sale.otherfees)}</td>
             <td>${salesReportDate(sale.paymentdate)}</td>
             <td>${salesReportEscape(salesReportText(sale.reference))}</td>
             <td>${salesReportInstallments(record)}</td>
         </tr>`;
-    }).join('') : '<tr><td colspan="10">No completed sales match the selected filters.</td></tr>';
+    }).join('') : '<tr><td colspan="9">No completed sales match the selected filters.</td></tr>';
 
     const status = document.getElementById('salesreportpaginationstatus');
     if (status) status.textContent = salesReportRows.length ? `Showing ${start + 1} - ${Math.min(start + pageSize, salesReportRows.length)} of ${salesReportRows.length}` : 'No completed sales found';
