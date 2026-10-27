@@ -472,7 +472,10 @@ function addFrontendTableTools(root = document.getElementById('workspace')) {
         const tableWrapper = table.closest('.table-content');
         const toolsParent = tableWrapper?.parentElement || table.parentElement;
         const toolsReference = tableWrapper || table;
-        if (toolsReference.previousElementSibling?.classList.contains('table-tools')) return;
+        const existingTools = toolsReference.previousElementSibling;
+        const hasPrintButton = existingTools?.querySelector('button[onclick*="print"], .table-print-action');
+        const hasExportButton = existingTools?.querySelector('button[onclick*="export"], .table-export-action');
+        if (existingTools?.classList.contains('table-tools') || (hasPrintButton && hasExportButton)) return;
         const tools = document.createElement('div');
         tools.className = 'table-tools flex justify-end gap-2 mb-3';
         tools.dataset.tableToolsFor = table.id;
