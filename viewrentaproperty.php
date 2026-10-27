@@ -137,6 +137,26 @@
 .d-none{
     display: none;
 }
+.view-rent-modal-actions {
+    display: flex;
+    align-items: flex-start;
+    gap: .5rem;
+}
+.view-rent-modal-print {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    border: 1px solid #c9a227;
+    border-radius: 6px;
+    padding: .4rem .65rem;
+    background: #fff;
+    color: #604d17;
+    font-size: .76rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+.view-rent-modal-print:hover { background: #fff3cd; }
+.view-rent-modal-print .material-symbols-outlined { font-size: 16px; }
 </style>
 
 <!-- Add to your HTML -->

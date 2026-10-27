@@ -385,6 +385,49 @@ function printTable(tableTarget = null, title = 'AVATA HOMES Report') {
     };
 }
 
+function printModalContent(modalId, contentSelector, title = 'AVATA HOMES Schedule') {
+    const modal = document.getElementById(modalId);
+    const content = modal?.querySelector(contentSelector);
+    if (!content) {
+        notification('The schedule is not available to print.', 0);
+        return;
+    }
+
+    const clonedContent = content.cloneNode(true);
+    clonedContent.querySelectorAll('[data-print-exclude]').forEach(element => element.remove());
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        notification('Unable to open print window. Please allow popups for this site.', 0);
+        return;
+    }
+
+    printWindow.document.open();
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>${title}</title>
+                <style>
+                    body { padding: 24px; color: #1f2937; font-family: Arial, sans-serif; }
+                    h1 { margin: 0 0 16px; font-size: 18px; }
+                    button { display: none !important; }
+                    .view-rent-modal-dialog, .sales-report-modal-dialog { width: 100%; max-width: none; border: 0; box-shadow: none; }
+                    .view-rent-modal-header, .sales-report-modal-header { padding: 0 0 16px; border-bottom: 1px solid #d1d5db; }
+                    .view-rent-modal-summary, .sales-report-modal-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px 0; }
+                    .view-rent-modal-summary div, .sales-report-modal-summary div, .view-rent-installment-row, .sales-report-installment-row { border: 1px solid #d1d5db; padding: 10px; }
+                    .view-rent-schedule-list, .sales-report-schedule-list { padding: 0; }
+                    @media print { body { padding: 0; } }
+                </style>
+            </head>
+            <body><h1>${title}</h1>${clonedContent.outerHTML}</body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.onload = () => {
+        printWindow.focus();
+        printWindow.print();
+    };
+}
+
 
 // TO EXPORT TO EXCEL
 function exportToExcel(tableId = null, filename = 'table-export') {
@@ -494,6 +537,7 @@ if (typeof window !== 'undefined') {
         if (typeof checkdatalist === 'function') window.checkdatalist = checkdatalist;
         if (typeof formatCurrency === 'function') window.formatCurrency = formatCurrency;
         if (typeof exportToExcel === 'function') window.exportToExcel = exportToExcel;
+        if (typeof printModalContent === 'function') window.printModalContent = printModalContent;
         if (typeof addFrontendTableTools === 'function') window.addFrontendTableTools = addFrontendTableTools;
         if (typeof startFrontendTableToolsObserver === 'function') window.startFrontendTableToolsObserver = startFrontendTableToolsObserver;
         if (typeof exportToPDF === 'function') window.exportToPDF = exportToPDF;

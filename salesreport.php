@@ -90,6 +90,10 @@
     .sales-report-modal-eyebrow { color: #a77d0b; font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
     .sales-report-modal-header h2 { margin: .2rem 0; color: #604d17; font-size: 1.25rem; }
     .sales-report-modal-header p { margin: 0; color: #80651b; font-size: .8rem; }
+    .sales-report-modal-actions { display: flex; align-items: flex-start; gap: .5rem; }
+    .sales-report-modal-print { display: inline-flex; align-items: center; gap: .25rem; border: 1px solid #c9a227; border-radius: 6px; padding: .4rem .65rem; background: #fff; color: #604d17; font-size: .76rem; font-weight: 700; cursor: pointer; }
+    .sales-report-modal-print:hover { background: #fff3cd; }
+    .sales-report-modal-print .material-symbols-outlined { font-size: 16px; }
     .sales-report-modal-close { width: 2rem; height: 2rem; border: 0; border-radius: 50%; background: #fff; color: #604d17; font-size: 1.5rem; line-height: 1; cursor: pointer; }
     .sales-report-modal-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; padding: 1rem 1.4rem; }
     .sales-report-modal-summary div { padding: .7rem; border: 1px solid #f0e4c4; border-radius: 9px; background: #fff; }
