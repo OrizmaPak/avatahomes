@@ -187,10 +187,10 @@ if(!isset($_SESSION["wuseremail"]))
                                         <li class="navitem-child" id="pendingdiscountapprovals">Discount Approvals</li>
                                         <li class="navitem-child" id="approvesalesdiscounts">Approve Sales Discounts</li>
                                         <li class="nav-section-heading">Payments & Receivables</li>
-                                        <li class="navitem-child" id="duerentals">Due Rentals</li>
                                         <li class="navitem-child" id="duepayments" title="Due Payments">Due Payments</li>
                                         <li class="navitem-child" id="overduepayments" title="Overdue Payments">Overdue Payments</li>
                                         <li class="navitem-child" id="installmentpayments">Installment Payments</li>
+                                        <li class="navitem-child" id="duerentals">Due Rentals</li>
                                         <li class="nav-section-heading">Documents</li>
                                         <li class="navitem-child" id="moredocuments">More Documents</li>
                                     </ul>
