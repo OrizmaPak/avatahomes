@@ -16,9 +16,19 @@
 
   async function organisation() {
     if (!organisationPromise) {
-      organisationPromise = fetch('../controllers/fetchorganisation')
+      organisationPromise = fetch('../controllers/fetchorganisationscript')
         .then(response => response.json())
-        .then(response => response?.status ? (Array.isArray(response.data) ? response.data[0] : response.data) || {} : {})
+        .then(response => {
+          if (!response?.status) return {};
+          const candidates = [
+            response?.data?.data?.data?.[0],
+            response?.data?.data?.[0],
+            response?.data?.[0],
+            response?.data?.data,
+            response?.data
+          ];
+          return candidates.find(item => item && typeof item === 'object' && !Array.isArray(item)) || {};
+        })
         .catch(() => ({}));
     }
     return organisationPromise;
