@@ -1,4 +1,4 @@
-                    <section class="animate__animated animate__fadeIn">
+                    <section class="animate__animated animate__fadeIn duerentals-page">
                             <p class="page-title">
                                 <span>Due Property Payments</span>
                             </p> 

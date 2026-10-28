@@ -55,7 +55,7 @@
 ">
                                 <table class="">
     <thead class="">
-        <tr style="background:#64748b !important; color: white !important;">
+        <tr>
             <th>S/N</th>
             <th>Product</th>
             <th>Client</th>

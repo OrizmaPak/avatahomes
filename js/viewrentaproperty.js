@@ -263,7 +263,7 @@ async function onviewrentapropertyTableDataSignal() {
         <div class="table-content">
             <table class="mb-0 view-rent-fees-table">
                 <thead>
-                    <tr style="background:#64748b !important; color: white !important;">
+                    <tr>
                         <th>Fee Name</th>
                         <th>Amount</th>
                         <th>Instalment</th>

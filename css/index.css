@@ -2083,6 +2083,28 @@ button:disabled {
   color: #50627f;
 }
 
+.dashboard-theme .nav-section-heading {
+  flex: 0 0 auto;
+}
+
+.dashboard-theme .duerentals-page {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.dashboard-theme .duerentals-page .table-content {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.dashboard-theme .duerentals-page .table-content table {
+  min-width: 1500px;
+}
+
 .dashboard-theme .page-title { 
   font-size: 14px; 
 }

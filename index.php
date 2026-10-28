@@ -17,7 +17,7 @@ if(!isset($_SESSION["wuseremail"]))
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avata Homes Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./css/index.css?v=20261028b">
+    <link rel="stylesheet" href="./css/index.css?v=20261028c">
     <link rel="stylesheet" href="./css/css_vanilla.css?v=20260219c">
     <link rel="stylesheet" href="./css/floorplans.css?v=20261007b">
     <link rel="stylesheet" href="./css/dashboard.css?v=20261022a">
@@ -119,7 +119,7 @@ if(!isset($_SESSION["wuseremail"]))
             <section>
                 <div class="xl:flex h-screen relative">
                     <!-- navigation -->
-                    <nav id="navigation" class="dashboard-nav fixed top-0 left-0 z-40 lg:relative lg:z-0 w-4/5 xl:w-[250px] h-full bg-white border-r border-gray-200/50 pb-14">
+                    <nav id="navigation" class="dashboard-nav fixed top-0 left-0 z-40 lg:relative lg:z-0 w-4/5 xl:w-[250px] xl:flex-none h-full bg-white border-r border-gray-200/50 pb-14">
                         <div class="overflow-y-auto overflow-x-hidden h-full">
                             <ul class="font-poppins mt-5">
                                 <li class="nav-item">
@@ -236,7 +236,7 @@ if(!isset($_SESSION["wuseremail"]))
                             </ul>
                         </div>
                     </nav>
-                    <section class="flex-1 flex flex-col justify-between pb-14">
+                    <section class="flex-1 min-w-0 flex flex-col justify-between pb-14">
                         <!-- content area -->
                         <div  class="overflow-y-auto overflow-x-hidden h-full">
                             <div class="xl:w-5/6 3xl:w-3/5 w-full mx-auto mt-5 p-5 xl:p-0" id="workspace"></div>
@@ -254,7 +254,7 @@ if(!isset($_SESSION["wuseremail"]))
         <div class="modal-content" id="modal-content"></div>
     </div>
     <script src="./js/util.js?v=20260613a"></script>
-    <script src="./js/router.js?v=20261028b"></script>
+    <script src="./js/router.js?v=20261028c"></script>
     <script src="./js/index.js?v=20261028b"></script>
     <script src="./js/oreutil.js?v=20261027a"></script>
 </body>
