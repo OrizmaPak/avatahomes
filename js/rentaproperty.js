@@ -210,6 +210,13 @@ async function rentapropertyActive() {
     saleInstallmentStartDate = event.target.value;
     updateSalePlan();
   });
+  document.getElementById('installmentcount')?.addEventListener('change', (event) => {
+    const installmentCount = Number.parseInt(event.target.value || '', 10);
+    const beginDate = document.getElementById('begindate')?.value;
+    if (getSelectedExitMode() === 'SALE' && installmentCount > 0 && !beginDate) {
+      notification('Please fill in the begin date for the instalment schedule to be calculated.', 0);
+    }
+  });
 
   // Fetch tenants
   const tRes = await httpRequest2('../controllers/fetchtenants', null, null, 'json');
