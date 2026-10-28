@@ -102,18 +102,36 @@
 }
 
 .sales-payment-pay-button {
-    border: 1px solid #c9a227;
-    border-radius: 7px;
-    padding: 7px 15px;
-    background: #fff8e5;
-    color: #80651b;
-    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 38px;
+    border: 1px solid #b68b16;
+    border-radius: 9px;
+    padding: 8px 17px;
+    background: linear-gradient(135deg, #d9b64a, #bd901c);
+    color: #fff;
+    font-size: 13px;
     font-weight: 800;
     cursor: pointer;
+    box-shadow: 0 3px 8px rgb(132 97 19 / 24%);
+    transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
 }
 
 .sales-payment-pay-button:hover {
-    background: #fff0c4;
+    filter: brightness(1.05);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgb(132 97 19 / 30%);
+}
+
+.sales-payment-pay-button:focus-visible {
+    outline: 3px solid rgb(201 162 39 / 35%);
+    outline-offset: 2px;
+}
+
+.sales-payment-pay-button .material-symbols-outlined {
+    font-size: 18px;
 }
 
 .sales-payment-missing-id-note {

@@ -41,7 +41,7 @@ function salesPaymentReportRender() {
         <td>${salesPaymentReportText(record?.unitname)}</td>
         <td class="text-right">${salesPaymentReportMoney(record?.amountdue)}</td>
         <td><span class="sales-payment-report-installment">${salesPaymentReportText(record?.status ?? record?.paymentstatus, 'DUE')}</span></td>
-        <td><button type="button" class="sales-payment-pay-button" data-sales-payment-row="${salesPaymentReportRows.indexOf(record)}">Pay</button></td>
+        <td><button type="button" class="sales-payment-pay-button" data-sales-payment-row="${salesPaymentReportRows.indexOf(record)}"><span class="material-symbols-outlined" aria-hidden="true">payments</span><span>Pay</span></button></td>
     </tr>`).join('') : '<tr><td colspan="7">No matching payment records found.</td></tr>';
 
     const status = document.getElementById('salesPaymentReportPaginationStatus');
@@ -94,7 +94,7 @@ function salesPaymentReportOpenPayment(record) {
             <div class="installment-payment-dialog-header"><div><small>Sales payment</small><h2 id="salesPaymentDialogTitle">Record due payment</h2><p>${salesPaymentReportText(record?.tenant)} · ${salesPaymentReportText(record?.propertyname ?? record?.property)} · ${salesPaymentReportText(record?.unitname)}</p></div><button type="button" class="installment-payment-close" data-sales-payment-close aria-label="Close">×</button></div>
             <div class="installment-payment-summary"><div><small>Amount due</small><strong>${salesPaymentReportMoney(record?.amountdue)}</strong></div><div><small>Original sale ID</small><strong>${salesPaymentReportText(originalSaleId, 'Not provided')}</strong></div><div><small>Fee name ID</small><strong>${salesPaymentReportText(feeNameId, 'Not provided')}</strong></div></div>
             <form id="salesPaymentReportForm"><input type="hidden" name="id" value="${salesPaymentReportText(originalSaleId, '')}"><input type="hidden" name="feenameid" value="${salesPaymentReportText(feeNameId, '')}">
-                <label>Amount paid<input name="amountpaid" class="form-control" type="number" min="0" step="0.01" value="${Number(record?.amountdue) || ''}" required></label>
+                <label>Amount paid<input name="amountpaid" class="form-control" type="number" min="0" step="0.01" placeholder="Enter amount paid" required></label>
                 <label>Transaction date<input name="transactiondate" class="form-control" type="date" value="${new Date().toISOString().split('T')[0]}" required></label>
                 <div class="sales-payment-missing-id-note" ${hasRequiredIds ? 'hidden' : ''}>This report response does not include the original sale ID or fee name ID, so payment cannot be submitted yet.</div>
                 <div class="installment-payment-dialog-actions"><button type="button" class="btn installment-payment-cancel" data-sales-payment-close>Cancel</button><button type="submit" class="btn installment-payment-save" ${hasRequiredIds ? '' : 'disabled'}>Pay</button></div>
