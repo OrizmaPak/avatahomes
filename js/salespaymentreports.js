@@ -50,7 +50,7 @@ function salesPaymentReportRender() {
     const next = document.getElementById('salesPaymentReportNext');
     if (previous) previous.disabled = salesPaymentReportPage === 1;
     if (next) next.disabled = salesPaymentReportPage === totalPages;
-    const pageNumbers = document.getElementById('salesPaymentReportPageNumbers');
+    const pageNumbers = document.getElementById('pagination-numbers');
     if (pageNumbers) pageNumbers.innerHTML = Array.from({ length: totalPages }, (_, index) => `<button type="button" class="${index + 1 === salesPaymentReportPage ? 'pagination-number active' : 'pagination-number'}" data-payment-report-page="${index + 1}">${index + 1}</button>`).join('');
     pageNumbers?.querySelectorAll('[data-payment-report-page]').forEach(button => button.addEventListener('click', () => {
         salesPaymentReportPage = Number(button.dataset.paymentReportPage);
