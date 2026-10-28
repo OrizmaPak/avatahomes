@@ -115,8 +115,8 @@ function salesPaymentReportOpenPayment(record) {
         const response = await httpRequest2('../controllers/paysalesschedule', payload, event.submitter, 'json');
         if (!response?.status) return notification(response?.message || 'Unable to save payment.', 0);
         close();
+        notification('Payment recorded successfully.', 1);
         await fetchSalesPaymentReport();
-        notification(response.message || 'Payment saved successfully.', 1);
     });
 }
 
