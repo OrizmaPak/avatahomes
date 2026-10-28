@@ -33,14 +33,6 @@ window.onload = async   function() {
         })
     })
 
-    document.querySelectorAll('#navigation .nav-subgroup-toggle').forEach(toggle => {
-        toggle.addEventListener('click', () => {
-            const group = toggle.closest('.nav-subgroup');
-            const isOpen = group.classList.toggle('open');
-            toggle.setAttribute('aria-expanded', `${isOpen}`);
-        });
-    });
-
     Object.keys(routerTree).forEach( route => {
         if(route && !!document.getElementById(route)) {
             document.getElementById(route)?.addEventListener('click', () => {
@@ -306,9 +298,12 @@ async function runPermissions(){
                 }  
                     if(permission_switch === 'OFF')subitems[i].classList.remove('hidden');
             }
-            document.querySelectorAll('#navigation .nav-subgroup').forEach(group => {
-                const hasVisibleLinks = Array.from(group.querySelectorAll('.navitem-child')).some(link => !link.classList.contains('hidden'));
-                group.classList.toggle('hidden', !hasVisibleLinks);
+            document.querySelectorAll('#navigation .nav-section-heading').forEach(heading => {
+                let hasVisibleItems = false;
+                for (let sibling = heading.nextElementSibling; sibling && !sibling.classList.contains('nav-section-heading'); sibling = sibling.nextElementSibling) {
+                    if (sibling.classList.contains('navitem-child') && !sibling.classList.contains('hidden')) hasVisibleItems = true;
+                }
+                heading.classList.toggle('hidden', !hasVisibleItems);
             });
             let x =  document.getElementsByClassName('navitem-title')
             for(let i=0;i<x.length;i++){

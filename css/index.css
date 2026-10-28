@@ -1347,64 +1347,16 @@ body {
   padding: 0.25rem 0.75rem 0.45rem 0.35rem;
 }
 
-.nav-subgroup {
-  min-width: 0;
-}
-
-.nav-subgroup-toggle {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 9px 10px 9px 12px;
-  border: 0;
-  border-radius: 8px;
-  background: #f8f6ef;
+.nav-section-heading {
+  margin: 7px 0 0 1.75rem;
+  padding: 8px 0 3px 0.75rem;
+  border-bottom: 1px solid #eee5cf;
   color: #8a7342;
-  cursor: pointer;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.075em;
   line-height: 1.35;
-  text-align: left;
   text-transform: uppercase;
-  transition: background-color .2s ease, color .2s ease;
-}
-
-.nav-subgroup-toggle:hover,
-.nav-subgroup.open > .nav-subgroup-toggle {
-  background: #fff4d8;
-  color: #a87912;
-}
-
-.nav-subgroup-toggle .material-symbols-outlined {
-  flex: 0 0 auto;
-  font-size: 17px;
-  transition: transform .2s ease;
-}
-
-.nav-subgroup.open > .nav-subgroup-toggle .material-symbols-outlined {
-  transform: rotate(180deg);
-}
-
-.nav-subgroup > ul {
-  display: none;
-  flex-direction: column;
-  gap: 2px;
-  margin: 3px 0 7px 7px;
-  padding: 0 0 0 5px;
-  border-left: 1px solid #eee5cf;
-}
-
-.nav-subgroup.open > ul {
-  display: flex;
-}
-
-.nav-subgroup .navitem-child {
-  margin-left: 0;
-  padding-left: 12px;
-  overflow-wrap: anywhere;
 }
 
 .nav-item.expand {

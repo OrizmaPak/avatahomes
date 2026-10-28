@@ -17,7 +17,7 @@ if(!isset($_SESSION["wuseremail"]))
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avata Homes Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./css/index.css?v=20261028a">
+    <link rel="stylesheet" href="./css/index.css?v=20261028b">
     <link rel="stylesheet" href="./css/css_vanilla.css?v=20260219c">
     <link rel="stylesheet" href="./css/floorplans.css?v=20261007b">
     <link rel="stylesheet" href="./css/dashboard.css?v=20261022a">
@@ -175,39 +175,24 @@ if(!isset($_SESSION["wuseremail"]))
                                         </span>
                                     </span>
                                     <ul class="ml-14 gap-y-4 flex flex-col">
-                                        <li class="nav-subgroup">
-                                            <button type="button" class="nav-subgroup-toggle" aria-expanded="false"><span>Client Services</span><span class="material-symbols-outlined">expand_more</span></button>
-                                            <ul>
-                                                <li class="navitem-child" id="registeratenant">Register Client</li>
-                                                <li class="navitem-child" id="viewtenants">View Clients</li>
-                                                <li class="navitem-child" id="viewenquires">View Enquires</li>
-                                                <li class="navitem-child" id="moredocuments">More Documents</li>
-                                            </ul>
-                                        </li>
-                                        <li class="nav-subgroup">
-                                            <button type="button" class="nav-subgroup-toggle" aria-expanded="false"><span>Property Transactions</span><span class="material-symbols-outlined">expand_more</span></button>
-                                            <ul>
-                                                <li class="navitem-child" id="rentaproperty">Property Sales</li>
-                                                <li class="navitem-child" id="viewrentaproperty">View Properties Rented</li>
-                                                <li class="navitem-child" id="salesreport">View Sales</li>
-                                            </ul>
-                                        </li>
-                                        <li class="nav-subgroup">
-                                            <button type="button" class="nav-subgroup-toggle" aria-expanded="false"><span>Discount Governance</span><span class="material-symbols-outlined">expand_more</span></button>
-                                            <ul>
-                                                <li class="navitem-child" id="pendingdiscountapprovals">Discount Approvals</li>
-                                                <li class="navitem-child" id="approvesalesdiscounts">Approve Sales Discounts</li>
-                                            </ul>
-                                        </li>
-                                        <li class="nav-subgroup">
-                                            <button type="button" class="nav-subgroup-toggle" aria-expanded="false"><span>Payment Monitoring</span><span class="material-symbols-outlined">expand_more</span></button>
-                                            <ul>
-                                                <li class="navitem-child" id="duerentals">Due Rentals</li>
-                                                <li class="navitem-child" id="duepayments" title="Due Payments">Due Payments</li>
-                                                <li class="navitem-child" id="overduepayments" title="Overdue Payments">Overdue Payments</li>
-                                                <li class="navitem-child" id="installmentpayments">Installment Payments</li>
-                                            </ul>
-                                        </li>
+                                        <li class="nav-section-heading">Clients & Enquiries</li>
+                                        <li class="navitem-child" id="registeratenant">Register Client</li>
+                                        <li class="navitem-child" id="viewtenants">View Clients</li>
+                                        <li class="navitem-child" id="viewenquires">View Enquires</li>
+                                        <li class="nav-section-heading">Property Transactions</li>
+                                        <li class="navitem-child" id="rentaproperty">Property Sales</li>
+                                        <li class="navitem-child" id="viewrentaproperty">View Properties Rented</li>
+                                        <li class="navitem-child" id="salesreport">View Sales</li>
+                                        <li class="nav-section-heading">Discount Approvals</li>
+                                        <li class="navitem-child" id="pendingdiscountapprovals">Discount Approvals</li>
+                                        <li class="navitem-child" id="approvesalesdiscounts">Approve Sales Discounts</li>
+                                        <li class="nav-section-heading">Payments & Receivables</li>
+                                        <li class="navitem-child" id="duerentals">Due Rentals</li>
+                                        <li class="navitem-child" id="duepayments" title="Due Payments">Due Payments</li>
+                                        <li class="navitem-child" id="overduepayments" title="Overdue Payments">Overdue Payments</li>
+                                        <li class="navitem-child" id="installmentpayments">Installment Payments</li>
+                                        <li class="nav-section-heading">Documents</li>
+                                        <li class="navitem-child" id="moredocuments">More Documents</li>
                                     </ul>
                                 </li>
                                 <li class="nav-item"> 
@@ -269,8 +254,8 @@ if(!isset($_SESSION["wuseremail"]))
         <div class="modal-content" id="modal-content"></div>
     </div>
     <script src="./js/util.js?v=20260613a"></script>
-    <script src="./js/router.js?v=20261028a"></script>
-    <script src="./js/index.js?v=20261028a"></script>
+    <script src="./js/router.js?v=20261028b"></script>
+    <script src="./js/index.js?v=20261028b"></script>
     <script src="./js/oreutil.js?v=20261027a"></script>
 </body>
 
