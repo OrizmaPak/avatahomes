@@ -22,12 +22,17 @@ window.onload = async   function() {
                 if(nav.parentElement.classList.contains('expand')) {
                     nav.parentElement.style.maxHeight = '36px';
                     nav.parentElement.classList.remove('expand')
-                    nav.querySelectorAll('.material-symbols-outlined')[1].style.transform = 'rotate(0deg)'
+                    nav.querySelectorAll('.material-symbols-outlined')[1]?.style.setProperty('transform', 'rotate(0deg)')
                 }
                 else {
+                    document.querySelectorAll('#navigation .nav-item.expand').forEach(expandedNav => {
+                        expandedNav.style.maxHeight = '36px';
+                        expandedNav.classList.remove('expand');
+                        expandedNav.querySelector('.navitem-title .material-symbols-outlined:last-child')?.style.setProperty('transform', 'rotate(0deg)');
+                    });
                     nav.parentElement.style.maxHeight = '1200px';
                     nav.parentElement.classList.add('expand')
-                    nav.querySelectorAll('.material-symbols-outlined')[1].style.transform = 'rotate(90deg)'
+                    nav.querySelectorAll('.material-symbols-outlined')[1]?.style.setProperty('transform', 'rotate(90deg)')
                 }
             }
         })

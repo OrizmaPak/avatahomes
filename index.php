@@ -257,7 +257,7 @@ if(!isset($_SESSION["wuseremail"]))
     <script src="./js/util.js?v=20260613a"></script>
     <script src="./js/receipts.js?v=20261028b"></script>
     <script src="./js/router.js?v=20261028e"></script>
-    <script src="./js/index.js?v=20261028b"></script>
+    <script src="./js/index.js?v=20261028c"></script>
     <script src="./js/oreutil.js?v=20261027a"></script>
 </body>
 
