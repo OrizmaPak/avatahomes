@@ -31,6 +31,7 @@ if(!isset($_SESSION["wuseremail"]))
   <link rel="stylesheet" href="./css/installmentpayments.css?v=20261011a">
   <link rel="stylesheet" href="./css/installmentpayments-overrides.css?v=20261011a">
   <link rel="stylesheet" href="./css/salespaymentreports.css?v=20261028e">
+  <link rel="stylesheet" href="./css/receipts.css?v=20261028a">
      <!-- PWA Manifest --> 
   <link rel="manifest" href="./manifest.json"> 
       <!-- ios support -->
@@ -254,7 +255,8 @@ if(!isset($_SESSION["wuseremail"]))
         <div class="modal-content" id="modal-content"></div>
     </div>
     <script src="./js/util.js?v=20260613a"></script>
-    <script src="./js/router.js?v=20261028d"></script>
+    <script src="./js/receipts.js?v=20261028a"></script>
+    <script src="./js/router.js?v=20261028e"></script>
     <script src="./js/index.js?v=20261028b"></script>
     <script src="./js/oreutil.js?v=20261027a"></script>
 </body>

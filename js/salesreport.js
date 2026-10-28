@@ -95,8 +95,9 @@ function salesReportRender() {
             <td>${salesReportDate(sale.paymentdate)}</td>
             <td>${salesReportEscape(salesReportText(sale.reference))}</td>
             <td>${salesReportInstallments(record)}</td>
+            <td>${AvataReceipts.fromSale(record).amount > 0 ? `<button type="button" class="avata-receipt-button" data-sales-receipt="${salesReportEscape(sale.id)}">Receipt</button>` : '—'}</td>
         </tr>`;
-    }).join('') : '<tr><td colspan="9">No completed sales match the selected filters.</td></tr>';
+    }).join('') : '<tr><td colspan="10">No completed sales match the selected filters.</td></tr>';
 
     const status = document.getElementById('salesreportpaginationstatus');
     if (status) status.textContent = salesReportRows.length ? `Showing ${start + 1} - ${Math.min(start + pageSize, salesReportRows.length)} of ${salesReportRows.length}` : 'No completed sales found';
@@ -110,6 +111,10 @@ function salesReportRender() {
     document.querySelectorAll('[data-sales-report-schedule]').forEach(button => button.addEventListener('click', () => {
         const record = salesReportRows.find(item => `${item?.rentdata?.id}` === button.dataset.salesReportSchedule);
         if (record) salesReportShowInstallments(record);
+    }));
+    body.querySelectorAll('[data-sales-receipt]').forEach(button => button.addEventListener('click', () => {
+        const record = salesReportRows.find(item => `${item?.rentdata?.id}` === button.dataset.salesReceipt);
+        if (record) AvataReceipts.open(AvataReceipts.fromSale(record));
     }));
 }
 

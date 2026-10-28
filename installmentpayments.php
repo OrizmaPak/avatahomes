@@ -2,6 +2,7 @@
     <div class="installment-payments-heading">
         <div><p class="page-title"><span>Installment Payments</span></p><p class="installment-payments-subtitle">View remaining payments and record the next instalment for a client.</p></div>
         <div class="flex items-center gap-2">
+            <a class="avata-receipt-button" href="./index.php?r=paymenthistory">Payment receipts</a>
             <button type="button" class="btn" style="background:#006E7093" onclick="printTable('installmentPaymentsExportTable', 'AVATA HOMES Installment Payments')"><span class="material-symbols-outlined">print</span> Print</button>
             <button type="button" class="btn" style="background:#00703293" onclick="exportToExcel('installmentPaymentsExportTable', 'avata-homes-installment-payments')"><span class="material-symbols-outlined">download</span> Export</button>
             <button type="button" id="installmentPaymentsRefresh" class="btn"><span class="material-symbols-outlined">refresh</span> Refresh</button>

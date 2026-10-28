@@ -120,6 +120,11 @@ async function otherpaymentssubmitss(){
     let request = await httpRequest2('../controllers/otherpaymentscript', payload, document.querySelector('#otherpaymentsform #submit'))
     if(request.status) {
         notification('Record saved successfully!', 1);
+        AvataReceipts.offer({ kind: 'Other payment', amount: payload.get('credit'),
+            transactionDate: payload.get('transactiondate'), ...AvataReceipts.savedDetails(request),
+            reference: AvataReceipts.savedDetails(request).reference || payload.get('reference'),
+            client: AvataReceipts.selectedText('#otherpaymentsform #ownerid'),
+            description: payload.get('description'), method: payload.get('paymentmethod') });
         document.querySelector('#otherpaymentsform').reset();
         document.querySelector('#imagePreview').innerHTML = '';
         return

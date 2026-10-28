@@ -83,7 +83,14 @@ async function duerentalpay(id, again=''){
     let request = await httpRequest2('../controllers/renewrent', payload, null, 'json')
     if(request.status){
         notification(request.message, 1)
+        const unit = duerentalsAllRows.find(item => `${item.unitid}` === `${id}`)
+        AvataReceipts.offer({ kind: 'Rental', amount: payload.get('amountpaid'),
+            transactionDate: payload.get('paymentdate'), ...AvataReceipts.savedDetails(request),
+            reference: AvataReceipts.savedDetails(request).reference || payload.get('reference'),
+            client: [unit?.tenantdata?.firstname, unit?.tenantdata?.lastname].filter(Boolean).join(' '),
+            property: unit?.propertydata?.propertyname, unit: unit?.unitname, description: 'Rental renewal payment' })
         closeJmodal()
+        await duerentalsFormSubmitHandler()
     }else return notification(request.message, 0)
     
 }
@@ -162,12 +169,22 @@ async function onduerentalsTableDataSignal() {
         <td>${item.rentstatus || 'N/A'}</td>
         <td class="flex items-center gap-3">
             <button title="Edit row entry" onclick="duerentalpay(${item.unitid})" class="bg-[green]-g h-8 w-fit text-white drop-shadow-md text-sm px-4 rounded-md" style="background: green;font-size: 18px;padding-left: 14px;padding-right: 14px;border-radius: 6px;font-size: small">Record Payment</button>
+            ${Number(item.lastrentdata?.amountpaid || 0) > 0 ? `<button type="button" class="avata-receipt-button" onclick="dueRentalReceipt('${item.unitid}')">Receipt</button>` : ''}
             <button title="Vacate unit" onclick="duerentalsvacate('${item.unitid}')" class="bg-red-600 h-8 w-fit text-white drop-shadow-md text-sm px-4 rounded-md" style="font-size: 18px;padding-left: 14px;padding-right: 14px;border-radius: 6px;font-size: small">Vacate</button>
         </td>
     </tr>`
     )
     .join('')
     injectPaginatatedTable(rows)
+}
+
+function dueRentalReceipt(unitId) {
+    const item = duerentalsAllRows.find(row => `${row.unitid}` === `${unitId}`)
+    if (!item?.lastrentdata) return
+    AvataReceipts.open({ kind: 'Rental', amount: item.lastrentdata.amountpaid,
+        transactionDate: item.lastrentdata.paymentdate, reference: item.lastrentdata.reference,
+        client: [item.tenantdata?.firstname, item.tenantdata?.lastname].filter(Boolean).join(' '),
+        property: item.propertydata?.propertyname, unit: item.unitname, description: 'Rental payment' })
 }
 
 function formatOtherFeesDetail(details){

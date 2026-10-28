@@ -79,21 +79,9 @@ async function paymenthistoryremove(id) {
  * Opens a SweetAlert2 modal showing the receipt details.
  */
 function viewReceipt(id) {
-  const item = datasource.find(r => r.id === id);
+  const item = datasource.find(r => `${r.id}` === `${id}`);
   if (!item) return;
-
-  // generateReceiptHTML is your existing function
-  const receiptHtml = generateReceiptHTML(item);
-
-  Swal.fire({
-    html: receiptHtml,
-    width: 800,
-    showCloseButton: true,
-    showConfirmButton: false,
-    customClass: {
-      popup: 'swal-wide'   // you can define .swal-wide in your CSS if you need extra styling
-    },
-  });
+  AvataReceipts.open(AvataReceipts.fromLedger(item, Number(item.credit || 0) > 0 ? 'Payment' : 'Expense'));
 }
 
 
@@ -115,16 +103,11 @@ function renderTablePage() {
         <td class="text-right">${formatNumber(balance)}</td>
         <td class="flex items-center gap-2">
         <button style="color:blue;display:none" title="Edit row entry" onclick="document.getElementById('otherpayments').click();otherpaymentsid = ${item.id}" class="material-symbols-outlined rounded-full bg-blue-500 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
-         <button
-            title="View receipt"
+          <button
+            title="View and print receipt"
             onclick="viewReceipt('${item.id}')"
-            class="material-symbols-outlined rounded-full bg-blue-500 h-8 w-8 text-white drop-shadow-md text-xs"
-            style="font-size:18px;"
-          >visibility</button>
-          <button style="background:orange" title="Print receipt"
-            onclick="printReceipt('${item.id}')"   class="material-symbols-outlined rounded-full h-8 w-8 text-white text-xs">print</button>
-          <button style="background:teal"   title="Download receipt"
-            onclick="downloadReceipt('${item.id}')" class="material-symbols-outlined rounded-full h-8 w-8 text-white text-xs">download</button>
+            class="avata-receipt-button"
+          >Receipt / Print</button>
        
         </td>
       </tr>

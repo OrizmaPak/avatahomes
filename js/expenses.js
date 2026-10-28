@@ -64,6 +64,10 @@ async function expensessubmit(){
     let request = await httpRequest2('../controllers/expenses', payload, document.querySelector('#expensesform #submit'))
     if(request.status) {
         notification('Record saved successfully!', 1);
+        AvataReceipts.offer({ kind: 'Expense', amount: payload.get('debit'),
+            transactionDate: payload.get('transactiondate'), ...AvataReceipts.savedDetails(request),
+            reference: AvataReceipts.savedDetails(request).reference || payload.get('reference'),
+            property: AvataReceipts.selectedText('#expensesform #ownerid'), description: payload.get('description') });
         document.querySelector('#expensesform').reset();
         return
     }

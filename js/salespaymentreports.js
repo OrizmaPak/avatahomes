@@ -116,6 +116,10 @@ function salesPaymentReportOpenPayment(record) {
         if (!response?.status) return notification(response?.message || 'Unable to save payment.', 0);
         close();
         notification('Payment recorded successfully.', 1);
+        AvataReceipts.offer({ kind: 'Instalment', amount: payload.get('amountpaid'), transactionDate: payload.get('transactiondate'),
+            ...AvataReceipts.savedDetails(response), saleId: originalSaleId, client: record?.tenant,
+            property: record?.propertyname ?? record?.property, unit: record?.unitname,
+            description: `${new URLSearchParams(window.location.search).get('r') === 'overduepayments' ? 'Overdue' : 'Due'} payment` });
         await fetchSalesPaymentReport();
     });
 }

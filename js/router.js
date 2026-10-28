@@ -121,7 +121,7 @@ const routerTree = {
     rentaproperty: {
         template: 'rentaproperty',
         startingFunction: 'rentapropertyActive',
-        scriptName:  './js/rentaproperty.js?v=20261008d'
+        scriptName:  './js/rentaproperty.js?v=20261028g'
     },
     viewtenants: {
         template: 'viewtenants',
@@ -136,12 +136,12 @@ const routerTree = {
     viewrentaproperty: {
         template: 'viewrentaproperty',
         startingFunction: 'viewrentapropertyActive',
-        scriptName:  './js/viewrentaproperty.js?v=20261028a'
+        scriptName:  './js/viewrentaproperty.js?v=20261028b'
     },
     salesreport: {
         template: 'salesreport',
         startingFunction: 'salesreportActive',
-        scriptName: './js/salesreport.js?v=20261027a'
+        scriptName: './js/salesreport.js?v=20261028b'
     },
     pendingdiscountapprovals: {
         template: 'pendingdiscountapprovals',
@@ -156,32 +156,32 @@ const routerTree = {
     duerentals: {
         template: 'duerentals',
         startingFunction: 'duerentalsActive',
-        scriptName:  './js/duerentals.js?v=20261028a'
+        scriptName:  './js/duerentals.js?v=20261028b'
     },
     duepayments: {
         template: 'duepayments',
         startingFunction: 'salesPaymentReportActive',
-        scriptName: './js/salespaymentreports.js?v=20261028f'
+        scriptName: './js/salespaymentreports.js?v=20261028g'
     },
     overduepayments: {
         template: 'overduepayments',
         startingFunction: 'salesPaymentReportActive',
-        scriptName: './js/salespaymentreports.js?v=20261028f'
+        scriptName: './js/salespaymentreports.js?v=20261028g'
     },
     installmentpayments: {
         template: 'installmentpayments',
         startingFunction: 'installmentpaymentsActive',
-        scriptName: './js/installmentpayments.js?v=20261011a'
+        scriptName: './js/installmentpayments.js?v=20261028b'
     },
     otherpayments: {
         template: 'otherpayments',
         startingFunction: 'otherpaymentsActive',
-        scriptName:  './js/otherpayments.js?v=20260725d'
+        scriptName:  './js/otherpayments.js?v=20261028b'
     },
     paymenthistory: {
         template: 'paymenthistory',
         startingFunction: 'paymenthistoryActive',
-        scriptName:  './js/paymenthistory.js?v=20261026a'
+        scriptName:  './js/paymenthistory.js?v=20261028b'
     },
     addglaccount: {
         template: 'addglaccount',
@@ -226,12 +226,12 @@ const routerTree = {
     expenses: {
         template: 'expenses',
         startingFunction: 'expensesActive',
-        scriptName:  './js/expenses.js'
+        scriptName:  './js/expenses.js?v=20261028b'
     },
     viewexpenses: { 
         template: 'viewexpenses',
         startingFunction: 'viewexpensesActive',
-        scriptName:  './js/viewexpenses.js?v=20261026a'
+        scriptName:  './js/viewexpenses.js?v=20261028b'
     },
     moredocuments: {
         template: 'moredocuments',

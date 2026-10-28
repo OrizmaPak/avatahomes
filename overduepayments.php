@@ -4,6 +4,7 @@
     <div class="sales-payment-report-toolbar">
         <label class="sales-payment-report-search">Search client, property or unit<input id="salesPaymentReportSearch" class="form-control" type="search" placeholder="Start typing to search"></label>
         <div class="sales-payment-report-actions">
+            <a class="avata-receipt-button" href="./index.php?r=paymenthistory">Payment receipts</a>
             <button type="button" class="btn" style="background:#006E7093" onclick="printTable('salesPaymentReportTable', 'AVATA HOMES Overdue Payments')"><span class="material-symbols-outlined">print</span> Print</button>
             <button type="button" class="btn" style="background:#00703293" onclick="exportToExcel('salesPaymentReportTable', 'avata-homes-overdue-payments')"><span class="material-symbols-outlined">download</span> Export</button>
             <button type="button" id="salesPaymentReportRefresh" class="btn"><span class="material-symbols-outlined">refresh</span> Refresh</button>

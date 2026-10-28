@@ -188,7 +188,7 @@
                     <div id="saleinstallments" class="sale-installments sale-only-field hidden">
                         <div class="sale-installments-heading">
                             <span>Instalment schedule</span>
-                            <small>Set a due date for every instalment. The first amount is copied to Deposit below.</small>
+                            <small>Set a due date for every instalment. Enter any deposit separately in Payments below.</small>
                         </div>
                         <div class="sale-installments-grid" id="saleinstallmentrows"></div>
                     </div>

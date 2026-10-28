@@ -1195,6 +1195,14 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
       if (approvalSubmitted) approvalSubmitted.value = 'YES';
       updateSalePlan();
     } else {
+      const depositPaid = fees.reduce((sum, row) => sum + parseMoneyValue(row.querySelector('.deposit-input')?.value), 0);
+      if (depositPaid > 0) {
+        AvataReceipts.offer({ kind: exitMode === 'SALE' ? 'Sale' : 'Rental', amount: depositPaid,
+          transactionDate: formData.get('paymentdate'), ...AvataReceipts.savedDetails(res),
+          client: AvataReceipts.selectedText('#tenantid'),
+          property: AvataReceipts.selectedText('#propertyid'), unit: AvataReceipts.selectedText('#unitid'),
+          description: 'Initial payment / deposit' });
+      }
       document.getElementById('rentaproperty').click();
     }
   } else notification(res.message, 0);

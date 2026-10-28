@@ -58,6 +58,7 @@
                         <th>description</th>
                         <th>reference</th>
                         <th>amount</th>
+                        <th>Receipt</th>
                     </tr>
                 </thead>
                 <tbody id="tabledata">
@@ -111,4 +112,4 @@
         </div>
     </div>
 
-</section>  
+</section>

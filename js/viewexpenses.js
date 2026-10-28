@@ -71,6 +71,7 @@ async function onviewexpensesTableDataSignal() {
         <td>${item.description}</td>
         <td>${item.reference}</td>
         <td>${formatNumber(item.debit)}</td>
+        <td><button type="button" class="avata-receipt-button" onclick="viewExpenseReceipt('${item.id}')">Receipt</button></td>
         <td class="fle x items-center gap-3 hidden">
             <button title="Edit row entry" onclick="document.getElementById('otherpayments').click();otherpaymentsid = ${item.id}" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
         </td>
@@ -78,6 +79,11 @@ async function onviewexpensesTableDataSignal() {
     )
     .join('')
     injectPaginatatedTable(rows)
+}
+
+function viewExpenseReceipt(id) {
+    const item = (typeof datasource !== 'undefined' ? datasource : []).find(row => `${row.id}` === `${id}`)
+    if (item) AvataReceipts.open(AvataReceipts.fromLedger(item, 'Expense'))
 }
 
 async function viewexpensesFormSubmitHandler(payloadd='') {

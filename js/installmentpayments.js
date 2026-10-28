@@ -41,10 +41,18 @@ function renderInstallmentPayments() {
     const rows = installmentPaymentRows.filter(row => (filter === 'ALL' || row.remaining) && `${row.record?.tenant || ''} ${row.record?.property || ''} ${row.record?.unitname || ''}`.toLowerCase().includes(query));
     const table = document.getElementById('installmentPaymentsTable');
     if (!table) return;
-    table.innerHTML = rows.length ? rows.map((row, index) => `<tr><td>${index + 1}</td><td>${installmentPaymentText(row.record?.tenant)}</td><td>${installmentPaymentText(row.record?.property)}</td><td>${installmentPaymentText(row.record?.unitname)}</td><td><span class="installment-mode ${installmentPaymentMode(row.record).toLowerCase()}">${installmentPaymentMode(row.record)}</span></td><td>${row.index + 1}</td><td>${installmentPaymentText(row.schedule?.duedate)}</td><td class="text-right">${installmentPaymentMoney(row.schedule?.instalmentamount)}</td><td class="text-right">${installmentPaymentMoney(row.schedule?.amountpaid)}</td><td><span class="installment-status ${row.remaining ? 'pending' : 'paid'}">${installmentPaymentStatusLabel(row.schedule?.status)}</span></td><td>${row.isNext && row.remaining ? `<button type="button" class="installment-record-button" data-installment-payment="${row.sale.id}">Make Payments</button>` : row.remaining ? '<span class="installment-next-note">Complete earlier payment first</span>' : '—'}</td></tr>`).join('') : '<tr><td colspan="11">No installment payments found.</td></tr>';
+    table.innerHTML = rows.length ? rows.map((row, index) => `<tr><td>${index + 1}</td><td>${installmentPaymentText(row.record?.tenant)}</td><td>${installmentPaymentText(row.record?.property)}</td><td>${installmentPaymentText(row.record?.unitname)}</td><td><span class="installment-mode ${installmentPaymentMode(row.record).toLowerCase()}">${installmentPaymentMode(row.record)}</span></td><td>${row.index + 1}</td><td>${installmentPaymentText(row.schedule?.duedate)}</td><td class="text-right">${installmentPaymentMoney(row.schedule?.instalmentamount)}</td><td class="text-right">${installmentPaymentMoney(row.schedule?.amountpaid)}</td><td><span class="installment-status ${row.remaining ? 'pending' : 'paid'}">${installmentPaymentStatusLabel(row.schedule?.status)}</span></td><td>${row.isNext && row.remaining ? `<button type="button" class="installment-record-button" data-installment-payment="${row.sale.id}">Make Payments</button>` : row.remaining ? '<span class="installment-next-note">Complete earlier payment first</span>' : Number(row.schedule?.amountpaid || 0) > 0 ? `<button type="button" class="avata-receipt-button" data-installment-receipt="${row.sale.id}:${row.index}">Paid summary</button>` : '—'}</td></tr>`).join('') : '<tr><td colspan="11">No installment payments found.</td></tr>';
     table.querySelectorAll('[data-installment-payment]').forEach(button => button.addEventListener('click', () => {
         const row = installmentPaymentRows.find(item => item.isNext && item.remaining && `${item.sale.id}` === `${button.dataset.installmentPayment}`);
         if (row) openInstallmentPaymentDialog(row);
+    }));
+    table.querySelectorAll('[data-installment-receipt]').forEach(button => button.addEventListener('click', () => {
+        const row = installmentPaymentRows.find(item => `${item.sale.id}:${item.index}` === button.dataset.installmentReceipt);
+        if (row) AvataReceipts.open({ kind: 'Instalment summary', amount: row.schedule.amountpaid,
+            transactionDate: row.schedule.transactiondate || row.schedule.paymentdate,
+            reference: row.schedule.reference, saleId: row.sale.id, client: row.record?.tenant,
+            property: row.record?.property, unit: row.record?.unitname,
+            description: `Total paid against instalment ${row.index + 1}` });
     }));
 }
 
@@ -81,8 +89,11 @@ function openInstallmentPaymentDialog(row) {
         const response = await httpRequest2('../controllers/paysalesschedule', payload, event.submitter, 'json');
         if (!response?.status) return notification(response?.message || 'Unable to save payment.', 0);
         close();
+        notification('Payment recorded successfully.', 1);
+        AvataReceipts.offer({ kind: 'Instalment', amount: payload.get('amountpaid'), transactionDate: payload.get('transactiondate'),
+            ...AvataReceipts.savedDetails(response), saleId: row.sale.id, client: row.record?.tenant,
+            property: row.record?.property, unit: row.record?.unitname, description: `Instalment ${row.index + 1}` });
         await refreshInstallmentPaymentsAfterSave();
-        notification(response.message || 'Payment saved successfully.', 1);
     });
 }
 

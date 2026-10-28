@@ -47,6 +47,11 @@ function viewRentInstallmentsById(id) {
     if (record) showViewRentInstallments(record);
 }
 
+function viewRentReceiptById(id) {
+    const record = (typeof datasource !== 'undefined' ? datasource : []).find(item => `${item?.rentdata?.id}` === `${id}`);
+    if (record) AvataReceipts.open(AvataReceipts.fromSale(record));
+}
+
 function showViewRentInstallments(item) {
     const rentData = item?.rentdata || {};
     const installments = viewRentInstallments(item);
@@ -284,9 +289,9 @@ async function onviewrentapropertyTableDataSignal() {
         <td><button type="button" class="view-rent-schedule-button" onclick="viewRentInstallmentsById('${item.rentdata.id}')">${viewRentInstallments(item).length ? `View (${viewRentInstallments(item).length})` : 'No schedule'}</button></td>
         <td class="d-flex align-items-center gap-3">
            <button title="Edit row entry" onclick="document.getElementById('rentaproperty').click();rentapropertyid = ${item.rentdata.id}" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
-                <button title="Print Receipt" onclick="generateReceipt(${JSON.stringify(item).replace(/"/g, '&quot;')})" 
+                ${AvataReceipts.fromSale(item).amount > 0 ? `<button title="Print Receipt" onclick="viewRentReceiptById('${item.rentdata.id}')"
               class="material-symbols-outlined rounded-full !bg-blue-600 h-8 w-8 text-white drop-shadow-md text-xs" 
-              style="font-size: 18px;background:#0000ff87">receipt</button>
+              style="font-size: 18px;background:#0000ff87">receipt</button>` : ''}
         </td>
     </tr>`).join('');
     
