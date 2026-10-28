@@ -51,7 +51,9 @@ function salesPaymentReportRender() {
     if (previous) previous.disabled = salesPaymentReportPage === 1;
     if (next) next.disabled = salesPaymentReportPage === totalPages;
     const pageNumbers = document.getElementById('pagination-numbers');
-    if (pageNumbers) pageNumbers.innerHTML = Array.from({ length: totalPages }, (_, index) => `<button type="button" class="${index + 1 === salesPaymentReportPage ? 'pagination-number active' : 'pagination-number'}" data-payment-report-page="${index + 1}">${index + 1}</button>`).join('');
+    if (pageNumbers) pageNumbers.innerHTML = salesPaymentReportPageTokens(salesPaymentReportPage, totalPages).map(token => token === '…'
+        ? '<span class="sales-payment-report-page-ellipsis" aria-hidden="true">…</span>'
+        : `<button type="button" class="${token === salesPaymentReportPage ? 'pagination-number active' : 'pagination-number'}" data-payment-report-page="${token}">${token}</button>`).join('');
     pageNumbers?.querySelectorAll('[data-payment-report-page]').forEach(button => button.addEventListener('click', () => {
         salesPaymentReportPage = Number(button.dataset.paymentReportPage);
         salesPaymentReportRender();
@@ -60,6 +62,25 @@ function salesPaymentReportRender() {
         const record = salesPaymentReportRows[Number(button.dataset.salesPaymentRow)];
         if (record) salesPaymentReportOpenPayment(record);
     }));
+}
+
+function salesPaymentReportPageTokens(currentPage, totalPages) {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, index) => index + 1);
+    let firstVisible = Math.max(2, currentPage - 1);
+    let lastVisible = Math.min(totalPages - 1, currentPage + 1);
+    if (currentPage <= 3) {
+        firstVisible = 2;
+        lastVisible = 4;
+    } else if (currentPage >= totalPages - 2) {
+        firstVisible = totalPages - 3;
+        lastVisible = totalPages - 1;
+    }
+    const tokens = [1];
+    if (firstVisible > 2) tokens.push('…');
+    for (let page = firstVisible; page <= lastVisible; page++) tokens.push(page);
+    if (lastVisible < totalPages - 1) tokens.push('…');
+    tokens.push(totalPages);
+    return tokens;
 }
 
 function salesPaymentReportOpenPayment(record) {

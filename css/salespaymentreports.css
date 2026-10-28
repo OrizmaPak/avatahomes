@@ -133,6 +133,43 @@
 
 .sales-payment-report .table-status {
     align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.sales-payment-report-pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-left: auto;
+}
+
+.sales-payment-report-pagination-controls select {
+    width: 110px;
+    flex: 0 0 auto;
+}
+
+.sales-payment-report .pagination {
+    max-width: 100%;
+    flex-shrink: 1;
+}
+
+.sales-payment-report .pagination #pagination-numbers {
+    display: flex;
+    min-width: 0;
+    align-items: stretch;
+}
+
+.sales-payment-report .pagination .sales-payment-report-page-ellipsis {
+    display: inline-flex;
+    min-width: 22px;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #ead8aa;
+    background: #fff9ea;
+    color: #7a6332;
+    font-size: 12px;
 }
 
 @media (max-width: 640px) {
@@ -153,6 +190,38 @@
     .sales-payment-report-actions .btn {
         flex: 1;
         justify-content: center;
+    }
+
+    .sales-payment-report-pagination-controls {
+        width: 100%;
+        flex-wrap: wrap;
+        margin-left: 0;
+    }
+
+    .sales-payment-report-pagination-controls select {
+        width: 100%;
+    }
+
+    .sales-payment-report .pagination {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .sales-payment-report .pagination > button {
+        width: 56px;
+        flex: 0 0 56px;
+        padding: 4px 3px;
+        font-size: 11px;
+    }
+
+    .sales-payment-report .pagination #pagination-numbers button {
+        min-width: 30px;
+        padding-right: 7px;
+        padding-left: 7px;
+    }
+
+    .sales-payment-report .pagination .sales-payment-report-page-ellipsis {
+        min-width: 16px;
     }
 }
 
