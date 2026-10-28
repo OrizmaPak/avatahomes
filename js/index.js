@@ -25,13 +25,21 @@ window.onload = async   function() {
                     nav.querySelectorAll('.material-symbols-outlined')[1].style.transform = 'rotate(0deg)'
                 }
                 else {
-                    nav.parentElement.style.maxHeight = '500px';
+                    nav.parentElement.style.maxHeight = '1200px';
                     nav.parentElement.classList.add('expand')
                     nav.querySelectorAll('.material-symbols-outlined')[1].style.transform = 'rotate(90deg)'
                 }
             }
         })
     })
+
+    document.querySelectorAll('#navigation .nav-subgroup-toggle').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const group = toggle.closest('.nav-subgroup');
+            const isOpen = group.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', `${isOpen}`);
+        });
+    });
 
     Object.keys(routerTree).forEach( route => {
         if(route && !!document.getElementById(route)) {
@@ -298,16 +306,16 @@ async function runPermissions(){
                 }  
                     if(permission_switch === 'OFF')subitems[i].classList.remove('hidden');
             }
+            document.querySelectorAll('#navigation .nav-subgroup').forEach(group => {
+                const hasVisibleLinks = Array.from(group.querySelectorAll('.navitem-child')).some(link => !link.classList.contains('hidden'));
+                group.classList.toggle('hidden', !hasVisibleLinks);
+            });
             let x =  document.getElementsByClassName('navitem-title')
             for(let i=0;i<x.length;i++){
-                if(x[i].nextElementSibling){
-                    let y = x[i].nextElementSibling.children
-                    let m = false
-                    for(let j=0;j<y.length;j++){
-                        if(!y[j].classList.contains('hidden'))m = true
-                    }
-                    if(!m)x[i].classList.add('hidden')
-                    if(m)x[i].classList.remove('hidden')
+                const menuList = x[i].nextElementSibling;
+                if(menuList?.tagName === 'UL'){
+                    const hasVisibleLinks = Array.from(menuList.querySelectorAll('.navitem-child')).some(link => !link.classList.contains('hidden'));
+                    x[i].classList.toggle('hidden', !hasVisibleLinks);
                 }
             }
         }

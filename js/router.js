@@ -314,9 +314,20 @@ function showActiveRoute() {
     document.querySelectorAll('#navigation .navitem-child-active').forEach( item => item.classList.remove('navitem-child-active'))
     if(menu.classList.contains('navitem-child')) {
         menu.classList.add('navitem-child-active')
-        const parentTitle = menu.parentElement.previousElementSibling
-        if(parentTitle) parentTitle.classList.add('active')
-        else menu.classList.add('active')
+        const subgroup = menu.closest('.nav-subgroup');
+        if (subgroup) {
+            subgroup.classList.remove('hidden');
+            subgroup.classList.add('open');
+            subgroup.querySelector('.nav-subgroup-toggle')?.setAttribute('aria-expanded', 'true');
+            const navItem = subgroup.closest('.nav-item');
+            navItem?.classList.add('expand');
+            if (navItem) navItem.style.maxHeight = '1200px';
+            navItem?.querySelector(':scope > .navitem-title')?.classList.add('active');
+        } else {
+            const parentTitle = menu.parentElement.previousElementSibling;
+            if (parentTitle) parentTitle.classList.add('active');
+            else menu.classList.add('active');
+        }
     }
     else menu.classList.add('active')
     
