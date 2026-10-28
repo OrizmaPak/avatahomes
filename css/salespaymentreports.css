@@ -101,6 +101,36 @@
     white-space: nowrap;
 }
 
+.sales-payment-pay-button {
+    border: 1px solid #c9a227;
+    border-radius: 7px;
+    padding: 7px 15px;
+    background: #fff8e5;
+    color: #80651b;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.sales-payment-pay-button:hover {
+    background: #fff0c4;
+}
+
+.sales-payment-missing-id-note {
+    padding: .7rem .8rem;
+    border: 1px solid #f2d79b;
+    border-radius: 8px;
+    background: #fff8e5;
+    color: #795b16;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.installment-payment-save:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
 .sales-payment-report .table-status {
     align-items: center;
 }

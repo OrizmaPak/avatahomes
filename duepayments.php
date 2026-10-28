@@ -10,7 +10,7 @@
         </div>
     </div>
     <div id="salesPaymentReportMessage" class="sales-payment-report-message" role="status">Loading due payments...</div>
-    <div class="table-content sales-payment-report-table-wrap"><table id="salesPaymentReportTable"><thead><tr><th>S/N</th><th>Product/Property</th><th>Sales Fees</th><th>Client</th><th>Unit</th><th>Amount Due</th><th>Amount Paid</th><th>Due Date</th><th>Reference</th><th>Instalment</th></tr></thead><tbody id="salesPaymentReportBody"><tr><td colspan="10">Loading...</td></tr></tbody></table></div>
+    <div class="table-content sales-payment-report-table-wrap"><table id="salesPaymentReportTable"><thead><tr><th>S/N</th><th>Property</th><th>Client</th><th>Unit</th><th>Amount Due</th><th>Status</th><th>Action</th></tr></thead><tbody id="salesPaymentReportBody"><tr><td colspan="7">Loading...</td></tr></tbody></table></div>
     <div class="table-status flex justify-between mt-5">
         <span class="text-xs text-gray-500" id="salesPaymentReportPaginationStatus"></span>
         <span class="flex justify-between gap-6"><select id="salesPaymentReportPageSize" class="form-control !bg-white cursor-pointer"><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="250">250</option><option value="500">500</option></select><span class="flex pagination"><button type="button" id="salesPaymentReportPrev" disabled>Previous</button><span id="salesPaymentReportPageNumbers"></span><button type="button" id="salesPaymentReportNext" disabled>Next</button></span></span>

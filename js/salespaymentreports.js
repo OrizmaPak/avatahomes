@@ -7,44 +7,10 @@ function salesPaymentReportText(value, fallback = '—') {
     return `${value}`.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
 }
 
-function salesPaymentReportLookup(record, paths) {
-    for (const path of paths) {
-        const value = path.split('.').reduce((current, key) => current?.[key], record);
-        if (value !== undefined && value !== null && `${value}`.trim() !== '') return value;
-    }
-    return undefined;
-}
-
 function salesPaymentReportMoney(value) {
     if (value === undefined || value === null || value === '') return '—';
     const amount = Number(`${value}`.replace(/,/g, ''));
-    return Number.isFinite(amount) ? `₦${amount.toLocaleString('en-NG', { maximumFractionDigits: 2 })}` : salesPaymentReportText(value);
-}
-
-function salesPaymentReportDate(value) {
-    const date = `${value ?? ''}`.trim().split(' ')[0];
-    return date ? salesPaymentReportText(typeof formatDate === 'function' ? formatDate(date) : date) : '—';
-}
-
-function salesPaymentReportClient(record) {
-    const client = record?.tenant ?? record?.client ?? record?.clientname ?? record?.tenantname;
-    if (typeof client === 'string' || typeof client === 'number') return salesPaymentReportText(client);
-    const tenant = record?.tenantdata || client || {};
-    return salesPaymentReportText([tenant.firstname, tenant.lastname].filter(Boolean).join(' '));
-}
-
-function salesPaymentReportProperty(record) {
-    const property = record?.property ?? record?.propertyname ?? record?.propertydata?.propertyname ?? record?.rentdata?.propertyname;
-    if (typeof property === 'string' || typeof property === 'number') return salesPaymentReportText(property);
-    return salesPaymentReportText(property?.propertyname ?? property?.name);
-}
-
-function salesPaymentReportFees(record) {
-    const fees = record?.rentalfees || record?.fees || record?.rentdata?.rentalfees || [];
-    if (!Array.isArray(fees) || !fees.length) return '<span class="sales-payment-report-muted">—</span>';
-    const salesFees = fees.filter(fee => `${fee?.feename ?? fee?.feename_name ?? fee?.fee_name ?? fee?.name ?? ''}`.trim().toUpperCase().startsWith('SALES ') || `${fee?.feename ?? fee?.feename_name ?? fee?.fee_name ?? fee?.name ?? ''}`.trim().toUpperCase().startsWith('PROPERTY SALES'));
-    const shownFees = salesFees.length ? salesFees : fees;
-    return `<div class="sales-payment-report-fees">${shownFees.map(fee => `<div><span>${salesPaymentReportText(fee?.feename ?? fee?.feename_name ?? fee?.fee_name ?? fee?.name, 'Sales fee')}</span><small>${salesPaymentReportText(fee?.currency ?? fee?.currencycode ?? fee?.currency_code, 'NGN')}</small><strong>₦${salesPaymentReportMoney(fee?.amount).replace(/^₦/, '')}</strong></div>`).join('')}</div>`;
+    return Number.isFinite(amount) ? `₦${amount.toLocaleString('en-NG', { maximumFractionDigits: 2 })}` : '—';
 }
 
 function salesPaymentReportResponseRows(response) {
@@ -53,29 +19,9 @@ function salesPaymentReportResponseRows(response) {
     return [];
 }
 
-function salesPaymentReportNormalize(records) {
-    return records.flatMap(record => {
-        const sale = record?.rentdata || record?.sale || {};
-        let schedules = record?.instalments || record?.installments || record?.schedules;
-        if (!Array.isArray(schedules)) {
-            const schedule = record?.instalmentdata || record?.installmentdata || record?.schedule || record?.installment;
-            schedules = schedule && typeof schedule === 'object' ? [schedule] : [];
-        }
-        if (!schedules.length) return [{ ...record, rentdata: sale }];
-        return schedules.map((schedule, index) => ({
-            ...record,
-            ...schedule,
-            rentdata: sale,
-            whichinstalment: schedule?.whichinstalment ?? schedule?.instalmentnumber ?? schedule?.instalmentno ?? index + 1,
-            salerentid: schedule?.salerentid ?? sale?.id
-        }));
-    });
-}
-
 function salesPaymentReportFilteredRows() {
     const query = `${document.getElementById('salesPaymentReportSearch')?.value || ''}`.trim().toLowerCase();
-    if (!query) return salesPaymentReportRows;
-    return salesPaymentReportRows.filter(record => JSON.stringify(record).toLowerCase().includes(query));
+    return query ? salesPaymentReportRows.filter(record => JSON.stringify(record).toLowerCase().includes(query)) : salesPaymentReportRows;
 }
 
 function salesPaymentReportRender() {
@@ -88,28 +34,15 @@ function salesPaymentReportRender() {
     const start = (salesPaymentReportPage - 1) * pageSize;
     const pageRows = rows.slice(start, start + pageSize);
 
-    body.innerHTML = pageRows.length ? pageRows.map((record, index) => {
-        const sale = record?.rentdata || {};
-        const scheduledAmount = salesPaymentReportLookup(record, ['instalmentamount', 'amountdue', 'dueamount', 'payabledue', 'payable_due', 'paymentdue', 'scheduledamount', 'amount', 'rentdata.totalamount']);
-        const amountPaid = salesPaymentReportLookup(record, ['amountpaid', 'paidamount', 'rentdata.amountpaid', 'lastrentdata.amountpaid']);
-        const dueDate = salesPaymentReportLookup(record, ['duedate', 'due_date', 'transactiondate', 'paymentdate']);
-        const reference = salesPaymentReportLookup(record, ['reference', 'rentdata.reference']);
-        const installmentNumber = salesPaymentReportLookup(record, ['whichinstalment', 'instalmentnumber', 'instalmentno']);
-        const installmentStatus = salesPaymentReportLookup(record, ['status', 'paymentstatus']);
-        const installmentLabel = [installmentNumber ? `#${installmentNumber}` : '', installmentStatus || 'Due'].filter(Boolean).join(' · ');
-        return `<tr>
-            <td>${start + index + 1}</td>
-            <td>${salesPaymentReportProperty(record)}</td>
-            <td>${salesPaymentReportFees(record)}</td>
-            <td>${salesPaymentReportClient(record)}</td>
-            <td>${salesPaymentReportText(record?.unitname ?? record?.unitdata?.unitname ?? record?.rentdata?.unitname)}</td>
-            <td class="text-right">${salesPaymentReportMoney(scheduledAmount)}</td>
-            <td class="text-right">${salesPaymentReportMoney(amountPaid)}</td>
-            <td>${salesPaymentReportDate(dueDate)}</td>
-            <td>${salesPaymentReportText(reference ?? sale.reference)}</td>
-            <td><span class="sales-payment-report-installment">${salesPaymentReportText(installmentLabel)}</span></td>
-        </tr>`;
-    }).join('') : '<tr><td colspan="10">No matching payment records found.</td></tr>';
+    body.innerHTML = pageRows.length ? pageRows.map((record, index) => `<tr>
+        <td>${start + index + 1}</td>
+        <td>${salesPaymentReportText(record?.propertyname ?? record?.property)}</td>
+        <td>${salesPaymentReportText(record?.tenant)}</td>
+        <td>${salesPaymentReportText(record?.unitname)}</td>
+        <td class="text-right">${salesPaymentReportMoney(record?.amountdue)}</td>
+        <td><span class="sales-payment-report-installment">${salesPaymentReportText(record?.status ?? record?.paymentstatus, 'DUE')}</span></td>
+        <td><button type="button" class="sales-payment-pay-button" data-sales-payment-row="${salesPaymentReportRows.indexOf(record)}">Pay</button></td>
+    </tr>`).join('') : '<tr><td colspan="7">No matching payment records found.</td></tr>';
 
     const status = document.getElementById('salesPaymentReportPaginationStatus');
     if (status) status.textContent = rows.length ? `Showing ${start + 1} - ${Math.min(start + pageSize, rows.length)} of ${rows.length}` : 'No matching payments found';
@@ -123,6 +56,47 @@ function salesPaymentReportRender() {
         salesPaymentReportPage = Number(button.dataset.paymentReportPage);
         salesPaymentReportRender();
     }));
+    body.querySelectorAll('[data-sales-payment-row]').forEach(button => button.addEventListener('click', () => {
+        const record = salesPaymentReportRows[Number(button.dataset.salesPaymentRow)];
+        if (record) salesPaymentReportOpenPayment(record);
+    }));
+}
+
+function salesPaymentReportOpenPayment(record) {
+    const originalSaleId = record?.salerentid ?? record?.saleid ?? record?.salesid ?? record?.originalsaleid ?? record?.rentdata?.id ?? '';
+    const feeNameId = record?.feenameid ?? record?.fee_name_id ?? '';
+    const hasRequiredIds = `${originalSaleId}`.trim() !== '' && `${feeNameId}`.trim() !== '';
+    const modal = document.createElement('div');
+    modal.className = 'installment-payment-modal sales-payment-modal';
+    modal.innerHTML = `<div class="installment-payment-backdrop" data-sales-payment-close></div>
+        <div class="installment-payment-dialog" role="dialog" aria-modal="true" aria-labelledby="salesPaymentDialogTitle">
+            <div class="installment-payment-dialog-header"><div><small>Sales payment</small><h2 id="salesPaymentDialogTitle">Record due payment</h2><p>${salesPaymentReportText(record?.tenant)} · ${salesPaymentReportText(record?.propertyname ?? record?.property)} · ${salesPaymentReportText(record?.unitname)}</p></div><button type="button" class="installment-payment-close" data-sales-payment-close aria-label="Close">×</button></div>
+            <div class="installment-payment-summary"><div><small>Amount due</small><strong>${salesPaymentReportMoney(record?.amountdue)}</strong></div><div><small>Original sale ID</small><strong>${salesPaymentReportText(originalSaleId, 'Not provided')}</strong></div><div><small>Fee name ID</small><strong>${salesPaymentReportText(feeNameId, 'Not provided')}</strong></div></div>
+            <form id="salesPaymentReportForm"><input type="hidden" name="id" value="${salesPaymentReportText(originalSaleId, '')}"><input type="hidden" name="feenameid" value="${salesPaymentReportText(feeNameId, '')}">
+                <label>Amount paid<input name="amountpaid" class="form-control" type="number" min="0" step="0.01" value="${Number(record?.amountdue) || ''}" required></label>
+                <label>Transaction date<input name="transactiondate" class="form-control" type="date" value="${new Date().toISOString().split('T')[0]}" required></label>
+                <div class="sales-payment-missing-id-note" ${hasRequiredIds ? 'hidden' : ''}>This report response does not include the original sale ID or fee name ID, so payment cannot be submitted yet.</div>
+                <div class="installment-payment-dialog-actions"><button type="button" class="btn installment-payment-cancel" data-sales-payment-close>Cancel</button><button type="submit" class="btn installment-payment-save" ${hasRequiredIds ? '' : 'disabled'}>Pay</button></div>
+            </form>
+        </div>`;
+    document.body.appendChild(modal);
+    const close = () => modal.remove();
+    modal.querySelectorAll('[data-sales-payment-close]').forEach(element => element.addEventListener('click', close));
+    modal.querySelector('form').addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!hasRequiredIds) return;
+        const form = event.currentTarget;
+        const payload = new FormData();
+        payload.append('id', originalSaleId);
+        payload.append('amountpaid', form.elements.amountpaid.value);
+        payload.append('transactiondate', form.elements.transactiondate.value);
+        payload.append('feenameid', feeNameId);
+        const response = await httpRequest2('../controllers/paysalesschedule', payload, event.submitter, 'json');
+        if (!response?.status) return notification(response?.message || 'Unable to save payment.', 0);
+        close();
+        await fetchSalesPaymentReport();
+        notification(response.message || 'Payment saved successfully.', 1);
+    });
 }
 
 async function salesPaymentReportActive() {
@@ -150,10 +124,10 @@ async function fetchSalesPaymentReport() {
         if (message) message.textContent = response?.message || `Unable to retrieve ${isOverdue ? 'overdue' : 'due'} sales payments.`;
         return;
     }
-    salesPaymentReportRows = salesPaymentReportNormalize(salesPaymentReportResponseRows(response));
+    salesPaymentReportRows = salesPaymentReportResponseRows(response);
     salesPaymentReportPage = 1;
     salesPaymentReportRender();
-    if (message) message.textContent = `${salesPaymentReportRows.length} ${isOverdue ? 'overdue' : 'due'} instalment payment${salesPaymentReportRows.length === 1 ? '' : 's'}.`;
+    if (message) message.textContent = `${salesPaymentReportRows.length} ${isOverdue ? 'overdue' : 'due'} payment${salesPaymentReportRows.length === 1 ? '' : 's'}.`;
 }
 
 window.salesPaymentReportActive = salesPaymentReportActive;

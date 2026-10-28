@@ -161,12 +161,12 @@ const routerTree = {
     duepayments: {
         template: 'duepayments',
         startingFunction: 'salesPaymentReportActive',
-        scriptName: './js/salespaymentreports.js?v=20261028b'
+        scriptName: './js/salespaymentreports.js?v=20261028c'
     },
     overduepayments: {
         template: 'overduepayments',
         startingFunction: 'salesPaymentReportActive',
-        scriptName: './js/salespaymentreports.js?v=20261028b'
+        scriptName: './js/salespaymentreports.js?v=20261028c'
     },
     installmentpayments: {
         template: 'installmentpayments',
