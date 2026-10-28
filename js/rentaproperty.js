@@ -632,11 +632,6 @@ function updateSalePlan() {
   const lastInstallmentDate = [...document.querySelectorAll('#saleinstallmentrows .sale-installment-due-date')].at(-1)?.value || '';
   const expirationDate = document.getElementById('expirationdate');
   if (expirationDate && isSale) expirationDate.value = lastInstallmentDate;
-  const firstInstallment = document.querySelector('.sale-installment-amount')?.value;
-  const deposit = saleRow?.querySelector('.deposit-input');
-  if (deposit && firstInstallment && saleRow.dataset.saleDepositEdited !== 'true') {
-    deposit.value = firstInstallment;
-  }
 }
 
 function updateRentDurationVisibility() {
