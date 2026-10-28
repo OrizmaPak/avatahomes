@@ -30,6 +30,7 @@ if(!isset($_SESSION["wuseremail"]))
   <link rel="stylesheet" href="./css/viewrentaproperty-overrides.css?v=20261011a">
   <link rel="stylesheet" href="./css/installmentpayments.css?v=20261011a">
   <link rel="stylesheet" href="./css/installmentpayments-overrides.css?v=20261011a">
+  <link rel="stylesheet" href="./css/salespaymentreports.css?v=20261028a">
      <!-- PWA Manifest --> 
   <link rel="manifest" href="./manifest.json"> 
       <!-- ios support -->
@@ -183,6 +184,8 @@ if(!isset($_SESSION["wuseremail"]))
                                         <li class="navitem-child" id="pendingdiscountapprovals">Discount Approvals</li>
                                         <li class="navitem-child" id="approvesalesdiscounts">Approve Sales Discounts</li>
                                         <li class="navitem-child" id="duerentals">Due Rentals</li>
+                                        <li class="navitem-child" id="duepayments" title="Due Payments">Due Payments</li>
+                                        <li class="navitem-child" id="overduepayments" title="Overdue Payments">Overdue Payments</li>
                                         <li class="navitem-child" id="installmentpayments">Installment Payments</li>
                                         <li class="navitem-child" id="moredocuments">more documents</li>
                                     </ul>
