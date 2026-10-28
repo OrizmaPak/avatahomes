@@ -183,8 +183,8 @@
                             <input type="number" id="installmentcount" class="form-control" min="1" step="1" placeholder="1">
                         </div>
                     </div>
-                    <input type="hidden" id="discountapprovalstatus" value="NOT_REQUIRED">
-                    <input type="hidden" id="discountapprovalsubmitted" value="NO">
+                    <input type="hidden" id="discountapprovalstatus" value="NOT_REQUIRED" hidden style="display:none !important">
+                    <input type="hidden" id="discountapprovalsubmitted" value="NO" hidden style="display:none !important">
                     <div id="saleinstallments" class="sale-installments sale-only-field hidden">
                         <div class="sale-installments-heading">
                             <span>Instalment schedule</span>
