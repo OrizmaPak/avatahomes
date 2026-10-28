@@ -1,8 +1,12 @@
                     <section class="animate__animated animate__fadeIn duerentals-page">
                             <p class="page-title">
-                                <span>Due Property Payments</span>
+                                <span>Due Rentals</span>
                             </p> 
                             <hr class="my-10"> 
+                            <div class="duerentals-toolbar">
+                                <label for="duerentalsSearch">Search client, property or unit</label>
+                                <input type="search" id="duerentalsSearch" class="form-control" placeholder="Start typing to search">
+                            </div>
                             <div >
                                 <div class="table-content">
                                     <table>

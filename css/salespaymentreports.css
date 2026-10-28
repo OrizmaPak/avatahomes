@@ -2,20 +2,23 @@
     color: #334155;
 }
 
-.sales-payment-report-heading,
+.sales-payment-report-toolbar,
 .sales-payment-report-actions {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
 }
 
-.sales-payment-report-heading {
+.sales-payment-report-toolbar {
+    justify-content: space-between;
     flex-wrap: wrap;
+    margin: 0 0 12px;
 }
 
 .sales-payment-report-actions {
+    justify-content: flex-end;
     flex-wrap: wrap;
+    margin-left: auto;
 }
 
 .sales-payment-report-actions .btn {
@@ -25,25 +28,15 @@
     color: #fff;
 }
 
-.sales-payment-report-subtitle {
-    margin-top: 4px;
-    color: #64748b;
-    font-size: 13px;
-}
-
-.sales-payment-report-toolbar {
-    display: flex;
-    justify-content: flex-end;
-    margin: 22px 0 12px;
-}
-
-.sales-payment-report-toolbar label {
-    width: min(100%, 380px);
+.sales-payment-report-search {
+    display: block;
+    flex: 0 1 380px;
+    min-width: min(100%, 260px);
     color: #475569;
     font-size: 12px;
 }
 
-.sales-payment-report-toolbar input {
+.sales-payment-report-search input {
     margin-top: 6px;
 }
 
@@ -58,18 +51,73 @@
 }
 
 .sales-payment-report-table-wrap table {
-    min-width: 1100px;
+    min-width: 1120px;
     width: 100%;
 }
 
+.sales-payment-report-fees {
+    display: grid;
+    min-width: 150px;
+    gap: 4px;
+}
+
+.sales-payment-report-fees > div {
+    display: grid;
+    grid-template-columns: minmax(70px, 1fr) auto auto;
+    align-items: baseline;
+    gap: 8px;
+    border-bottom: 1px solid #f1e8d3;
+    padding-bottom: 3px;
+}
+
+.sales-payment-report-fees > div:last-child {
+    border-bottom: 0;
+}
+
+.sales-payment-report-fees strong {
+    white-space: nowrap;
+    font-weight: 700;
+}
+
+.sales-payment-report-fees small {
+    color: #80651b;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.sales-payment-report-muted {
+    color: #94a3b8;
+}
+
+.sales-payment-report-installment {
+    display: inline-block;
+    border: 1px solid #eadcb7;
+    border-radius: 999px;
+    padding: 3px 8px;
+    background: #fff8e5;
+    color: #80651b;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.sales-payment-report .table-status {
+    align-items: center;
+}
+
 @media (max-width: 640px) {
-    .sales-payment-report-heading,
+    .sales-payment-report-toolbar,
     .sales-payment-report-actions {
         align-items: stretch;
     }
 
+    .sales-payment-report-search {
+        flex-basis: 100%;
+    }
+
     .sales-payment-report-actions {
         width: 100%;
+        margin-left: 0;
     }
 
     .sales-payment-report-actions .btn {

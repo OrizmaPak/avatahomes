@@ -17,7 +17,7 @@ if(!isset($_SESSION["wuseremail"]))
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avata Homes Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="./css/index.css?v=20261028c">
+    <link rel="stylesheet" href="./css/index.css?v=20261028d">
     <link rel="stylesheet" href="./css/css_vanilla.css?v=20260219c">
     <link rel="stylesheet" href="./css/floorplans.css?v=20261007b">
     <link rel="stylesheet" href="./css/dashboard.css?v=20261022a">
@@ -30,7 +30,7 @@ if(!isset($_SESSION["wuseremail"]))
   <link rel="stylesheet" href="./css/viewrentaproperty-overrides.css?v=20261011a">
   <link rel="stylesheet" href="./css/installmentpayments.css?v=20261011a">
   <link rel="stylesheet" href="./css/installmentpayments-overrides.css?v=20261011a">
-  <link rel="stylesheet" href="./css/salespaymentreports.css?v=20261028a">
+  <link rel="stylesheet" href="./css/salespaymentreports.css?v=20261028b">
      <!-- PWA Manifest --> 
   <link rel="manifest" href="./manifest.json"> 
       <!-- ios support -->
@@ -254,7 +254,7 @@ if(!isset($_SESSION["wuseremail"]))
         <div class="modal-content" id="modal-content"></div>
     </div>
     <script src="./js/util.js?v=20260613a"></script>
-    <script src="./js/router.js?v=20261028c"></script>
+    <script src="./js/router.js?v=20261028d"></script>
     <script src="./js/index.js?v=20261028b"></script>
     <script src="./js/oreutil.js?v=20261027a"></script>
 </body>

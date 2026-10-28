@@ -1,9 +1,27 @@
 let duerentalsid
+let duerentalsAllRows = []
 async function duerentalsActive() {
     // const form = document.querySelector('#duerentalssform')
     // if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', e=>duerentalsFormSubmitHandler('payload'))
     datasource = []
+    document.getElementById('duerentalsSearch')?.addEventListener('input', duerentalsApplySearch)
     await duerentalsFormSubmitHandler()
+}
+
+function duerentalsApplySearch() {
+    const query = `${document.getElementById('duerentalsSearch')?.value || ''}`.trim().toLowerCase()
+    const rows = query
+        ? duerentalsAllRows.filter(item => JSON.stringify(item).toLowerCase().includes(query))
+        : duerentalsAllRows
+    if (!rows.length) {
+        document.getElementById('tabledata').innerHTML = '<tr><td colspan="18">No rentals match your search.</td></tr>'
+        document.getElementById('pagination-status').textContent = 'No matching rentals found'
+        document.getElementById('pagination-prev-button').disabled = true
+        document.getElementById('pagination-next-button').disabled = true
+        document.getElementById('pagination-numbers').innerHTML = ''
+        return
+    }
+    resolvePagination(rows, onduerentalsTableDataSignal)
 }
 
 async function fetchduerentalss(id) {
@@ -125,7 +143,7 @@ async function duerentalsvacate(id){
 async function onduerentalsTableDataSignal() { 
     let rows = getSignaledDatasource().map((item, index) => `
     <tr> 
-        <td>${index + 1 }</td>
+        <td>${Number.isFinite(Number(item.index)) ? Number(item.index) + 1 : index + 1}</td>
         <td>${item.propertydata?.propertyidno || 'N/A'}</td>
         <td>${item.propertydata?.propertyname || 'N/A'}</td>
         <td>${item.unitname || 'N/A'}</td> 
@@ -171,10 +189,11 @@ async function duerentalsFormSubmitHandler(payloadd='') {
     // if(!id)document.getElementById('tabledata').innerHTML = `No records retrieved`
     // request = JSON.parse(request)
     if(request.status == true) {
+            duerentalsAllRows = []
             if(request.data.length) {
-                datasource = request.data
-                resolvePagination(datasource, onduerentalsTableDataSignal)
-            }else document.getElementById('tabledata').innerHTML = `No records retrieved`
+                duerentalsAllRows = request.data
+                duerentalsApplySearch()
+            }else duerentalsApplySearch()
     }
     else return notification(request.message)
 }
