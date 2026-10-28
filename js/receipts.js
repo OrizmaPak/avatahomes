@@ -50,15 +50,63 @@
 
   async function open(receipt) {
     if (!(amount(receipt?.amount) > 0)) return notification('No paid amount is available for this receipt.', 0);
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return notification('Please allow pop-ups to print the receipt.', 0);
-    printWindow.document.write('<!doctype html><title>Preparing receipt</title><p>Preparing receipt…</p>');
-    const org = await organisation();
-    if (printWindow.closed) return;
-    printWindow.document.open();
-    printWindow.document.write(receiptHtml(receipt, org));
-    printWindow.document.close();
-    printWindow.focus();
+    document.getElementById('avata-receipt-modal')?.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'avata-receipt-modal';
+    overlay.innerHTML = `<div class="avata-receipt-dialog" role="dialog" aria-modal="true" aria-label="Payment receipt">
+      <div class="avata-receipt-dialog-header"><div><span>AVATA HOMES</span><h2>Payment receipt</h2></div><button type="button" data-receipt-close aria-label="Close receipt">×</button></div>
+      <div class="avata-receipt-dialog-body"><div class="avata-receipt-loader" role="status"><span class="avata-receipt-spinner"></span>Loading receipt…</div><iframe title="Receipt preview" hidden></iframe></div>
+      <div class="avata-receipt-dialog-actions"><button type="button" data-receipt-download disabled>Download PDF</button><button type="button" data-receipt-print disabled>Print receipt</button></div>
+    </div>`;
+    document.body.appendChild(overlay);
+    const frame = overlay.querySelector('iframe');
+    const loader = overlay.querySelector('.avata-receipt-loader');
+    const printButton = overlay.querySelector('[data-receipt-print]');
+    const downloadButton = overlay.querySelector('[data-receipt-download]');
+    const close = () => { overlay.remove(); document.removeEventListener('keydown', onKeyDown); };
+    const onKeyDown = event => { if (event.key === 'Escape') close(); };
+    document.addEventListener('keydown', onKeyDown);
+    overlay.querySelector('[data-receipt-close]').addEventListener('click', close);
+    overlay.addEventListener('click', event => { if (event.target === overlay) close(); });
+    printButton.addEventListener('click', () => { frame.contentWindow.focus(); frame.contentWindow.print(); });
+    downloadButton.addEventListener('click', async () => {
+      downloadButton.disabled = true;
+      downloadButton.textContent = 'Preparing PDF…';
+      try {
+        if (!frame.contentWindow.html2pdf) {
+          await new Promise((resolve, reject) => {
+            const script = frame.contentDocument.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js';
+            script.onload = resolve;
+            script.onerror = reject;
+            frame.contentDocument.head.appendChild(script);
+          });
+        }
+        const filename = `avata-receipt-${`${receipt.reference || receipt.kind || 'payment'}`.replace(/[^a-z0-9-]+/gi, '-').toLowerCase()}.pdf`;
+        await frame.contentWindow.html2pdf().set({ margin: 10, filename, image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } })
+          .from(frame.contentDocument.querySelector('.sheet')).save();
+      } catch (error) {
+        notification('Unable to create the PDF. Please use Print and choose Save as PDF.', 0);
+      } finally {
+        downloadButton.disabled = false;
+        downloadButton.textContent = 'Download PDF';
+      }
+    });
+    try {
+      const org = await organisation();
+      if (!overlay.isConnected) return;
+      frame.addEventListener('load', () => {
+        frame.contentDocument.querySelector('.toolbar')?.remove();
+        loader.hidden = true;
+        frame.hidden = false;
+        printButton.disabled = false;
+        downloadButton.disabled = false;
+      }, { once: true });
+      frame.srcdoc = receiptHtml(receipt, org);
+    } catch (error) {
+      loader.textContent = 'Unable to load this receipt. Please try again.';
+    }
   }
 
   function offer(receipt) {
@@ -66,7 +114,7 @@
     document.getElementById('avata-receipt-offer')?.remove();
     const overlay = document.createElement('div');
     overlay.id = 'avata-receipt-offer';
-    overlay.innerHTML = `<div class="avata-receipt-offer-card" role="dialog" aria-modal="true" aria-label="Payment receipt"><div class="avata-receipt-offer-icon">✓</div><h2>Payment recorded</h2><p>${money(receipt.amount)} has been saved. You can print the receipt now.</p><div><button type="button" data-receipt-later>Later</button><button type="button" data-receipt-print>Print receipt</button></div></div>`;
+    overlay.innerHTML = `<div class="avata-receipt-offer-card" role="dialog" aria-modal="true" aria-label="Payment receipt"><div class="avata-receipt-offer-icon">✓</div><h2>Payment recorded</h2><p>${money(receipt.amount)} has been saved. View, print or download the receipt.</p><div><button type="button" data-receipt-later>Later</button><button type="button" data-receipt-print>View receipt</button></div></div>`;
     document.body.appendChild(overlay);
     overlay.querySelector('[data-receipt-later]').addEventListener('click', () => overlay.remove());
     overlay.querySelector('[data-receipt-print]').addEventListener('click', () => { open(receipt); overlay.remove(); });
