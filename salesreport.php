@@ -36,9 +36,9 @@
             <button type="button" class="btn" style="background: #00703293" onclick="exportSalesReport()"><span>Export</span></button>
         </div>
         <div class="table-content" style="scrollbar-width: thin;">
-            <table id="salesreporttable">
+            <table id="salesreporttable" class="sales-report-table">
                 <thead>
-                    <tr style="background:#64748b !important; color: white !important;">
+                <tr>
                         <th>S/N</th>
                         <th>Product/Property</th>
                         <th>Sales Fees</th>
@@ -47,8 +47,7 @@
                         <th>Amount Paid</th>
                         <th>Date</th>
                         <th>Reference</th>
-                        <th>Instalments</th>
-                        <th>Receipt</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="salesreporttabledata">
@@ -76,13 +75,20 @@
     </div>
 </section>
 <style>
+    .sales-report-table > thead > tr > th { background: #8a6a1f !important; color: #fff !important; padding: .75rem .65rem; white-space: nowrap; }
+    .sales-report-table > tbody > tr > td { vertical-align: top; }
     .sales-report-fees-table { min-width: 230px; border-collapse: collapse; }
-    .sales-report-fees-table th { padding: .38rem .5rem; background: #f8f2e2; color: #80651b; font-size: .67rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .sales-report-fees-table th { padding: .38rem .5rem; background: #f8f2e2 !important; color: #80651b !important; font-size: .67rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
     .sales-report-fees-table td { padding: .42rem .5rem; font-size: .76rem; vertical-align: middle; }
     .sales-report-fees-table .sales-report-fee-currency { color: #80651b; font-size: .7rem; font-weight: 700; }
     .sales-report-fees-table .sales-report-fee-amount { color: #334155; font-weight: 700; text-align: right; white-space: nowrap; }
     .sales-report-schedule-button { border: 1px solid #c9a227; border-radius: 6px; padding: .38rem .65rem; background: #fffaf0; color: #604d17; font-size: .76rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
     .sales-report-schedule-button:hover { background: #fff3cd; }
+    .sales-report-fees-toggle { border: 0; padding: .35rem .1rem; background: transparent; color: #8a6a1f; font-size: .72rem; font-weight: 800; cursor: pointer; }
+    .sales-report-fees-toggle:hover { text-decoration: underline; }
+    .sales-report-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+    .sales-report-receipt-button { border: 1px solid #c9a227; border-radius: 6px; padding: .38rem .6rem; background: #fffaf0; color: #604d17; font-size: .74rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .sales-report-receipt-button:hover { background: #fff3cd; }
     .sales-report-no-schedule { color: #94a3b8; font-size: .76rem; }
     .sales-report-modal { position: fixed; inset: 0; z-index: 1000; }
     .sales-report-modal-backdrop { position: absolute; inset: 0; background: rgba(15, 23, 42, .56); backdrop-filter: blur(3px); }

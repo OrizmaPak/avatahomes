@@ -136,12 +136,12 @@ const routerTree = {
     viewrentaproperty: {
         template: 'viewrentaproperty',
         startingFunction: 'viewrentapropertyActive',
-        scriptName:  './js/viewrentaproperty.js?v=20261028b'
+        scriptName:  './js/viewrentaproperty.js?v=20261103a'
     },
     salesreport: {
         template: 'salesreport',
         startingFunction: 'salesreportActive',
-        scriptName: './js/salesreport.js?v=20261028b'
+        scriptName: './js/salesreport.js?v=20261103a'
     },
     pendingdiscountapprovals: {
         template: 'pendingdiscountapprovals',

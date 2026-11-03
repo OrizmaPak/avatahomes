@@ -42,6 +42,31 @@ function viewRentInstallments(item) {
     return Array.isArray(item?.instalments) ? item.instalments : [];
 }
 
+function viewRentFeeRows(item, expanded = false) {
+    const fees = Array.isArray(item?.rentalfees) ? item.rentalfees : [];
+    const visibleFees = expanded ? fees : fees.slice(0, 2);
+    const rows = visibleFees.map(fee => `
+        <tr>
+            <td>${escapeReceiptValue(fee.feename || 'N/A')}</td>
+            <td class="text-right">${formatViewRentNumber(fee.amount)}</td>
+            <td>${escapeReceiptValue(fee.renewable || 'N/A')}</td>
+        </tr>
+    `).join('');
+    const moreButton = fees.length > 2 ? `<button type="button" class="view-rent-fees-toggle" data-toggle-view-rent-fees="${escapeReceiptValue(item?.rentdata?.id)}">${expanded ? 'Show less' : `Show ${fees.length - 2} more`}</button>` : '';
+    return `${rows || '<tr><td colspan="3">No fee details</td></tr>'}${moreButton ? `<tr class="view-rent-fees-more"><td colspan="3">${moreButton}</td></tr>` : ''}`;
+}
+
+function viewRentToggleFees(event) {
+    const button = event.currentTarget;
+    const record = (Array.isArray(datasource) ? datasource : []).find(item => `${item?.rentdata?.id}` === button.dataset.toggleViewRentFees);
+    if (!record) return;
+    const expanded = button.textContent.trim().startsWith('Show less');
+    const body = button.closest('.view-rent-fees-table')?.querySelector('tbody');
+    if (!body) return;
+    body.innerHTML = viewRentFeeRows(record, !expanded);
+    body.querySelector('[data-toggle-view-rent-fees]')?.addEventListener('click', viewRentToggleFees);
+}
+
 function viewRentInstallmentsById(id) {
     const record = (typeof datasource !== 'undefined' ? datasource : []).find(item => `${item?.rentdata?.id}` === `${id}`);
     if (record) showViewRentInstallments(record);
@@ -265,7 +290,6 @@ async function onviewrentapropertyTableDataSignal() {
         <td>${formatDate(item.rentdata.paymentdate.split(' ')[0])}</td>
         <td>${item.rentdata.reference}</td>
         <td>
-        <div class="table-content">
             <table class="mb-0 view-rent-fees-table">
                 <thead>
                     <tr>
@@ -274,28 +298,19 @@ async function onviewrentapropertyTableDataSignal() {
                         <th>Instalment</th>
                     </tr>
                 </thead>
-                <tbody>
-                    ${(Array.isArray(item.rentalfees) ? item.rentalfees : []).map(fee => `
-                        <tr>
-                            <td>${fee.feename || 'N/A'}</td>
-                            <td class="text-right">${formatViewRentNumber(fee.amount)}</td>
-                            <td>${fee.renewable}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
+                <tbody>${viewRentFeeRows(item)}</tbody>
             </table> 
-            </div>
         </td>
         <td><button type="button" class="view-rent-schedule-button" onclick="viewRentInstallmentsById('${item.rentdata.id}')">${viewRentInstallments(item).length ? `View (${viewRentInstallments(item).length})` : 'No schedule'}</button></td>
-        <td class="d-flex align-items-center gap-3">
-           <button title="Edit row entry" onclick="document.getElementById('rentaproperty').click();rentapropertyid = ${item.rentdata.id}" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
-                ${AvataReceipts.fromSale(item).amount > 0 ? `<button title="Print Receipt" onclick="viewRentReceiptById('${item.rentdata.id}')"
-              class="material-symbols-outlined rounded-full !bg-blue-600 h-8 w-8 text-white drop-shadow-md text-xs" 
-              style="font-size: 18px;background:#0000ff87">receipt</button>` : ''}
+        <td>
+            <div class="view-rent-row-actions">
+                <button type="button" title="Edit row entry" aria-label="Edit row entry" onclick="document.getElementById('rentaproperty').click();rentapropertyid = ${item.rentdata.id}" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
+                ${AvataReceipts.fromSale(item).amount > 0 ? `<button type="button" title="View receipt" aria-label="View receipt" onclick="viewRentReceiptById('${item.rentdata.id}')" class="material-symbols-outlined rounded-full bg-blue-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">receipt</button>` : ''}
+            </div>
         </td>
     </tr>`).join('');
-    
     injectPaginatatedTable(rows);
+    document.querySelectorAll('[data-toggle-view-rent-fees]').forEach(button => button.addEventListener('click', viewRentToggleFees));
 }
 
 

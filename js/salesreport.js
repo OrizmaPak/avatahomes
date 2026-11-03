@@ -35,16 +35,32 @@ function salesReportCompletedSales(records) {
 
 function salesReportFees(record) {
     const fees = Array.isArray(record?.rentalfees) ? record.rentalfees : [];
-    const salesFees = fees.filter(fee => {
-        const name = `${fee?.feename ?? ''}`.trim().toUpperCase();
-        return name.startsWith('SALES ') || name.startsWith('PROPERTY SALES');
-    });
-    const displayFees = salesFees.length ? salesFees : fees;
-    if (!displayFees.length) return '—';
-    return `<table class="sales-report-fees-table"><thead><tr><th>Fee name</th><th>Currency</th><th>Amount</th></tr></thead><tbody>${displayFees.map(fee => {
+    if (!fees.length) return '—';
+    const recordId = salesReportEscape(record?.rentdata?.id || '');
+    const displayFees = fees.slice(0, 2);
+    const feeRows = displayFees.map(fee => {
         const currency = salesReportText(fee.currency || fee.currencycode || fee.currency_code, 'NGN');
         return `<tr><td>${salesReportEscape(salesReportText(fee.feename, 'Sales fee'))}</td><td class="sales-report-fee-currency">${salesReportEscape(currency)}</td><td class="sales-report-fee-amount">₦${salesReportMoney(fee.amount)}</td></tr>`;
-    }).join('')}</tbody></table>`;
+    }).join('');
+    const more = fees.length > 2 ? `<tr class="sales-report-fees-more"><td colspan="3"><button type="button" class="sales-report-fees-toggle" data-sales-report-fees="${recordId}">Show ${fees.length - 2} more</button></td></tr>` : '';
+    return `<table class="sales-report-fees-table"><thead><tr><th>Fee name</th><th>Currency</th><th>Amount</th></tr></thead><tbody>${feeRows}${more}</tbody></table>`;
+}
+
+function salesReportToggleFees(event) {
+    const button = event.currentTarget;
+    const record = salesReportRows.find(item => `${item?.rentdata?.id}` === button.dataset.salesReportFees);
+    const body = button.closest('.sales-report-fees-table')?.querySelector('tbody');
+    if (!record || !body) return;
+    const expanded = button.textContent.trim().startsWith('Show less');
+    const fees = Array.isArray(record.rentalfees) ? record.rentalfees : [];
+    const visibleFees = expanded ? fees.slice(0, 2) : fees;
+    const feeRows = visibleFees.map(fee => {
+        const currency = salesReportText(fee.currency || fee.currencycode || fee.currency_code, 'NGN');
+        return `<tr><td>${salesReportEscape(salesReportText(fee.feename, 'Sales fee'))}</td><td class="sales-report-fee-currency">${salesReportEscape(currency)}</td><td class="sales-report-fee-amount">₦${salesReportMoney(fee.amount)}</td></tr>`;
+    }).join('');
+    const more = fees.length > 2 ? `<tr class="sales-report-fees-more"><td colspan="3"><button type="button" class="sales-report-fees-toggle" data-sales-report-fees="${salesReportEscape(record?.rentdata?.id || '')}">${expanded ? `Show ${fees.length - 2} more` : 'Show less'}</button></td></tr>` : '';
+    body.innerHTML = `${feeRows}${more}`;
+    body.querySelector('[data-sales-report-fees]')?.addEventListener('click', salesReportToggleFees);
 }
 
 function salesReportInstallments(record) {
@@ -94,10 +110,9 @@ function salesReportRender() {
             <td class="text-right">₦${salesReportMoney(sale.amountpaid)}</td>
             <td>${salesReportDate(sale.paymentdate)}</td>
             <td>${salesReportEscape(salesReportText(sale.reference))}</td>
-            <td>${salesReportInstallments(record)}</td>
-            <td>${AvataReceipts.fromSale(record).amount > 0 ? `<button type="button" class="avata-receipt-button" data-sales-receipt="${salesReportEscape(sale.id)}">Receipt</button>` : '—'}</td>
+            <td><div class="sales-report-actions">${salesReportInstallments(record)}<button type="button" class="sales-report-receipt-button" data-sales-receipt="${salesReportEscape(sale.id)}">${AvataReceipts.fromSale(record).amount > 0 ? 'Receipt' : 'Sales Invoice'}</button></div></td>
         </tr>`;
-    }).join('') : '<tr><td colspan="10">No completed sales match the selected filters.</td></tr>';
+    }).join('') : '<tr><td colspan="9">No completed sales match the selected filters.</td></tr>';
 
     const status = document.getElementById('salesreportpaginationstatus');
     if (status) status.textContent = salesReportRows.length ? `Showing ${start + 1} - ${Math.min(start + pageSize, salesReportRows.length)} of ${salesReportRows.length}` : 'No completed sales found';
@@ -116,6 +131,7 @@ function salesReportRender() {
         const record = salesReportRows.find(item => `${item?.rentdata?.id}` === button.dataset.salesReceipt);
         if (record) AvataReceipts.open(AvataReceipts.fromSale(record));
     }));
+    body.querySelectorAll('[data-sales-report-fees]').forEach(button => button.addEventListener('click', salesReportToggleFees));
 }
 
 async function salesreportActive() {

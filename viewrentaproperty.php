@@ -53,8 +53,8 @@
                                     </div> 
                                 <div class="table-content" style="    scrollbar-width: thin;
 ">
-                                <table class="">
-    <thead class="">
+                                <table class="view-rent-report-table">
+    <thead>
         <tr>
             <th>S/N</th>
             <th>Product</th>
