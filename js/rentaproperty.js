@@ -295,6 +295,16 @@ async function rentapropertyActive() {
       .addEventListener('click', rentapropertysubmit);
   form.querySelector('#sendapproval')
       ?.addEventListener('click', () => rentapropertysubmit('SEND_APPROVAL'));
+  document.getElementById('amountpaid')?.addEventListener('input', (event) => {
+    if (getSelectedExitMode() !== 'SALE') return;
+    event.currentTarget.dataset.saleUserEdited = 'true';
+    const maximum = parseMoneyValue(document.getElementById('totalamount')?.value);
+    const value = parseMoneyValue(event.currentTarget.value);
+    if (maximum > 0 && value > maximum) {
+      event.currentTarget.value = formatMoneyInputValue(maximum);
+      notification('Amount paid cannot exceed the final sales total.', 0);
+    }
+  });
   document.getElementById('begindate')?.addEventListener('change', (event) => {
     saleInstallmentStartDate = event.target.value;
     revealRentTransactionDetails();
@@ -795,6 +805,15 @@ function updateSalePlan() {
   }
   if (amountInput) amountInput.value = formatMoneyInputValue(saleAmount || '');
   if (finalInput) finalInput.value = formatMoneyInputValue(finalTotal || '');
+  const amountPaidInput = document.getElementById('amountpaid');
+  if (amountPaidInput) {
+    amountPaidInput.max = `${finalTotal}`;
+    if (!amountPaidInput.dataset.saleUserEdited) {
+      amountPaidInput.value = '';
+    } else if (parseMoneyValue(amountPaidInput.value) > finalTotal) {
+      amountPaidInput.value = formatMoneyInputValue(finalTotal || '');
+    }
+  }
   renderSalesFeeBreakdown();
   const count = document.getElementById('installmentcount')?.value || '';
   if (isSale) renderSaleInstallments(finalTotal, count);
@@ -1241,6 +1260,10 @@ function updateRentTotalDeposit() {
 
   const amountPaid = document.getElementById('amountpaid');
   if (amountPaid) {
+    if (getSelectedExitMode() === 'SALE') {
+      updateSalePlan();
+      return;
+    }
     const value = hasAnyDeposit ? depositSum : payableSum;
     amountPaid.value = value ? value.toString() : '';
   }

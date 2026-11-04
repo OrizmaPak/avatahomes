@@ -250,7 +250,7 @@
                 </div>
                 <div class="form-group remain hidden">
                     <label for="country" class="control-label">amount paid</label>
-                    <input type="text" inputmode="decimal" name="amountpaid" id="amountpaid" readonly class="form-control rentapropertyverify money-input">
+                    <input type="text" inputmode="decimal" name="amountpaid" id="amountpaid" class="form-control rentapropertyverify money-input">
                 </div>
                 <div class="form-group hidden">
                     <label for="country" class="control-label">reference</label>
