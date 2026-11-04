@@ -18,7 +18,7 @@ function discountValue(record) {
 }
 
 function discountType(record) {
-    const type = `${record?.type ?? record?.ruletype ?? record?.rule_type ?? record?.mode ?? 'DISCOUNT'}`.trim().toUpperCase();
+    const type = `${record?.category ?? record?.type ?? record?.ruletype ?? record?.rule_type ?? record?.mode ?? 'DISCOUNT'}`.trim().toUpperCase();
     return type === 'PADDING' ? 'PADDING' : 'DISCOUNT';
 }
 
@@ -41,7 +41,6 @@ function addDiscountRow(values = {}) {
     row.dataset.discountRow = discountDraftRow;
     row.innerHTML = `
         <td data-discount-row-number></td>
-        <td><div class="discount-type-options"><label><input type="radio" name="ruletype-${discountDraftRow}" value="DISCOUNT" ${discountType(values) === 'DISCOUNT' ? 'checked' : ''}> Discount</label><label><input type="radio" name="ruletype-${discountDraftRow}" value="PADDING" ${discountType(values) === 'PADDING' ? 'checked' : ''}> Padding</label></div></td>
         <td><input type="number" name="rulevalue" class="form-control discount-value" min="0" max="100" step="0.01" inputmode="decimal" value="${discountEscape(discountValue(values))}" placeholder="e.g. 5"></td>
         <td><input type="number" name="ruleinstalmentcount" class="form-control discount-instalments" min="1" step="1" inputmode="numeric" value="${discountEscape(values.numberofinstalment || '')}" placeholder="e.g. 6"></td>
         <td><button type="button" class="discount-remove-button" title="Remove row" aria-label="Remove row"><span class="material-symbols-outlined">remove</span></button></td>`;
@@ -78,18 +77,14 @@ async function submitDiscountData() {
     if (!rows.length) return notification('Add at least one discount rule.', 0);
     const payload = new FormData();
     for (let index = 0; index < rows.length; index += 1) {
-        const type = rows[index].querySelector('input[type="radio"]:checked')?.value || 'DISCOUNT';
         const discount = Number(rows[index].querySelector('.discount-value')?.value);
         const instalments = Number(rows[index].querySelector('.discount-instalments')?.value);
         if (!Number.isFinite(discount) || discount < 0 || discount > 100) return notification(`Enter a value between 0 and 100 on row ${index + 1}.`, 0);
         if (!Number.isInteger(instalments) || instalments < 1) return notification(`Enter a valid number of instalments on row ${index + 1}.`, 0);
-        payload.append(`discount${index + 1}`, type === 'DISCOUNT' ? discount.toString() : '0');
-        payload.append(`padding${index + 1}`, type === 'PADDING' ? discount.toString() : '0');
         payload.append(`value${index + 1}`, discount.toString());
-        payload.append(`type${index + 1}`, type);
-        payload.append(`ruletype${index + 1}`, type);
         payload.append(`numberofinstalment${index + 1}`, instalments.toString());
     }
+    payload.append('category', document.querySelector('input[name="category"]:checked')?.value || 'DISCOUNT');
     payload.append('rowcount', rows.length.toString());
     const response = await httpRequest2('../controllers/adddiscountdata', payload, document.getElementById('discountsubmit'), 'json');
     if (!response?.status) return notification(response?.message || 'Unable to save discount rules.', 0);

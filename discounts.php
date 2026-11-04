@@ -15,12 +15,16 @@
     </div>
 
     <form id="discountdataform" class="discount-form-card">
+        <div class="discount-category-picker" role="radiogroup" aria-label="Rule category">
+            <span>Category</span>
+            <label><input type="radio" name="category" value="DISCOUNT" checked> Discount</label>
+            <label><input type="radio" name="category" value="PADDING"> Padding</label>
+        </div>
         <div class="table-content">
             <table class="discount-entry-table" data-no-table-tools>
                 <thead>
                     <tr>
                         <th>S/N</th>
-                        <th>Type</th>
                         <th>Value (%)</th>
                         <th>Number of instalments</th>
                         <th>Action</th>
@@ -75,6 +79,8 @@
     .discount-form-card { padding:1rem; border:1px solid #eadfbd; border-radius:14px; background:#fffdf8; box-shadow:0 8px 24px rgba(117,87,19,.06); }
     .discount-entry-table>thead>tr>th,#discountstable>thead>tr>th { background:#8a6a1f!important; color:#fff!important; }
     .discount-entry-table input { min-width:150px; }
+    .discount-category-picker { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin:0 0 1rem; color:#4b4030; font-size:.85rem; font-weight:700; }
+    .discount-category-picker label { display:inline-flex; align-items:center; gap:.35rem; cursor:pointer; font-weight:600; }
     .discount-add-button,.discount-refresh-button { display:inline-flex; align-items:center; gap:.35rem; border:1px solid #d6b85e; border-radius:8px; padding:.55rem .8rem; background:#fff9e9; color:var(--discount-deep); font-size:.78rem; font-weight:800; cursor:pointer; }
     .discount-add-button:hover,.discount-refresh-button:hover { background:#fff1bf; }
     .discount-add-button .material-symbols-outlined,.discount-refresh-button .material-symbols-outlined { font-size:17px; }
@@ -82,8 +88,6 @@
     .discount-remove-button:hover { background:#fecaca; }
     .discount-form-actions { display:flex; justify-content:flex-end; margin-top:1rem; }
     .discount-percent-badge { display:inline-flex; min-width:3.8rem; justify-content:center; border-radius:999px; padding:.3rem .6rem; background:#fff3cd; color:#755713; font-weight:800; }
-    .discount-type-options { display:flex; gap:.75rem; flex-wrap:wrap; font-size:.82rem; white-space:nowrap; }
-    .discount-type-options label { display:inline-flex; align-items:center; gap:.3rem; cursor:pointer; }
     .discount-type-badge { display:inline-flex; border-radius:999px; padding:.3rem .6rem; font-size:.72rem; font-weight:800; }
     .discount-type-discount { background:#fff3cd; color:#755713; }
     .discount-type-padding { background:#dbeafe; color:#1d4ed8; }

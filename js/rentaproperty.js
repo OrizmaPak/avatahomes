@@ -26,7 +26,7 @@ function saleDiscountInstalmentCount(rule) {
 }
 
 function saleRuleType(rule) {
-  const type = `${rule?.type ?? rule?.ruletype ?? rule?.rule_type ?? rule?.mode ?? 'DISCOUNT'}`.trim().toUpperCase();
+  const type = `${rule?.category ?? rule?.type ?? rule?.ruletype ?? rule?.rule_type ?? rule?.mode ?? 'DISCOUNT'}`.trim().toUpperCase();
   return type === 'PADDING' ? 'PADDING' : 'DISCOUNT';
 }
 
