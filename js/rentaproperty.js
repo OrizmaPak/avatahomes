@@ -355,7 +355,13 @@ async function rentapropertyActive() {
     rentapropertyid = storedRentPropertyId;
     sessionStorage.removeItem('rentapropertyid');
   }
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   const form = document.querySelector('#rentapropertyform');
+  if (!form) {
+    return notification('Property Sales/Rentals is still loading. Please try again.', 0);
+  }
+  if (form.dataset.rentapropertyInitialized === 'true') return;
+  form.dataset.rentapropertyInitialized = 'true';
   form.querySelector('#submit')
       .addEventListener('click', rentapropertysubmit);
   form.querySelector('#sendapproval')
