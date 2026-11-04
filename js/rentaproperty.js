@@ -228,8 +228,11 @@ function updateAmountPaidAvailability() {
   if (!amountPaid) return;
   const container = document.getElementById('amountpaidcontainer');
   const selling = getSelectedExitMode() === 'SALE';
+  const rentalIsReady = getSelectedExitMode() === 'RENT'
+    && !!document.getElementById('unitid')?.value
+    && !!document.getElementById('begindate')?.value;
   amountPaid.disabled = selling;
-  container?.classList.toggle('hidden', selling);
+  container?.classList.toggle('hidden', !rentalIsReady);
   if (selling) {
     amountPaid.value = '';
     delete amountPaid.dataset.saleUserEdited;
