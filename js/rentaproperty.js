@@ -31,8 +31,23 @@ function saleRuleType(rule) {
 }
 
 function selectedSalePricingType() {
-  const option = document.getElementById('discount')?.options[document.getElementById('discount')?.selectedIndex];
-  return `${option?.dataset.ruleType || 'DISCOUNT'}`.toUpperCase() === 'PADDING' ? 'PADDING' : 'DISCOUNT';
+  if (parseMoneyValue(document.getElementById('discount')?.value) > 0) return 'DISCOUNT';
+  return selectedSalePaddingRule() ? 'PADDING' : 'DISCOUNT';
+}
+
+function saleRulesOfType(type) {
+  return saleDiscountRules.filter(rule => saleRuleType(rule) === type);
+}
+
+function selectedSalePaddingRule() {
+  const count = `${document.getElementById('installmentcount')?.value || ''}`;
+  return saleRulesOfType('PADDING').find(rule => `${saleDiscountInstalmentCount(rule)}` === count) || null;
+}
+
+function selectedSalePricingValue() {
+  return selectedSalePricingType() === 'PADDING'
+    ? parseMoneyValue(saleDiscountValue(selectedSalePaddingRule()))
+    : parseMoneyValue(document.getElementById('discount')?.value);
 }
 
 async function ensureSaleDiscountRules() {
@@ -47,27 +62,42 @@ function configureSaleDiscountOptions(preferredDiscount = '', preferredType = ''
   if (!select) return;
   const existingValue = `${preferredDiscount || select.value || ''}`;
   const existingType = `${preferredType || select.options[select.selectedIndex]?.dataset.ruleType || 'DISCOUNT'}`.toUpperCase();
-  const options = saleDiscountRules.map((rule, index) => {
+  const options = saleRulesOfType('DISCOUNT').map((rule) => {
     const discount = saleDiscountValue(rule);
     const instalments = saleDiscountInstalmentCount(rule);
-    const type = saleRuleType(rule);
-    return `<option value="${discount}" data-rule-type="${type}" data-instalments="${instalments}">${type === 'PADDING' ? 'Padding' : 'Discount'} ${discount}% — ${instalments} instalment${Number(instalments) === 1 ? '' : 's'}</option>`;
+    return `<option value="${discount}" data-instalments="${instalments}">Discount ${discount}% — ${instalments} instalment${Number(instalments) === 1 ? '' : 's'}</option>`;
   });
   options.push('<option value="0" data-rule-type="DISCOUNT" data-instalments="1">0% — No discount</option>');
   select.innerHTML = options.join('');
-  const preferredOption = [...select.options].find(option => option.value === existingValue && option.dataset.ruleType === existingType);
+  const preferredOption = existingType === 'DISCOUNT' ? [...select.options].find(option => option.value === existingValue) : null;
   if (preferredOption) select.selectedIndex = [...select.options].indexOf(preferredOption);
-  else select.selectedIndex = saleDiscountRules.length ? 0 : select.options.length - 1;
+  else select.selectedIndex = existingType === 'PADDING' ? select.options.length - 1 : (saleRulesOfType('DISCOUNT').length ? 0 : select.options.length - 1);
   syncSaleDiscountRule();
+}
+
+function configureSaleInstalmentOptions(preferredCount = '') {
+  const select = document.getElementById('installmentcount');
+  const discount = parseMoneyValue(document.getElementById('discount')?.value);
+  if (!select) return;
+  const rules = discount > 0 ? [] : saleRulesOfType('PADDING');
+  const selectedDiscount = document.getElementById('discount')?.options[document.getElementById('discount')?.selectedIndex];
+  const counts = discount > 0
+    ? [selectedDiscount?.dataset.instalments || '1']
+    : [...new Set(rules.map(saleDiscountInstalmentCount).filter(Boolean))];
+  const desired = `${preferredCount || select.value || counts[0] || '1'}`;
+  select.innerHTML = counts.length
+    ? counts.map(count => `<option value="${count}">${count} instalment${Number(count) === 1 ? '' : 's'}</option>`).join('')
+    : '<option value="1">1 instalment</option>';
+  select.value = [...select.options].some(option => option.value === desired) ? desired : select.options[0].value;
+  select.disabled = discount > 0;
 }
 
 function syncSaleDiscountRule() {
   const select = document.getElementById('discount');
   const instalmentInput = document.getElementById('installmentcount');
   if (!select || !instalmentInput) return;
-  const selected = select.options[select.selectedIndex];
-  instalmentInput.value = selected?.dataset.instalments || '1';
-  const discount = selectedSalePricingType() === 'DISCOUNT' ? (parseMoneyValue(select.value) || 0) : 0;
+  configureSaleInstalmentOptions();
+  const discount = parseMoneyValue(select.value) || 0;
   const approvalStatus = document.getElementById('discountapprovalstatus');
   const approvalSubmitted = document.getElementById('discountapprovalsubmitted');
   if (approvalStatus) approvalStatus.value = discount > 0 ? 'PENDING' : 'NOT_REQUIRED';
@@ -352,6 +382,7 @@ async function rentapropertyActive() {
     if (getSelectedExitMode() === 'SALE' && installmentCount > 0 && !beginDate) {
       notification('Please fill in the begin date for the instalment schedule to be calculated.', 0);
     }
+    updateSalePlan();
   });
 
   // Fetch tenants
@@ -429,6 +460,7 @@ async function rentapropertyActive() {
       if (document.getElementById('discount') && savedSaleDiscount !== '') {
         configureSaleDiscountOptions(savedSaleDiscount, savedPricingType);
       }
+      if (savedPricingType === 'PADDING') configureSaleInstalmentOptions(record.rentdata.numberofinstalment);
       if (document.getElementById('discountapprovalstatus') && savedApprovalStatus) {
         document.getElementById('discountapprovalstatus').value = `${savedApprovalStatus}`.toUpperCase();
         if (['PENDING', 'PENDING_APPROVAL'].includes(`${savedApprovalStatus}`.toUpperCase())) {
@@ -810,7 +842,9 @@ function updateSalePlan() {
   const finalLabel = document.getElementById('finaltotallabel');
   const pricingLabel = document.getElementById('pricingrulelabel');
   if (title) title.textContent = 'Sale payment plan';
-  if (help) help.textContent = 'Discounts require approval before this transaction can be completed.';
+  if (help) help.textContent = selectedSalePricingType() === 'PADDING'
+    ? 'Padding applies to the selected instalment plan. No discount approval is required.'
+    : 'Discounts require approval before this transaction can be completed.';
   if (finalLabel) finalLabel.textContent = 'Final sales total';
   panel.classList.toggle('hidden', !hasTransaction);
   if (!hasTransaction) {
@@ -826,7 +860,7 @@ function updateSalePlan() {
   const discountInput = document.getElementById('discount');
   const finalInput = document.getElementById('totalamount');
   initializeMoneyInputs(panel);
-  const adjustment = Math.max(0, Math.min(100, parseMoneyValue(discountInput?.value)));
+  const adjustment = Math.max(0, Math.min(100, selectedSalePricingValue()));
   const pricingType = selectedSalePricingType();
   const discount = pricingType === 'DISCOUNT' ? adjustment : 0;
   const padding = pricingType === 'PADDING' ? adjustment : 0;
@@ -1364,7 +1398,7 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
   if (exitMode === 'SALE') {
     updateSalePlan();
     const pricingType = selectedSalePricingType();
-    const pricingValue = parseMoneyValue(document.getElementById('discount')?.value);
+    const pricingValue = selectedSalePricingValue();
     const saleDiscount = pricingType === 'DISCOUNT' ? pricingValue : 0;
     const salePadding = pricingType === 'PADDING' ? pricingValue : 0;
     const approvalStatus = `${document.getElementById('discountapprovalstatus')?.value || 'NOT_REQUIRED'}`.toUpperCase();

@@ -186,7 +186,7 @@
                         </div>
                         <div id="installmentcountcontainer" class="form-group sale-only-field">
                             <label for="installmentcount" class="control-label">Number of instalments</label>
-                            <input type="number" id="installmentcount" class="form-control" min="1" step="1" placeholder="1" readonly>
+                            <select id="installmentcount" class="form-control"></select>
                         </div>
                     </div>
                     <input type="hidden" id="discountapprovalstatus" value="NOT_REQUIRED" hidden style="display:none !important">
