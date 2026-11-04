@@ -1425,6 +1425,7 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
     formData.set('discount', saleDiscount.toString());
     formData.set('padding', salePadding.toString());
     formData.set('pricingtype', pricingType);
+    formData.set('rent', document.getElementById('baseamount')?.value || '');
     formData.set('totalamount', document.getElementById('totalamount')?.value || '');
     formData.set('numberofinstalment', installmentRows.length.toString());
     installmentRows.forEach((row, index) => {
