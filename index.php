@@ -23,7 +23,7 @@ if(!isset($_SESSION["wuseremail"]))
     <link rel="stylesheet" href="./css/dashboard.css?v=20261022a">
   <link rel="stylesheet" href="./css/floorplans-data.css?v=20261011a">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
-    <link rel="stylesheet" href="./css/rentaproperty.css?v=20261008a">
+    <link rel="stylesheet" href="./css/rentaproperty.css?v=20261104a">
     <link rel="stylesheet" href="./css/discountapprovals.css?v=20261008d">
   <link rel="stylesheet" href="./css/discountapproval-schedule.css?v=20261009a">
   <link rel="stylesheet" href="./css/viewrentaproperty.css?v=20261011a">
@@ -257,7 +257,7 @@ if(!isset($_SESSION["wuseremail"]))
     </div>
     <script src="./js/util.js?v=20260613a"></script>
     <script src="./js/receipts.js?v=20261028b"></script>
-    <script src="./js/router.js?v=20261104b"></script>
+    <script src="./js/router.js?v=20261104c"></script>
     <script src="./js/index.js?v=20261104a"></script>
     <script src="./js/oreutil.js?v=20261027a"></script>
 </body>

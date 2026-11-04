@@ -3,9 +3,56 @@ let rentapropertyresult;
 let rentFeeDefinitions = [];
 let rentUnitChoices = null;
 let saleInstallmentStartDate = '';
+let saleDiscountRules = [];
 const RENT_APPLY_PERCENTAGE_GROUP = 'rentaproperty-apply-percent';
 const RENT_NOT_APPLICABLE_DURATION = 'NOT APPLICABLE';
 const RENT_ALLOWED_UNIT_FEES = ['RENT'];
+
+function saleDiscountRecords(response) {
+  if (Array.isArray(response?.data)) return response.data;
+  if (Array.isArray(response?.data?.data)) return response.data.data;
+  return [];
+}
+
+function saleDiscountValue(rule) {
+  return rule?.discount ?? rule?.discountpercentage ?? rule?.discount_percent ?? rule?.discountvalue ?? '';
+}
+
+function saleDiscountInstalmentCount(rule) {
+  return rule?.numberofinstalment ?? rule?.numberofinstallment ?? rule?.instalments ?? '';
+}
+
+async function ensureSaleDiscountRules() {
+  if (saleDiscountRules.length) return saleDiscountRules;
+  const response = await httpRequest2('../controllers/fetchdiscountdata', null, null, 'json');
+  if (response?.status) saleDiscountRules = saleDiscountRecords(response);
+  return saleDiscountRules;
+}
+
+function configureSaleDiscountOptions(preferredDiscount = '') {
+  const select = document.getElementById('discount');
+  if (!select) return;
+  const existingValue = `${preferredDiscount || select.value || ''}`;
+  const options = saleDiscountRules.map((rule, index) => {
+    const discount = saleDiscountValue(rule);
+    const instalments = saleDiscountInstalmentCount(rule);
+    return `<option value="${discount}" data-instalments="${instalments}">${discount}% — ${instalments} instalment${Number(instalments) === 1 ? '' : 's'}</option>`;
+  });
+  options.push('<option value="0" data-instalments="1">0% — No discount</option>');
+  select.innerHTML = options.join('');
+  const hasPreferred = [...select.options].some(option => option.value === existingValue);
+  select.value = hasPreferred ? existingValue : (saleDiscountRules.length ? `${saleDiscountValue(saleDiscountRules[0])}` : '0');
+  syncSaleDiscountRule();
+}
+
+function syncSaleDiscountRule() {
+  const select = document.getElementById('discount');
+  const instalmentInput = document.getElementById('installmentcount');
+  if (!select || !instalmentInput) return;
+  const selected = select.options[select.selectedIndex];
+  instalmentInput.value = selected?.dataset.instalments || '1';
+  updateSalePlan();
+}
 
 /* -------- DATE DIFFERENCE UTILITY -------- */
 function differenceInMonths(date1, date2) {
@@ -119,6 +166,7 @@ async function handleRentExitModeChange() {
   const feeTable = document.getElementById('rentapropertytable');
   if (feeTable) feeTable.innerHTML = '';
   document.getElementById('saleplan')?.classList.add('hidden');
+  document.getElementById('otherfeesview')?.classList.remove('sale-payment-mode');
   document.getElementById('submit')?.classList.remove('hidden');
   document.getElementById('sendapproval')?.classList.add('hidden');
   const exitMode = getSelectedExitMode();
@@ -235,6 +283,8 @@ async function rentapropertyActive() {
     saleInstallmentStartDate = event.target.value;
     updateSalePlan();
   });
+  document.getElementById('discount')?.addEventListener('change', syncSaleDiscountRule);
+  document.getElementById('addsalefee')?.addEventListener('click', addSaleAdditionalFee);
   document.getElementById('installmentcount')?.addEventListener('change', (event) => {
     const installmentCount = Number.parseInt(event.target.value || '', 10);
     const beginDate = document.getElementById('begindate')?.value;
@@ -263,6 +313,8 @@ async function rentapropertyActive() {
   } else {
     return notification('Unable to retrieve properties, please reload.', 0);
   }
+  await ensureSaleDiscountRules();
+  configureSaleDiscountOptions();
 
   const addRowButton = getRentAddRowButton();
   if (addRowButton && !addRowButton.dataset.bound) {
@@ -538,6 +590,76 @@ function getSaleFeeTableRow() {
   }) || null;
 }
 
+function saleFeeNameForRow(row) {
+  const feeId = row?.querySelector('.feename-select')?.value;
+  const fee = rentFeeDefinitions.find(item => `${item.id}` === `${feeId}`);
+  return fee?.feename || row?.querySelector('.feename-select option:checked')?.textContent || 'Select fee';
+}
+
+function saleAdditionalFeeOptions(selectedId = '') {
+  return ['<option value="">Select other fee</option>'].concat(rentFeeDefinitions
+    .filter(fee => !isSaleFeeName(fee.feename))
+    .map(fee => `<option value="${fee.id}" ${`${fee.id}` === `${selectedId}` ? 'selected' : ''}>${fee.feename}</option>`)).join('');
+}
+
+function setSalePaymentRowsReadOnly() {
+  document.querySelectorAll('#rentapropertytable tr').forEach(row => {
+    row.querySelector('.feename-select')?.setAttribute('disabled', 'disabled');
+    const amount = row.querySelector('.amount-input');
+    if (amount) amount.readOnly = true;
+  });
+}
+
+function renderSalesFeeBreakdown() {
+  const container = document.getElementById('salesfeeitems');
+  if (!container) return;
+  if (getSelectedExitMode() !== 'SALE') {
+    container.innerHTML = '';
+    return;
+  }
+  const saleRow = getSaleFeeTableRow();
+  const rows = [...document.querySelectorAll('#rentapropertytable tr')];
+  const additionalRows = rows.filter(row => row !== saleRow);
+  container.innerHTML = additionalRows.map(row => {
+    const controls = getRentFeeRowControls(row.id);
+    const feeId = controls.feeSelect?.value || '';
+    const mode = `${row.dataset.feeMode || ''}`.toUpperCase();
+    const name = feeId ? `<div class="sale-fee-item-name">${saleFeeNameForRow(row)}</div>` : `<select class="form-control" data-sale-extra-select="${row.id}">${saleAdditionalFeeOptions(feeId)}</select>`;
+    return `<div class="sale-fee-item" data-sale-fee-row="${row.id}">
+      <div><label>Fee name</label>${name}</div>
+      <div><label>Amount</label><input type="text" inputmode="decimal" class="form-control money-input" data-sale-extra-amount="${row.id}" value="${controls.amount?.value || ''}" ${mode === 'PERCENTAGE' || !feeId ? 'readonly' : ''}></div>
+      <button type="button" class="sale-fee-remove" data-remove-sale-fee="${row.id}" title="Remove fee" aria-label="Remove fee"><span class="material-symbols-outlined">remove</span></button>
+    </div>`;
+  }).join('');
+  container.querySelectorAll('[data-sale-extra-select]').forEach(select => select.addEventListener('change', event => {
+    const controls = getRentFeeRowControls(event.currentTarget.dataset.saleExtraSelect);
+    if (!controls.feeSelect) return;
+    controls.feeSelect.removeAttribute('disabled');
+    controls.feeSelect.value = event.currentTarget.value;
+    handleRentFeeChange(controls.row.id);
+    setSalePaymentRowsReadOnly();
+  }));
+  container.querySelectorAll('[data-sale-extra-amount]').forEach(input => input.addEventListener('input', event => {
+    const controls = getRentFeeRowControls(event.currentTarget.dataset.saleExtraAmount);
+    if (!controls.amount || controls.amount.readOnly && `${controls.row.dataset.feeMode}`.toUpperCase() === 'PERCENTAGE') return;
+    controls.amount.readOnly = false;
+    controls.amount.value = event.currentTarget.value;
+    handleRentAmountInput(controls.row.id);
+    setSalePaymentRowsReadOnly();
+  }));
+  container.querySelectorAll('[data-remove-sale-fee]').forEach(button => button.addEventListener('click', () => removeRentFeeRow(button.dataset.removeSaleFee)));
+  setSalePaymentRowsReadOnly();
+}
+
+function addSaleAdditionalFee() {
+  if (getSelectedExitMode() !== 'SALE') return;
+  const row = addRentFeeRow({});
+  if (row) {
+    row.dataset.saleExtra = 'true';
+    renderSalesFeeBreakdown();
+  }
+}
+
 function setSaleDiscountApprovalStatus(status = 'NOT_REQUIRED') {
   const normalized = `${status || 'NOT_REQUIRED'}`.trim().toUpperCase();
   const hidden = document.getElementById('discountapprovalstatus');
@@ -604,37 +726,36 @@ function updateSalePlan() {
   updateRentDurationVisibility();
   const transactionMode = getSelectedExitMode();
   const isSale = transactionMode === 'SALE';
-  const isRental = transactionMode === 'RENT';
-  const hasTransaction = (isSale || isRental) && !!document.getElementById('unitid')?.value;
+  const hasTransaction = isSale && !!document.getElementById('unitid')?.value;
   const countContainer = document.getElementById('installmentcountcontainer');
-  const baseAmountContainer = document.getElementById('transactionbaseamountgroup');
   const installments = document.getElementById('saleinstallments');
   countContainer?.classList.toggle('hidden', !isSale);
-  baseAmountContainer?.classList.toggle('hidden', !isSale);
   installments?.classList.toggle('hidden', !isSale);
   const title = document.getElementById('transactionplantitle');
   const help = document.getElementById('transactionplanhelp');
   const finalLabel = document.getElementById('finaltotallabel');
-  if (title) title.textContent = isSale ? 'Sale payment plan' : 'Rental payment summary';
+  if (title) title.textContent = 'Sale payment plan';
   if (help) help.textContent = 'Discounts require approval before this transaction can be completed.';
-  if (finalLabel) finalLabel.textContent = isSale ? 'Final sales total' : 'Final rental total';
+  if (finalLabel) finalLabel.textContent = 'Final sales total';
   panel.classList.toggle('hidden', !hasTransaction);
-  if (!hasTransaction) return;
+  if (!hasTransaction) {
+    renderSalesFeeBreakdown();
+    return;
+  }
   saleInstallmentStartDate = document.getElementById('begindate')?.value || '';
   const saleRow = getSaleFeeTableRow();
-  const baseAmount = isSale
-    ? parseMoneyValue(saleRow?.querySelector('.amount-input')?.value)
-    : [...document.querySelectorAll('#rentapropertytable .amount-input')].reduce((sum, input) => sum + parseMoneyValue(input.value), 0);
+  const saleAmount = parseMoneyValue(saleRow?.querySelector('.amount-input')?.value);
+  const feeTotal = [...document.querySelectorAll('#rentapropertytable .amount-input')]
+    .reduce((sum, input) => sum + parseMoneyValue(input.value), 0);
   const amountInput = document.getElementById('baseamount');
   const discountInput = document.getElementById('discount');
   const finalInput = document.getElementById('totalamount');
   initializeMoneyInputs(panel);
-  const discount = Math.max(0, Math.min(baseAmount, parseMoneyValue(discountInput?.value)));
-  if (discountInput && discountInput.value !== '' && parseMoneyValue(discountInput.value) !== discount) discountInput.value = formatMoneyInputValue(discount);
+  const discount = Math.max(0, Math.min(100, parseMoneyValue(discountInput?.value)));
   const status = setSaleDiscountApprovalStatus(discount > 0
     ? document.getElementById('discountapprovalstatus')?.value
     : 'NOT_REQUIRED');
-  const finalTotal = Math.max(baseAmount - discount, 0);
+  const finalTotal = Math.max(feeTotal - ((feeTotal * discount) / 100), 0);
   const submitButton = document.getElementById('submit');
   const approvalButton = document.getElementById('sendapproval');
   const approvalRequired = discount > 0 && status !== 'APPROVED';
@@ -645,10 +766,9 @@ function updateSalePlan() {
     approvalButton.disabled = submitted;
     approvalButton.querySelector('span').textContent = submitted ? 'Awaiting Approval' : 'Send for Approval';
   }
-  if (amountInput) amountInput.value = formatMoneyInputValue(baseAmount || '');
+  if (amountInput) amountInput.value = formatMoneyInputValue(saleAmount || '');
   if (finalInput) finalInput.value = formatMoneyInputValue(finalTotal || '');
-  const finalAmountInput = saleRow?.querySelector('.final-amount-input');
-  if (finalAmountInput) finalAmountInput.value = formatMoneyInputValue(finalTotal || '');
+  renderSalesFeeBreakdown();
   const count = document.getElementById('installmentcount')?.value || '';
   if (isSale) renderSaleInstallments(finalTotal, count);
   const lastInstallmentDate = [...document.querySelectorAll('#saleinstallmentrows .sale-installment-due-date')].at(-1)?.value || '';
@@ -677,6 +797,7 @@ async function checkrentapropertyunit(el, prefillFees) {
   const feesContainer = document.getElementById('otherfeesview'); 
   if (feesContainer) {
     feesContainer.classList.add('hidden');
+    feesContainer.classList.toggle('sale-payment-mode', getSelectedExitMode() === 'SALE');
   }
 
   document.querySelectorAll('.remain')
@@ -723,6 +844,10 @@ async function checkrentapropertyunit(el, prefillFees) {
   ensureRentDefaultFlatSelection();
   recalculateRentPercentageRows();
   updateRentTotalDeposit();
+  if (getSelectedExitMode() === 'SALE') {
+    await ensureSaleDiscountRules();
+    configureSaleDiscountOptions(prefillFees?.length ? document.getElementById('discount')?.value : '');
+  }
   updateSalePlan();
 }
 

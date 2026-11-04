@@ -165,14 +165,20 @@
                         </div>
                         <span id="saleapprovalstatus" class="sale-approval-status sale-approval-pending">Approval pending</span>
                     </div>
-                    <div class="sale-plan-fields">
-                        <div id="transactionbaseamountgroup" class="form-group">
-                            <label for="baseamount" class="control-label">Sale amount</label>
-                            <input type="text" inputmode="decimal" id="baseamount" class="form-control money-input" readonly>
+                    <div class="sale-fee-breakdown">
+                        <div class="sale-fee-main-row">
+                            <div class="form-group">
+                                <label for="baseamount" class="control-label">Sale Amount</label>
+                                <input type="text" inputmode="decimal" id="baseamount" class="form-control money-input" readonly>
+                            </div>
                         </div>
+                        <div id="salesfeeitems" class="sale-fee-items"></div>
+                        <button type="button" id="addsalefee" class="sale-add-fee-button"><span class="material-symbols-outlined">add</span> Add other fee</button>
+                    </div>
+                    <div class="sale-plan-fields">
                         <div class="form-group">
                             <label for="discount" class="control-label">Discount</label>
-                            <input type="text" inputmode="decimal" id="discount" class="form-control money-input" min="0" step="0.01" placeholder="Enter discount">
+                            <select id="discount" class="form-control"><option value="0">0% — No discount</option></select>
                         </div>
                         <div class="form-group">
                             <label id="finaltotallabel" for="totalamount" class="control-label">Final total</label>
@@ -180,7 +186,7 @@
                         </div>
                         <div id="installmentcountcontainer" class="form-group sale-only-field">
                             <label for="installmentcount" class="control-label">Number of instalments</label>
-                            <input type="number" id="installmentcount" class="form-control" min="1" step="1" placeholder="1">
+                            <input type="number" id="installmentcount" class="form-control" min="1" step="1" placeholder="1" readonly>
                         </div>
                     </div>
                     <input type="hidden" id="discountapprovalstatus" value="NOT_REQUIRED" hidden style="display:none !important">
