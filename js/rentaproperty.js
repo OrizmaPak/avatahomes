@@ -136,6 +136,22 @@ function getSelectedExitMode() {
   return document.querySelector('input[name="exitmode"]:checked')?.value.toUpperCase() || '';
 }
 
+function hideRentTransactionDetails() {
+  document.querySelectorAll('.remain').forEach(element => element.classList.add('hidden'));
+  document.getElementById('begin')?.classList.remove('hidden');
+  document.getElementById('saleplan')?.classList.add('hidden');
+  document.getElementById('otherfeesview')?.classList.add('hidden');
+}
+
+function revealRentTransactionDetails() {
+  const beginDate = document.getElementById('begindate')?.value;
+  if (!beginDate) return hideRentTransactionDetails();
+  document.querySelectorAll('.remain').forEach(element => element.classList.remove('hidden'));
+  document.getElementById('otherfeesview')?.classList.remove('hidden');
+  updateRentDurationVisibility();
+  updateSalePlan();
+}
+
 function updateRentExitModeVisibility() {
   const tenantId = document.getElementById('tenantid')?.value || '';
   const modeContainer = document.getElementById('exitmode');
@@ -281,7 +297,7 @@ async function rentapropertyActive() {
       ?.addEventListener('click', () => rentapropertysubmit('SEND_APPROVAL'));
   document.getElementById('begindate')?.addEventListener('change', (event) => {
     saleInstallmentStartDate = event.target.value;
-    updateSalePlan();
+    revealRentTransactionDetails();
   });
   document.getElementById('discount')?.addEventListener('change', syncSaleDiscountRule);
   document.getElementById('addsalefee')?.addEventListener('click', addSaleAdditionalFee);
@@ -726,7 +742,7 @@ function updateSalePlan() {
   updateRentDurationVisibility();
   const transactionMode = getSelectedExitMode();
   const isSale = transactionMode === 'SALE';
-  const hasTransaction = isSale && !!document.getElementById('unitid')?.value;
+  const hasTransaction = isSale && !!document.getElementById('unitid')?.value && !!document.getElementById('begindate')?.value;
   const countContainer = document.getElementById('installmentcountcontainer');
   const installments = document.getElementById('saleinstallments');
   countContainer?.classList.toggle('hidden', !isSale);
@@ -786,9 +802,14 @@ function updateRentDurationVisibility() {
 /* -------- FETCH & RENDER FEES -------- */
 async function checkrentapropertyunit(el, prefillFees) {
   const unitId = el.value;
-  saleInstallmentStartDate = '';
   const startDateInput = document.getElementById('begindate');
-  if (startDateInput) startDateInput.value = '';
+  const preserveBeginDate = Array.isArray(prefillFees) && prefillFees.length && !!startDateInput?.value;
+  if (!preserveBeginDate) {
+    saleInstallmentStartDate = '';
+    if (startDateInput) startDateInput.value = '';
+  } else {
+    saleInstallmentStartDate = startDateInput.value;
+  }
   const tbody = document.getElementById('rentapropertytable');
   if (!tbody) return; 
   tbody.innerHTML = '';
@@ -800,9 +821,13 @@ async function checkrentapropertyunit(el, prefillFees) {
     feesContainer.classList.toggle('sale-payment-mode', getSelectedExitMode() === 'SALE');
   }
 
-  document.querySelectorAll('.remain')
-          .forEach(elm => elm.classList[unitId ? 'remove' : 'add']('hidden'));
-  updateRentDurationVisibility();
+  if (unitId) {
+    hideRentTransactionDetails();
+  } else {
+    document.querySelectorAll('.remain').forEach(element => element.classList.add('hidden'));
+    document.getElementById('saleplan')?.classList.add('hidden');
+    document.getElementById('otherfeesview')?.classList.add('hidden');
+  }
   
   if (!unitId) {
     return;
@@ -817,10 +842,6 @@ async function checkrentapropertyunit(el, prefillFees) {
   }
 
   await ensureRentFeeDefinitions();
-  if (feesContainer) {   
-    feesContainer.classList.remove('hidden'); 
-  }
-
   const apiRows = normalizeUnitFeeRows(response.data);
   const rows = Array.isArray(prefillFees) && prefillFees.length ? prefillFees : apiRows;
   if (rows.length) {
@@ -848,7 +869,7 @@ async function checkrentapropertyunit(el, prefillFees) {
     await ensureSaleDiscountRules();
     configureSaleDiscountOptions(prefillFees?.length ? document.getElementById('discount')?.value : '');
   }
-  updateSalePlan();
+  revealRentTransactionDetails();
 }
 
 function normalizeUnitFeeRows(data) {
@@ -1241,6 +1262,9 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
   const exitMode = getSelectedExitMode();
   if (!exitMode) {
     return notification('Select Renting or Selling before choosing a unit', 0);
+  }
+  if (!document.getElementById('begindate')?.value) {
+    return notification('Select a begin date before continuing with this transaction.', 0);
   }
   formData.set('exitmode', exitMode);
   updateSalePlan();
