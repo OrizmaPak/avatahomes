@@ -1,12 +1,12 @@
 <section class="animate__animated animate__fadeIn discounts-page">
-    <p class="page-title"><span>Discounts</span></p>
+    <p class="page-title"><span>Discounts/Padding</span></p>
 
     <div class="discounts-intro">
         <div>
             <span class="material-symbols-outlined">percent</span>
             <div>
-                <h2>Sales discount and instalment rules</h2>
-                <p>Create the percentage discounts available for each permitted number of instalments.</p>
+                <h2>Sales discount, padding and instalment rules</h2>
+                <p>Set the percentage adjustment and permitted instalment count for each sales option.</p>
             </div>
         </div>
         <button type="button" id="discountaddrow" class="discount-add-button">
@@ -20,7 +20,8 @@
                 <thead>
                     <tr>
                         <th>S/N</th>
-                        <th>Discount (%)</th>
+                        <th>Type</th>
+                        <th>Value (%)</th>
                         <th>Number of instalments</th>
                         <th>Action</th>
                     </tr>
@@ -31,7 +32,7 @@
         <div class="discount-form-actions">
             <button type="button" id="discountsubmit" class="btn">
                 <div class="btnloader" style="display:none"></div>
-                <span>Save discount rules</span>
+                <span>Save rules</span>
             </button>
         </div>
     </form>
@@ -40,7 +41,7 @@
 
     <div class="discount-saved-heading">
         <div>
-            <h2>Saved discount rules</h2>
+            <h2>Saved discount/padding rules</h2>
             <p>These rules will be used when preparing a property sale.</p>
         </div>
         <button type="button" id="discountrefresh" class="discount-refresh-button">
@@ -52,12 +53,13 @@
             <thead>
                 <tr>
                     <th>S/N</th>
-                    <th>Discount</th>
+                    <th>Type</th>
+                    <th>Value</th>
                     <th>Number of instalments</th>
                 </tr>
             </thead>
             <tbody id="discountstabledata">
-                <tr><td colspan="3" class="text-center opacity-70">Loading discount rules...</td></tr>
+                <tr><td colspan="4" class="text-center opacity-70">Loading discount/padding rules...</td></tr>
             </tbody>
         </table>
     </div>
@@ -80,5 +82,10 @@
     .discount-remove-button:hover { background:#fecaca; }
     .discount-form-actions { display:flex; justify-content:flex-end; margin-top:1rem; }
     .discount-percent-badge { display:inline-flex; min-width:3.8rem; justify-content:center; border-radius:999px; padding:.3rem .6rem; background:#fff3cd; color:#755713; font-weight:800; }
+    .discount-type-options { display:flex; gap:.75rem; flex-wrap:wrap; font-size:.82rem; white-space:nowrap; }
+    .discount-type-options label { display:inline-flex; align-items:center; gap:.3rem; cursor:pointer; }
+    .discount-type-badge { display:inline-flex; border-radius:999px; padding:.3rem .6rem; font-size:.72rem; font-weight:800; }
+    .discount-type-discount { background:#fff3cd; color:#755713; }
+    .discount-type-padding { background:#dbeafe; color:#1d4ed8; }
     @media(max-width:640px){.discounts-intro,.discount-saved-heading{align-items:flex-start;flex-direction:column}.discount-add-button,.discount-refresh-button{width:100%;justify-content:center}}
 </style>

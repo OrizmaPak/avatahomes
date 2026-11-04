@@ -161,7 +161,7 @@
                     <div class="sale-plan-heading">
                         <div>
                             <p id="transactionplantitle" class="section-title">Sale payment plan</p>
-                            <p id="transactionplanhelp" class="sale-plan-help">Discounts require approval before this transaction can be completed.</p>
+                            <p id="transactionplanhelp" class="sale-plan-help">Discounts require approval; padding adjusts the sales total for the selected instalment plan.</p>
                         </div>
                         <span id="saleapprovalstatus" class="sale-approval-status sale-approval-pending">Approval pending</span>
                     </div>
@@ -177,7 +177,7 @@
                     </div>
                     <div class="sale-plan-fields">
                         <div class="form-group">
-                            <label for="discount" class="control-label">Discount</label>
+                            <label id="pricingrulelabel" for="discount" class="control-label">Discount / Padding</label>
                             <select id="discount" class="form-control"><option value="0">0% — No discount</option></select>
                         </div>
                         <div class="form-group">
