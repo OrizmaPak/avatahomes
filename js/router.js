@@ -296,10 +296,10 @@ function resolveUrlPage() {
         openRoute(page+ext)
     }
     else {
-        // open home default page
-        let queryParams = `?r=propertyregistration`
+        // Open Dashboard as the default page after sign-in or when no route is supplied.
+        let queryParams = `?r=dashboard`
         window.history.pushState(queryParams, undefined, `${window.location.origin.concat(window.location.pathname, queryParams)}`)
-        openRoute('propertyregistration'+ext)
+        openRoute('dashboard'+ext)
     }
     showActiveRoute()
 }

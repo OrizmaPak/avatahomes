@@ -84,6 +84,6 @@
         </div>
     </section>
     <script src="./js/util.js"></script>
-    <script src="./js/login.js"></script>
+    <script src="./js/login.js?v=20261104a"></script>
 </body>
 </html>
