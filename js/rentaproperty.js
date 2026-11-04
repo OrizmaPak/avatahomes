@@ -369,9 +369,14 @@ async function rentapropertyActive() {
 
     const payload = new FormData();
     payload.append('id', rentapropertyid);
-    const r = await httpRequest2('../controllers/fetchrentaproperty', payload, null, 'json');
-    if (r.status && r.data.length) {
-      const record = r.data[0];
+    let response = await httpRequest2('../controllers/fetchsalesdraft', payload, null, 'json');
+    let record = Array.isArray(response?.data) ? response.data.find(item => `${item?.rentdata?.id}` === `${rentapropertyid}`) : null;
+    const isApprovalDraft = !!record;
+    if (!record) {
+      response = await httpRequest2('../controllers/fetchrentaproperty', payload, null, 'json');
+      record = Array.isArray(response?.data) ? response.data.find(item => `${item?.rentdata?.id}` === `${rentapropertyid}`) : null;
+    }
+    if (record?.rentdata) {
       populateData(record.rentdata);
       const savedSaleDiscount = record.rentdata.discount ?? '';
       const savedApprovalStatus = record.rentdata.discountstatus ?? record.rentdata.discountapprovalstatus ?? record.rentdata.approvalstatus ?? '';
@@ -396,7 +401,13 @@ async function rentapropertyActive() {
       if (unitSelect) {
         unitSelect.value = record.rentdata.unitid;
         rentUnitChoices?.setChoiceByValue(String(record.rentdata.unitid));
-        await checkrentapropertyunit(unitSelect, record.rentalfees || []);
+        const savedFees = normalizeUnitFeeRows(record.rentalfees || record.fees || record.rentdata.rentalfees);
+        const feeCacheKey = `propertySaleFees:${record.rentdata.tenantid}:${record.rentdata.propertyid}:${record.rentdata.unitid}`;
+        const cachedFees = JSON.parse(sessionStorage.getItem(`propertySaleFees:${rentapropertyid}`) || sessionStorage.getItem(feeCacheKey) || 'null');
+        await checkrentapropertyunit(unitSelect, savedFees.length ? savedFees : cachedFees);
+        if (isApprovalDraft && !savedFees.length && !cachedFees?.length) {
+          notification('This approval record has no saved fee breakdown. Please review and re-enter the additional fees before submitting.', 0);
+        }
       }
 
       const savedInstallments = record.instalments || record.rentdata.instalments || [];
@@ -437,7 +448,7 @@ async function rentapropertyActive() {
         managerInput.value = record.tenant;
       }
     } else {
-      return notification(r.message || 'Error fetching record', 0);
+      return notification(response?.message || 'Error fetching record', 0);
     }
   }
   rentapropertyid = '';
@@ -805,7 +816,7 @@ function updateRentDurationVisibility() {
 async function checkrentapropertyunit(el, prefillFees) {
   const unitId = el.value;
   const startDateInput = document.getElementById('begindate');
-  const preserveBeginDate = Array.isArray(prefillFees) && prefillFees.length && !!startDateInput?.value;
+  const preserveBeginDate = !!rentapropertyid && !!startDateInput?.value;
   if (!preserveBeginDate) {
     saleInstallmentStartDate = '';
     if (startDateInput) startDateInput.value = '';
@@ -839,17 +850,18 @@ async function checkrentapropertyunit(el, prefillFees) {
   payload.append('propertyid', document.getElementById('propertyid').value);
   payload.append('id', unitId);
   const response = await httpRequest2('../controllers/fetchotherfeesforaunit', payload, null, 'json');
-  if (!response.status) {
-    return notification(response.message, 0);
+  if (!response.status && !(Array.isArray(prefillFees) && prefillFees.length)) {
+    notification(response.message || 'Saved fee details are not available yet. You can still review the payment table.', 0);
   }
 
   await ensureRentFeeDefinitions();
-  const apiRows = normalizeUnitFeeRows(response.data);
+  const apiRows = response.status ? normalizeUnitFeeRows(response.data) : [];
   const rows = Array.isArray(prefillFees) && prefillFees.length ? prefillFees : apiRows;
   if (rows.length) {
     rows.forEach((item, index) => {
       const feeId =
-        item.feenameid ?? item.feeid ?? item.morefeesid ?? item.id ?? item.feename_id ?? '';
+        item.feenameid ?? item.feeid ?? item.morefeesid ?? item.feename_id ??
+        rentFeeDefinitions.find(fee => `${fee.feename}`.trim().toUpperCase() === `${item.feename || ''}`.trim().toUpperCase())?.id ?? '';
       addRentFeeRow({
         feeId: feeId ? String(feeId) : '',
         amount: item.amount ?? item.feeamount ?? item.rent ?? '',
@@ -1327,6 +1339,14 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
 
   // Fees
   const fees = [...document.querySelectorAll('#rentapropertytable tr')];
+  const approvalFees = fees.map(row => ({
+    feenameid: row.querySelector('.feename-select')?.value || '',
+    amount: row.querySelector('.amount-input')?.value || '',
+    deposit: row.querySelector('.deposit-input')?.value || '',
+    discount: row.querySelector('.discount-input')?.value || '',
+    renewable: row.querySelector('.renewable-select')?.value || 'NO',
+    rentalperiod: row.querySelector('.rental-period-input')?.value || ''
+  }));
   if (submissionAction !== 'SEND_APPROVAL') {
     if (!fees.length) {
       return notification('Add at least one fee before submitting', 0);
@@ -1362,6 +1382,9 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
   if (res.status) {
     notification(submissionAction === 'SEND_APPROVAL' ? 'Sale sent for MD approval' : 'Record saved successfully!', 1);
     if (submissionAction === 'SEND_APPROVAL') {
+      const approvalId = res.data?.rentdata?.id ?? res.data?.id ?? res.id;
+      if (approvalId) sessionStorage.setItem(`propertySaleFees:${approvalId}`, JSON.stringify(approvalFees));
+      sessionStorage.setItem(`propertySaleFees:${formData.get('tenantid')}:${formData.get('propertyid')}:${formData.get('unitid')}`, JSON.stringify(approvalFees));
       const approvalStatus = document.getElementById('discountapprovalstatus');
       if (approvalStatus) approvalStatus.value = 'PENDING';
       const approvalSubmitted = document.getElementById('discountapprovalsubmitted');
