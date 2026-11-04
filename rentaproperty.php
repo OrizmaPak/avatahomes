@@ -231,7 +231,7 @@
                         <option class="uppercase" value="60">Ten Years</option>
                     </select>
                 </div>
-                <div id="amountpaidcontainer" class="form-group remain hidden">
+                <div class="form-group remain hidden">
                     <label for="country" class="control-label">expiration date</label>
                     <input type="text" readonly name="expirationdate" id="expirationdate"
                         class="form-control">
@@ -248,7 +248,7 @@
                     <label for="country" class="control-label">other fees description</label>
                     <input type="text" name="otherfeesdescription" id="otherfeesdescription" class="form-control ">
                 </div>
-                <div class="form-group remain hidden">
+                <div id="amountpaidcontainer" class="form-group remain hidden">
                     <label for="country" class="control-label">amount paid</label>
                     <input type="text" inputmode="decimal" name="amountpaid" id="amountpaid" class="form-control rentapropertyverify money-input">
                 </div>
