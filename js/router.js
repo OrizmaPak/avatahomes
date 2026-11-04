@@ -223,6 +223,11 @@ const routerTree = {
         startingFunction: 'morefeesActive',
         scriptName:  './js/morefees.js?v=20260613a'
     },
+    discounts: {
+        template: 'discounts',
+        startingFunction: 'discountsActive',
+        scriptName: './js/discounts.js?v=20261104a'
+    },
     expenses: {
         template: 'expenses',
         startingFunction: 'expensesActive',

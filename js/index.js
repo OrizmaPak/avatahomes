@@ -274,6 +274,7 @@ async function runPermissions(){
                 'INSTALLMENT PAYMENTS': ['INSTALLMENT PAYMENTS'],
                 'ORGANISATION INFO': ['ORGANISATION INFO'],
                 'MORE FEES': ['MORE FEES'],
+                'DISCOUNTS': ['DISCOUNTS'],
                 'OTHER PAYMENTS': ['OTHER PAYMENTS'],
                 'PAYMENT HISTORY': ['PAYMENT HISTORY'],
                 'EXPENSES': ['EXPENSES'],

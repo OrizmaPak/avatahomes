@@ -147,6 +147,7 @@ if(!isset($_SESSION["wuseremail"]))
                                         <li class="navitem-child" id="password">Change Password</li>
                                         <li class="navitem-child" id="organisationinfo">Organisation Info</li>
                                         <li class="navitem-child" id="morefees">More Fees</li>
+                                        <li class="navitem-child" id="discounts">Discounts</li>
                                     </ul>
                                 </li>
                                 <li class="nav-item">
@@ -256,8 +257,8 @@ if(!isset($_SESSION["wuseremail"]))
     </div>
     <script src="./js/util.js?v=20260613a"></script>
     <script src="./js/receipts.js?v=20261028b"></script>
-    <script src="./js/router.js?v=20261104a"></script>
-    <script src="./js/index.js?v=20261103a"></script>
+    <script src="./js/router.js?v=20261104b"></script>
+    <script src="./js/index.js?v=20261104a"></script>
     <script src="./js/oreutil.js?v=20261027a"></script>
 </body>
 
