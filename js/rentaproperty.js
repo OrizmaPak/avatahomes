@@ -159,6 +159,7 @@ function updateRentExitModeVisibility() {
   const unitContainer = document.getElementById('unitt');
   const unitSelect = document.getElementById('unitid');
   const exitMode = getSelectedExitMode();
+  updateAmountPaidAvailability();
 
   modeContainer?.classList.toggle('hidden', !tenantId);
   propertyContainer?.classList.toggle('hidden', !tenantId || !exitMode);
@@ -168,6 +169,17 @@ function updateRentExitModeVisibility() {
     rentUnitChoices = null;
     if (unitSelect) unitSelect.innerHTML = '<option value="">-- Select Unit --</option>';
     document.querySelectorAll('.remain').forEach(element => element.classList.add('hidden'));
+  }
+}
+
+function updateAmountPaidAvailability() {
+  const amountPaid = document.getElementById('amountpaid');
+  if (!amountPaid) return;
+  const selling = getSelectedExitMode() === 'SALE';
+  amountPaid.disabled = selling;
+  if (selling) {
+    amountPaid.value = '';
+    delete amountPaid.dataset.saleUserEdited;
   }
 }
 
@@ -760,6 +772,7 @@ function getMonthlyInstallmentDate(startDate, monthOffset) {
 function updateSalePlan() {
   const panel = document.getElementById('saleplan');
   if (!panel) return;
+  updateAmountPaidAvailability();
   updateRentDurationVisibility();
   const transactionMode = getSelectedExitMode();
   const isSale = transactionMode === 'SALE';
