@@ -75,8 +75,7 @@ function renderPendingDiscountApprovals() {
     </tr>`;
   }).join('') : '<tr><td colspan="11">No pending discount approvals found.</td></tr>';
   table.querySelectorAll('[data-edit-approval]').forEach(button => button.addEventListener('click', () => {
-    sessionStorage.setItem('rentapropertyid', button.dataset.editApproval);
-    document.getElementById('rentaproperty')?.click();
+    openPropertySalesRentalForEdit(button.dataset.editApproval);
   }));
 }
 

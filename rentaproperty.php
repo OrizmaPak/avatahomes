@@ -1,7 +1,7 @@
 <section class="animate__animated animate__fadeIn rentaproperty-page">
     <input type="hidden" id="id">
     <p class="page-title">
-        <span>Property Sales</span>
+        <span>Property Sales/Rentals</span>
     </p>
     <form id="rentapropertyform">
         <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">

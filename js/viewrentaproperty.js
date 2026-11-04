@@ -304,7 +304,7 @@ async function onviewrentapropertyTableDataSignal() {
         <td><button type="button" class="view-rent-schedule-button" onclick="viewRentInstallmentsById('${item.rentdata.id}')">${viewRentInstallments(item).length ? `View (${viewRentInstallments(item).length})` : 'No schedule'}</button></td>
         <td>
             <div class="view-rent-row-actions">
-                <button type="button" title="Edit row entry" aria-label="Edit row entry" onclick="document.getElementById('rentaproperty').click();rentapropertyid = ${item.rentdata.id}" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
+                <button type="button" title="Edit row entry" aria-label="Edit row entry" onclick="openPropertySalesRentalForEdit('${item.rentdata.id}')" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
                 ${AvataReceipts.fromSale(item).amount > 0 ? `<button type="button" title="View receipt" aria-label="View receipt" onclick="viewRentReceiptById('${item.rentdata.id}')" class="material-symbols-outlined rounded-full bg-blue-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">receipt</button>` : ''}
             </div>
         </td>

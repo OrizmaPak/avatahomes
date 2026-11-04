@@ -136,7 +136,7 @@ const routerTree = {
     viewrentaproperty: {
         template: 'viewrentaproperty',
         startingFunction: 'viewrentapropertyActive',
-        scriptName:  './js/viewrentaproperty.js?v=20261103a'
+        scriptName:  './js/viewrentaproperty.js?v=20261104a'
     },
     salesreport: {
         template: 'salesreport',
@@ -146,7 +146,7 @@ const routerTree = {
     pendingdiscountapprovals: {
         template: 'pendingdiscountapprovals',
         startingFunction: 'pendingdiscountapprovalsActive',
-        scriptName: './js/pendingdiscountapprovals.js?v=20261008b'
+        scriptName: './js/pendingdiscountapprovals.js?v=20261104a'
     },
     approvesalesdiscounts: {
         template: 'approvesalesdiscounts',
@@ -290,6 +290,16 @@ function routerEvent(route) {
         resolveUrlPage()
         if(!isDeviceMobile()) toggleNavigation()
     }
+}
+
+function openPropertySalesRentalForEdit(id) {
+    if (id === undefined || id === null || `${id}`.trim() === '') {
+        notification('Unable to open this property sale or rental for editing.', 0);
+        return;
+    }
+
+    sessionStorage.setItem('rentapropertyid', `${id}`);
+    routerEvent('rentaproperty');
 }
 
 
