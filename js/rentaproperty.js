@@ -5,7 +5,7 @@ let rentUnitChoices = null;
 let saleInstallmentStartDate = '';
 const RENT_APPLY_PERCENTAGE_GROUP = 'rentaproperty-apply-percent';
 const RENT_NOT_APPLICABLE_DURATION = 'NOT APPLICABLE';
-const RENT_ALLOWED_UNIT_FEES = ['RENT', 'PROPERTY SALES'];
+const RENT_ALLOWED_UNIT_FEES = ['RENT'];
 
 /* -------- DATE DIFFERENCE UTILITY -------- */
 function differenceInMonths(date1, date2) {
@@ -58,14 +58,31 @@ function normalizeUnitAmount(unit) {
   return Number.isFinite(numericValue) ? numericValue : 0;
 }
 
-function isRentPropertyUnitEligible(unit) {
+function isRentPropertyUnitEligible(unit, exitMode = getSelectedExitMode()) {
   const feeName = normalizeUnitFeeName(unit);
   const occupancyValue = `${unit?.rented ?? unit?.isrented ?? unit?.occupied ?? ''}`.trim().toUpperCase();
   const isSalesFee = feeName.startsWith('SALES ') || feeName.startsWith('PROPERTY SALES ');
-  const exitMode = getSelectedExitMode();
   const isRentFee = RENT_ALLOWED_UNIT_FEES.includes(feeName);
   const unavailable = ['YES', 'TRUE', '1', 'SOLD', 'RENTED', 'TAKEN', 'OCCUPIED', 'ALLOCATED'].includes(occupancyValue);
   return (exitMode === 'SALE' ? isSalesFee : exitMode === 'RENT' ? isRentFee : false) && !unavailable;
+}
+
+function rentPropertiesForExitMode(exitMode) {
+  if (!Array.isArray(rentapropertyresult) || !exitMode) return [];
+  return rentapropertyresult.filter(propertyData =>
+    (Array.isArray(propertyData?.propertyunits) ? propertyData.propertyunits : [])
+      .some(unit => isRentPropertyUnitEligible(unit, exitMode))
+  );
+}
+
+function populateRentProperties(exitMode, selectedPropertyId = '') {
+  const propertySelect = document.getElementById('propertyid');
+  if (!propertySelect) return [];
+  const properties = rentPropertiesForExitMode(exitMode);
+  propertySelect.innerHTML = `<option value="">-- Select ${exitMode === 'SALE' ? 'Property for Sale' : 'Rental Property'} --</option>` +
+    properties.map(item => `<option value="${item.property.id}">${item.property.propertyname}</option>`).join('');
+  propertySelect.value = `${selectedPropertyId}`;
+  return properties;
 }
 
 function getSelectedExitMode() {
@@ -74,14 +91,15 @@ function getSelectedExitMode() {
 
 function updateRentExitModeVisibility() {
   const tenantId = document.getElementById('tenantid')?.value || '';
-  const propertyId = document.getElementById('propertyid')?.value || '';
   const modeContainer = document.getElementById('exitmode');
+  const propertyContainer = document.getElementById('propertyfield');
   const unitContainer = document.getElementById('unitt');
   const unitSelect = document.getElementById('unitid');
-  const ready = !!tenantId && !!propertyId;
+  const exitMode = getSelectedExitMode();
 
-  modeContainer?.classList.toggle('hidden', !ready);
-  if (!ready || !getSelectedExitMode()) {
+  modeContainer?.classList.toggle('hidden', !tenantId);
+  propertyContainer?.classList.toggle('hidden', !tenantId || !exitMode);
+  if (!tenantId || !exitMode) {
     unitContainer?.classList.add('hidden');
     rentUnitChoices?.destroy();
     rentUnitChoices = null;
@@ -92,7 +110,6 @@ function updateRentExitModeVisibility() {
 
 async function handleRentExitModeChange() {
   const propertySelect = document.getElementById('propertyid');
-  if (!propertySelect?.value) return;
   saleInstallmentStartDate = '';
   const startDateInput = document.getElementById('begindate');
   if (startDateInput) startDateInput.value = '';
@@ -104,6 +121,14 @@ async function handleRentExitModeChange() {
   document.getElementById('saleplan')?.classList.add('hidden');
   document.getElementById('submit')?.classList.remove('hidden');
   document.getElementById('sendapproval')?.classList.add('hidden');
+  const exitMode = getSelectedExitMode();
+  const properties = populateRentProperties(exitMode);
+  updateRentExitModeVisibility();
+  if (!properties.length) notification(`No properties are configured for ${exitMode === 'SALE' ? 'sale' : 'rent'}.`, 0);
+}
+
+async function handleRentPropertyChange(propertySelect) {
+  updateRentExitModeVisibility();
   await checkrentapropertyproperty(propertySelect);
 }
 
@@ -234,11 +259,7 @@ async function rentapropertyActive() {
   const pRes = await httpRequest2('../controllers/fetchproperty', null, null, 'json');
   if (pRes.status) {
     rentapropertyresult = pRes.data;
-    document.getElementById('propertyid').innerHTML =
-      `<option value="">-- Select Property --</option>` +
-      pRes.data.map(d =>
-        `<option value="${d.property.id}">${d.property.propertyname}</option>`
-      ).join('');
+    document.getElementById('propertyid').innerHTML = '<option value="">-- Select transaction type first --</option>';
   } else {
     return notification('Unable to retrieve properties, please reload.', 0);
   }
@@ -298,8 +319,8 @@ async function rentapropertyActive() {
 
       const propertySelect = document.getElementById('propertyid');
       if (propertySelect) {
+        await setRentExitModeForEdit(record.rentdata);
         propertySelect.value = record.rentdata.propertyid;
-        setRentExitModeForEdit(record.rentdata);
         await checkrentapropertyproperty(propertySelect);
       }
 
@@ -488,7 +509,7 @@ async function checkrentapropertyproperty(el) {
   initializeRentUnitChoices();
 }
 
-function setRentExitModeForEdit(rentData) {
+async function setRentExitModeForEdit(rentData) {
   const savedMode = `${rentData?.exitmode ?? rentData?.exit_mode ?? ''}`.trim().toUpperCase();
   let mode = ['RENT', 'SALE'].includes(savedMode) ? savedMode : '';
   if (!mode) {
@@ -499,6 +520,7 @@ function setRentExitModeForEdit(rentData) {
     mode = feeName === 'RENT' ? 'RENT' : (feeName.startsWith('SALES ') || feeName.startsWith('PROPERTY SALES ')) ? 'SALE' : '';
   }
   document.querySelectorAll('input[name="exitmode"]').forEach(input => { input.checked = input.value === mode; });
+  populateRentProperties(mode, rentData?.propertyid);
   updateRentExitModeVisibility();
   return mode;
 }

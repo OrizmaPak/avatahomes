@@ -124,13 +124,6 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="country" class="control-label">property</label>
-                    <select class="form-control rentapropertyverify" onchange="updateRentExitModeVisibility()"
-                        name="propertyid" id="propertyid">
-                        <option value="">-- Select Property --</option>
-                    </select>
-                </div>
                 <div id="exitmode" class="form-group hidden lg:col-span-3">
                     <label class="control-label">Transaction type</label>
                     <div class="flex flex-wrap gap-4 rounded-md border border-[#eadfbd] bg-[#fffaf0] p-3">
@@ -143,6 +136,13 @@
                             <span>Selling</span>
                         </label>
                     </div>
+                </div>
+                <div id="propertyfield" class="form-group hidden">
+                    <label for="propertyid" class="control-label">Property</label>
+                    <select class="form-control rentapropertyverify" onchange="handleRentPropertyChange(this)"
+                        name="propertyid" id="propertyid">
+                        <option value="">-- Select Property --</option>
+                    </select>
                 </div>
                 <div id="unitt" class="form-group hidden">
                     <label for="unitid" class="control-label">unit</label>
