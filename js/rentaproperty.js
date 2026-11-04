@@ -175,8 +175,10 @@ function updateRentExitModeVisibility() {
 function updateAmountPaidAvailability() {
   const amountPaid = document.getElementById('amountpaid');
   if (!amountPaid) return;
+  const container = document.getElementById('amountpaidcontainer');
   const selling = getSelectedExitMode() === 'SALE';
   amountPaid.disabled = selling;
+  container?.classList.toggle('hidden', selling);
   if (selling) {
     amountPaid.value = '';
     delete amountPaid.dataset.saleUserEdited;

@@ -231,7 +231,7 @@
                         <option class="uppercase" value="60">Ten Years</option>
                     </select>
                 </div>
-                <div class="form-group remain hidden">
+                <div id="amountpaidcontainer" class="form-group remain hidden">
                     <label for="country" class="control-label">expiration date</label>
                     <input type="text" readonly name="expirationdate" id="expirationdate"
                         class="form-control">
