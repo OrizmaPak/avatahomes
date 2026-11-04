@@ -1274,12 +1274,14 @@ function rentapropertydate(months, begin, el) {
 async function rentapropertysubmit(submissionAction = 'COMPLETE') {
   const formData = new FormData(document.querySelector('#rentapropertyform'));
   const exitMode = getSelectedExitMode();
+  const recordId = rentapropertyid || document.getElementById('id')?.value || '';
   if (!exitMode) {
     return notification('Select Renting or Selling before choosing a unit', 0);
   }
   if (!document.getElementById('begindate')?.value) {
     return notification('Select a begin date before continuing with this transaction.', 0);
   }
+  if (recordId) formData.set('id', recordId);
   formData.set('exitmode', exitMode);
   updateSalePlan();
   const saleFeeRow = exitMode === 'SALE' ? getSaleFeeTableRow() : null;
@@ -1347,23 +1349,19 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
     renewable: row.querySelector('.renewable-select')?.value || 'NO',
     rentalperiod: row.querySelector('.rental-period-input')?.value || ''
   }));
-  if (submissionAction !== 'SEND_APPROVAL') {
-    if (!fees.length) {
-      return notification('Add at least one fee before submitting', 0);
-    }
-    formData.set('rowcount', fees.length);
-    const approvedSaleDiscount = exitMode === 'SALE' && `${document.getElementById('discountapprovalstatus')?.value || ''}`.toUpperCase() === 'APPROVED'
-      ? (document.getElementById('discount')?.value || '')
-      : '';
-    fees.forEach((r, i) => {
-      const idx = i + 1;
-      formData.set(`feenameid${idx}`, r.querySelector('.feename-select').value);
-      formData.set(`amount${idx}`, r.querySelector('.amount-input').value.trim());
-      formData.set(`deposit${idx}`, r.querySelector('.deposit-input').value.trim());
-      formData.set(`discount${idx}`, r === saleFeeRow ? approvedSaleDiscount : r.querySelector('.discount-input').value.trim());
-      formData.set(`renewable${idx}`, r.querySelector('.renewable-select').value);
-    });
+  if (!fees.length) {
+    return notification('Add at least one fee before submitting', 0);
   }
+  formData.set('rowcount', fees.length);
+  const saleDiscountForFees = exitMode === 'SALE' ? (document.getElementById('discount')?.value || '') : '';
+  fees.forEach((r, i) => {
+    const idx = i + 1;
+    formData.set(`feenameid${idx}`, r.querySelector('.feename-select').value);
+    formData.set(`amount${idx}`, r.querySelector('.amount-input').value.trim());
+    formData.set(`deposit${idx}`, r.querySelector('.deposit-input').value.trim());
+    formData.set(`discount${idx}`, r === saleFeeRow ? saleDiscountForFees : r.querySelector('.discount-input').value.trim());
+    formData.set(`renewable${idx}`, r.querySelector('.renewable-select').value);
+  });
 
   // if the id tenantid input is empty then set tenant to YES else set it to empty string
   if(document.getElementById('tenantid').value == ""){
