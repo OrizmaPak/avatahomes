@@ -795,8 +795,10 @@ function updateSalePlan() {
 function updateRentDurationVisibility() {
   const durationContainer = document.getElementById('durationcontainer');
   if (!durationContainer) return;
-  const isSale = getSelectedExitMode() === 'SALE';
-  durationContainer.classList.toggle('hidden', isSale);
+  const shouldShowDuration = getSelectedExitMode() === 'RENT'
+    && !!document.getElementById('unitid')?.value
+    && !!document.getElementById('begindate')?.value;
+  durationContainer.classList.toggle('hidden', !shouldShowDuration);
 }
   
 /* -------- FETCH & RENDER FEES -------- */
