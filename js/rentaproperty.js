@@ -1476,6 +1476,10 @@ async function rentapropertysubmit(submissionAction = 'COMPLETE') {
     formData.set(`discount${idx}`, r === saleFeeRow ? saleDiscountForFees : r.querySelector('.discount-input').value.trim());
     formData.set(`renewable${idx}`, r.querySelector('.renewable-select').value);
   });
+  if (exitMode === 'SALE') {
+    const depositPaid = fees.reduce((sum, row) => sum + parseMoneyValue(row.querySelector('.deposit-input')?.value), 0);
+    formData.set('amountpaid', depositPaid.toString());
+  }
 
   // if the id tenantid input is empty then set tenant to YES else set it to empty string
   if(document.getElementById('tenantid').value == ""){
