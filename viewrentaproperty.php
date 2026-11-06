@@ -1,6 +1,6 @@
                     <section class="animate__animated animate__fadeIn">
                             <p class="page-title">
-                                <span>View Property Sales</span>
+                                <span>View Property Rented</span>
                             </p>
                             <form id="viewrentapropertysform">
                                 <div class="flex flex-col space-y-3 bg-white/90 p-5 xl:p-10 rounded-sm">
@@ -60,7 +60,6 @@
             <th>Product</th>
             <th>Client</th>
             <th>Unit</th>
-            <th>Exit Mode</th>
             <th>Amount Paid</th>
             <th class="hidden">Rent</th>
             <th>Other Fees</th>
@@ -68,7 +67,7 @@
             <th>Expiry Date</th>
             <th>Payment Date</th>
             <th>Reference</th>
-            <th>Sales Fees</th>
+            <th>Rent Fees</th>
             <th>Instalments</th>
             <th>Actions</th>
         </tr>

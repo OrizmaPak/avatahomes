@@ -283,7 +283,6 @@ async function onviewrentapropertyTableDataSignal() {
         <td>${item.property}</td>
         <td>${item.tenant}</td>
         <td>${item.unitname}</td>
-        <td><span class="view-rent-mode view-rent-mode-${viewRentExitMode(item).toLowerCase()}">${viewRentExitMode(item)}</span></td>
         <td class="text-right">${formatViewRentNumber(item.rentdata.amountpaid)}</td>
         <td class="hidden text-right">${formatViewRentNumber(item.rentdata.otherfees)}</td>
         <td class="text-right">${formatViewRentNumber(item.rentdata.otherfees)}</td>

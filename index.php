@@ -27,7 +27,7 @@ if(!isset($_SESSION["wuseremail"]))
     <link rel="stylesheet" href="./css/discountapprovals.css?v=20261008d">
   <link rel="stylesheet" href="./css/discountapproval-schedule.css?v=20261009a">
   <link rel="stylesheet" href="./css/viewrentaproperty.css?v=20261011a">
-  <link rel="stylesheet" href="./css/viewrentaproperty-overrides.css?v=20261103a">
+  <link rel="stylesheet" href="./css/viewrentaproperty-overrides.css?v=20261106a">
   <link rel="stylesheet" href="./css/installmentpayments.css?v=20261011a">
   <link rel="stylesheet" href="./css/installmentpayments-overrides.css?v=20261011a">
   <link rel="stylesheet" href="./css/salespaymentreports.css?v=20261028e">
