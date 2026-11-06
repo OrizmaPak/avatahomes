@@ -302,7 +302,7 @@ async function onviewrentapropertyTableDataSignal() {
                 <tbody>${viewRentFeeRows(item)}</tbody>
             </table> 
         </td>
-        <td><button type="button" class="view-rent-schedule-button" onclick="viewRentInstallmentsById('${item.rentdata.id}')">${viewRentInstallments(item).length ? `View (${viewRentInstallments(item).length})` : 'No schedule'}</button></td>
+        <td class="view-rent-schedule-cell"><button type="button" class="view-rent-schedule-button" onclick="viewRentInstallmentsById('${item.rentdata.id}')" ${viewRentInstallments(item).length ? '' : 'disabled'}>${viewRentInstallments(item).length ? `View schedule (${viewRentInstallments(item).length})` : 'No schedule'}</button></td>
         <td>
             <div class="view-rent-row-actions">
                 <button type="button" title="Edit row entry" aria-label="Edit row entry" onclick="openPropertySalesRentalForEdit('${item.rentdata.id}')" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>

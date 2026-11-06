@@ -68,7 +68,7 @@
             <th>Payment Date</th>
             <th>Reference</th>
             <th>Rent Fees</th>
-            <th>Instalments</th>
+            <th>Installment Schedule</th>
             <th>Actions</th>
         </tr>
     </thead>
