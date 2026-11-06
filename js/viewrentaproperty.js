@@ -277,14 +277,12 @@ async function viewrentapropertyremove(id) {
 
 
 async function onviewrentapropertyTableDataSignal() {
-    let rows = getSignaledDatasource().map((item, index) => `
+    let rows = getSignaledDatasource().map(item => `
     <tr>
-        <td>${index + 1}</td>
         <td>${item.property}</td>
         <td>${item.tenant}</td>
         <td>${item.unitname}</td>
         <td class="text-right">${formatViewRentNumber(item.rentdata.amountpaid)}</td>
-        <td class="hidden text-right">${formatViewRentNumber(item.rentdata.otherfees)}</td>
         <td class="text-right">${formatViewRentNumber(item.rentdata.otherfees)}</td>
         <td>${formatDate(item.rentdata.begindate)}</td>
         <td>${formatDate(item.rentdata.expirationdate)}</td>

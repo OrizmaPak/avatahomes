@@ -56,19 +56,17 @@
                                 <table class="view-rent-report-table">
     <thead>
         <tr>
-            <th>S/N</th>
             <th>Product</th>
             <th>Client</th>
             <th>Unit</th>
             <th>Amount Paid</th>
-            <th class="hidden">Rent</th>
             <th>Other Fees</th>
             <th>Begin Date</th>
-            <th>Expiry Date</th>
+            <th>End Date</th>
             <th>Payment Date</th>
             <th>Reference</th>
             <th>Rent Fees</th>
-            <th>Installment Schedule</th>
+            <th>Schedules</th>
             <th>Actions</th>
         </tr>
     </thead>
