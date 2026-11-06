@@ -20,7 +20,7 @@ function formatViewRentNumber(value) {
 }
 
 function viewRentExitMode(item) {
-    return `${item?.rentdata?.exitmode || 'RENT'}`.trim().toUpperCase();
+    return `${item?.rentdata?.exitmode || ''}`.trim().toUpperCase();
 }
 
 function viewRentIsPendingDiscount(item) {
@@ -30,7 +30,9 @@ function viewRentIsPendingDiscount(item) {
 }
 
 function viewRentCompletedRecords(records) {
-    return (Array.isArray(records) ? records : []).filter(item => !viewRentIsPendingDiscount(item));
+    return (Array.isArray(records) ? records : []).filter(item =>
+        viewRentExitMode(item) === 'RENT' && !viewRentIsPendingDiscount(item)
+    );
 }
 
 function viewRentSalesAmount(item) {
@@ -238,7 +240,7 @@ async function fetchviewrentapropertys(id) {
             if(request.data.length) {
                 datasource = viewRentCompletedRecords(request.data)
                 if (datasource.length) resolvePagination(datasource, onviewrentapropertyTableDataSignal)
-                else document.getElementById('tabledata').innerHTML = `No completed property sales or rentals found`
+                else document.getElementById('tabledata').innerHTML = `No completed property rentals found`
             }
         }else{
              viewrentapropertyid = request.data[0].id
@@ -415,7 +417,7 @@ async function viewrentapropertyFormSubmitHandler(payloadd='') {
             if(request.data.length) {
                 datasource = viewRentCompletedRecords(request.data)
                 if (datasource.length) resolvePagination(datasource, onviewrentapropertyTableDataSignal)
-                else document.getElementById('tabledata').innerHTML = `No completed property sales or rentals found`
+                else document.getElementById('tabledata').innerHTML = `No completed property rentals found`
             }else document.getElementById('tabledata').innerHTML = `No records retrieved`
     }
     else return notification(request.message)
