@@ -26,12 +26,20 @@ async function onDeactivateUsersTableDataSignal() {
         <td>${item.address}</td>
         <td>${item.status}</td>
         <td class="flex items-center gap-3">
-            <button onclick="deactivateUsersItem(event, ${item.id})" title="Deactivate User" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">lock</button>
+            ${isDeactivatedUser(item) ? `
+                <button onclick="activateUsersItem(event, ${item.id})" title="Activate User" aria-label="Activate User" class="material-symbols-outlined rounded-full bg-green-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">lock_open</button>
+            ` : `
+                <button onclick="deactivateUsersItem(event, ${item.id})" title="Deactivate User" aria-label="Deactivate User" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">lock</button>
+            `}
         </td>
     </tr>`
     )
     .join('')
     injectPaginatatedTable(rows)
+}
+
+function isDeactivatedUser(user) {
+    return ['INACTIVE', 'DEACTIVATED', 'DISABLED', 'LOCKED', 'CLOSED'].includes(`${user?.status || ''}`.trim().toUpperCase());
 }
 
 async function deactivateUsersItem(event, index) {
@@ -49,4 +57,21 @@ async function deactivateUsersItem(event, index) {
         }
         return notification(request.message, 0)
     }
+}
+
+async function activateUsersItem(event, index) {
+    const user = deactivateusers.find(item => item.id == index);
+    if (!user) return;
+    if (!confirm('You are about to activate this user')) return;
+
+    const payload = new FormData();
+    payload.append('email', user.email);
+    const request = await httpRequest('../controllers/reactivateuser.php', payload, event.currentTarget || event.target);
+    if (request.status) {
+        document.getElementById('tabledata').innerHTML = '';
+        notification('User activated successfully!', 1);
+        fetchDeactivateUsers();
+        return;
+    }
+    notification(request.message, 0);
 }
