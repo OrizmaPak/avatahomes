@@ -40,8 +40,14 @@ function saleRulesOfType(type) {
 }
 
 function selectedSalePaddingRule() {
-  const count = `${document.getElementById('installmentcount')?.value || ''}`;
+  const instalmentSelect = document.getElementById('installmentcount');
+  if (instalmentSelect?.selectedOptions?.[0]?.dataset.noInstalment === 'true') return null;
+  const count = `${instalmentSelect?.value || ''}`;
   return saleRulesOfType('PADDING').find(rule => `${saleDiscountInstalmentCount(rule)}` === count) || null;
+}
+
+function isNoSaleInstalmentSelection() {
+  return document.getElementById('installmentcount')?.selectedOptions?.[0]?.dataset.noInstalment === 'true';
 }
 
 function selectedSalePricingValue() {
@@ -84,10 +90,15 @@ function configureSaleInstalmentOptions(preferredCount = '') {
   const counts = discount > 0
     ? [selectedDiscount?.dataset.instalments || '1']
     : [...new Set(rules.map(saleDiscountInstalmentCount).filter(Boolean))];
-  const desired = `${preferredCount || select.value || counts[0] || '1'}`;
-  select.innerHTML = counts.length
+  const desired = `${preferredCount || select.value || ''}`;
+  const noInstalmentOption = '<option value="1" data-no-instalment="true">No instalment — 0% padding</option>';
+  const paddingOptions = counts
+    .filter(count => `${count}` !== '1')
+    .map(count => `<option value="${count}">${count} instalment${Number(count) === 1 ? '' : 's'}</option>`)
+    .join('');
+  select.innerHTML = discount > 0
     ? counts.map(count => `<option value="${count}">${count} instalment${Number(count) === 1 ? '' : 's'}</option>`).join('')
-    : '<option value="1">1 instalment</option>';
+    : `${noInstalmentOption}${paddingOptions}`;
   select.value = [...select.options].some(option => option.value === desired) ? desired : select.options[0].value;
   select.disabled = discount > 0;
 }
@@ -877,8 +888,11 @@ function updateSalePlan() {
   if (pricingLabel) pricingLabel.textContent = 'Discount';
   if (paddingValue) {
     const installmentCount = Number(document.getElementById('installmentcount')?.value || 1);
-    paddingValue.textContent = padding > 0 ? `Padding applied: ${padding}% for ${installmentCount} instalment${installmentCount === 1 ? '' : 's'}.` : '';
-    paddingValue.classList.toggle('hidden', padding <= 0);
+    const noInstalment = isNoSaleInstalmentSelection();
+    paddingValue.textContent = noInstalment
+      ? 'Padding applied: 0% — no instalment selected.'
+      : padding > 0 ? `Padding applied: ${padding}% for ${installmentCount} instalment${installmentCount === 1 ? '' : 's'}.` : '';
+    paddingValue.classList.toggle('hidden', !noInstalment && padding <= 0);
   }
   const status = setSaleDiscountApprovalStatus(discount > 0
     ? document.getElementById('discountapprovalstatus')?.value
