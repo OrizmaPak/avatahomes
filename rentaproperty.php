@@ -177,8 +177,9 @@
                     </div>
                     <div class="sale-plan-fields">
                         <div class="form-group">
-                            <label id="pricingrulelabel" for="discount" class="control-label">Discount / Padding</label>
+                            <label id="pricingrulelabel" for="discount" class="control-label">Discount</label>
                             <select id="discount" class="form-control"><option value="0">0% — No discount</option></select>
+                            <small id="salepaddingvalue" class="sale-padding-value hidden" aria-live="polite"></small>
                         </div>
                         <div class="form-group">
                             <label id="finaltotallabel" for="totalamount" class="control-label">Final total</label>

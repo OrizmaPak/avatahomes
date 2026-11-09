@@ -850,6 +850,7 @@ function updateSalePlan() {
   const help = document.getElementById('transactionplanhelp');
   const finalLabel = document.getElementById('finaltotallabel');
   const pricingLabel = document.getElementById('pricingrulelabel');
+  const paddingValue = document.getElementById('salepaddingvalue');
   if (title) title.textContent = 'Sale payment plan';
   if (help) help.textContent = selectedSalePricingType() === 'PADDING'
     ? 'Padding applies to the selected instalment plan. No discount approval is required.'
@@ -873,7 +874,12 @@ function updateSalePlan() {
   const pricingType = selectedSalePricingType();
   const discount = pricingType === 'DISCOUNT' ? adjustment : 0;
   const padding = pricingType === 'PADDING' ? adjustment : 0;
-  if (pricingLabel) pricingLabel.textContent = pricingType === 'PADDING' ? 'Padding' : 'Discount';
+  if (pricingLabel) pricingLabel.textContent = 'Discount';
+  if (paddingValue) {
+    const installmentCount = Number(document.getElementById('installmentcount')?.value || 1);
+    paddingValue.textContent = padding > 0 ? `Padding applied: ${padding}% for ${installmentCount} instalment${installmentCount === 1 ? '' : 's'}.` : '';
+    paddingValue.classList.toggle('hidden', padding <= 0);
+  }
   const status = setSaleDiscountApprovalStatus(discount > 0
     ? document.getElementById('discountapprovalstatus')?.value
     : 'NOT_REQUIRED');

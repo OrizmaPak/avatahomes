@@ -23,7 +23,7 @@ if(!isset($_SESSION["wuseremail"]))
     <link rel="stylesheet" href="./css/dashboard.css?v=20261022a">
   <link rel="stylesheet" href="./css/floorplans-data.css?v=20261011a">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
-    <link rel="stylesheet" href="./css/rentaproperty.css?v=20261104a">
+    <link rel="stylesheet" href="./css/rentaproperty.css?v=20261109a">
     <link rel="stylesheet" href="./css/discountapprovals.css?v=20261008d">
   <link rel="stylesheet" href="./css/discountapproval-schedule.css?v=20261009a">
   <link rel="stylesheet" href="./css/viewrentaproperty.css?v=20261011a">
