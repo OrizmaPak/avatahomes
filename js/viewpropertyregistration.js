@@ -54,6 +54,13 @@ async function removeviewpropertyregistration(id) {
     
 }
 
+function editPropertyRegistration(id) {
+    const registerProperty = document.getElementById('propertyregistration')
+    if (!id || !registerProperty) return notification('Unable to open this property for editing.', 0)
+
+    propertyregistrationid = decodeURIComponent(id)
+    registerProperty.click()
+}
 
 async function onviewpropertyregistrationTableDataSignal() {
     let rows = getSignaledDatasource().map((item, index) => `
@@ -104,7 +111,7 @@ async function onviewpropertyregistrationTableDataSignal() {
             </td>
                     <td>${item.property?.propertyidno??''}</td>
         <td class="flex items-center gap-3">
-            <button style="background:blue" title="Edit row entry" onclick="document.getElementById('propertyregistration').click();propertyregistrationid = ${item.property?.id}" class="material-symbols-outlined rounded-full bg-[blue] h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
+            <button style="background:blue" title="Edit row entry" data-property-id="${encodeURIComponent(item.property?.id ?? item.property?.propertyid ?? item.id ?? '')}" onclick="editPropertyRegistration(this.dataset.propertyId)" class="material-symbols-outlined rounded-full bg-[blue] h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
             <button title="Delete row entry" onclick="removeviewpropertyregistration('${item.property?.id ?? item.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">delete</button>
         </td>
     </tr>`

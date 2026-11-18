@@ -1,4 +1,5 @@
 let propertyregistrationid
+let propertyRegistrationRowCount = 0
 let propertyfees = []
 let propertyImportGroups = []
 let propertyImportActiveIndex = -1
@@ -40,7 +41,7 @@ function isAddRowButtonReady() {
 } 
 
 function getPropertyDurationOptionsMarkup(selectedValue = '') {
-    const defaultValue = selectedValue === '' ? PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION : selectedValue
+    const defaultValue = String(selectedValue ?? '').trim().toUpperCase() || PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION
     const options = [
         { value: '', label: 'Select payment period' },
         { value: PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION, label: 'Not Applicable' },
@@ -63,15 +64,25 @@ function getPropertyDurationOptionsMarkup(selectedValue = '') {
         { value: '48', label: '48 Months' },
         { value: '60', label: '60 Months' }
     ]
-    return options.map(option => `<option value="${option.value}" ${String(defaultValue) === option.value ? 'selected' : ''}>${option.label}</option>`).join('')
+    if (/^\d+$/.test(defaultValue) && Number(defaultValue) > 0 && !options.some(option => option.value === defaultValue)) {
+        options.push({ value: defaultValue, label: `${defaultValue} (saved period)` })
+    }
+    return options.map(option => `<option value="${option.value}" ${defaultValue === option.value ? 'selected' : ''}>${option.label}</option>`).join('')
 }
  
 async function propertyregistrationActive() {
     const form = document.querySelector('#propertyregistrationform')
     const idInput = document.getElementById('id')
     if (!form || !idInput) return
-    if (form?.querySelector('#submit')) {
-        form.querySelector('#submit').addEventListener('click', propertyregistrationsubmit)
+    const editId = propertyregistrationid
+    propertyregistrationid = ''
+    idInput.value = ''
+    clearPropertyRegistrationTable()
+
+    const submitButton = form.querySelector('#submit')
+    if (submitButton) {
+        submitButton.disabled = Boolean(editId)
+        submitButton.addEventListener('click', propertyregistrationsubmit)
     }
 
     const addRowButton = getAddRowButton()
@@ -90,49 +101,55 @@ async function propertyregistrationActive() {
     }
 
     try {
-        propertyfees = await fetchpropertyfees()
-        if (!Array.isArray(propertyfees)) {
-            propertyfees = []
+        const fees = await fetchpropertyfees()
+        if (!form.isConnected) return
+        propertyfees = Array.isArray(fees) ? fees : []
+        wirePropertyRegistrationImport()
+        if (!editId) return
+
+        const params = new FormData()
+        params.append('id', editId)
+        const request = await httpRequest2('../controllers/fetchproperty', params)
+        if (!form.isConnected) return
+        const record = request?.status && request.data?.[0]
+        const units = record?.propertyunits ?? record?.units
+        if (!record || !Array.isArray(units)) {
+            return notification(request?.message || 'Unable to load the property and its units.', 0)
         }
+
+        populateData(record.property ?? record)
+        idInput.value = editId
+        units.forEach(addSavedPropertyRegistrationRow)
+        ensureDefaultFlatSelection()
+        recalculatePercentageRows({ preserveExistingAmounts: true })
+        if (submitButton) submitButton.disabled = false
     } finally {
-        setAddRowButtonLoading(false)
+        if (form.isConnected) setAddRowButtonLoading(false)
+    }
+}
+
+function addSavedPropertyRegistrationRow(unit) {
+    const feeName = cleanPropertyImportCell(unit.feename ?? unit.fee_name)
+    let feeId = cleanPropertyImportCell(unit.feenameid ?? unit.feeid ?? unit.morefeesid ?? unit.feename_id)
+    if (!feeId && feeName) {
+        const matchingFees = propertyfees.filter(fee =>
+            cleanPropertyImportCell(fee.feename).toUpperCase() === feeName.toUpperCase()
+        )
+        if (matchingFees.length === 1) feeId = String(matchingFees[0].id)
     }
 
-    wirePropertyRegistrationImport()
-    idInput.value = ''
-    clearPropertyRegistrationTable()
-
-    if (propertyregistrationid) {
-        idInput.value = propertyregistrationid
-        function payloadd() {
-            let params = new FormData()
-            params.append('id', propertyregistrationid)
-            return params
-        }
-        let request = await httpRequest2('../controllers/fetchproperty', payloadd())
-        if (request.status) {
-            if (request.data.length) {
-                populateData(request.data[0].property)
-                const units = request.data[0].propertyunits || []
-                units.forEach((unit) => {
-                    addPropertyRegistrationRow({
-                        unitName: unit.unitname ?? '',
-                        description: unit.description ?? unit.unitdescription ?? '',
-                        floor: unit.floor ?? unit.floornumber ?? unit.floorno ?? '',
-                        feeId: unit.feenameid ? String(unit.feenameid) : '',
-                        amount: unit.amount ?? unit.rent ?? '',
-                        rentalPeriod: unit.rentalperiod ?? '',
-                        unitId: unit.id
-                    })
-                })
-                ensureDefaultFlatSelection()
-                recalculatePercentageRows()
-            }
-        } else {
-            return notification(request.message, 0)
-        }
-        propertyregistrationid = ''
-    }
+    addPropertyRegistrationRow({
+        unitName: unit.unitname,
+        description: unit.description ?? unit.unitdescription,
+        floor: unit.floor ?? unit.floornumber ?? unit.floorno,
+        feeId,
+        feeName,
+        feeMode: unit.mode ?? unit.feemode,
+        amount: unit.amount ?? unit.rent ?? unit.feeamount,
+        rentalPeriod: unit.rentalperiod ?? unit.rentalperiodmonths ?? unit.paymentperiod,
+        unitId: unit.id ?? unit.unitid,
+        isSavedRow: true
+    })
 }
 
 function clearPropertyRegistrationTable() {
@@ -171,7 +188,7 @@ function addPropertyRegistrationRow(prefill = {}) {
     const tbody = document.getElementById('propertyregistrationtable')
     if (!tbody) return null
 
-    const id = prefill.rowId || randomId()
+    const id = `property-unit-${++propertyRegistrationRowCount}`
     const tr = document.createElement('tr')
     tr.id = id
     tr.dataset.feeMode = ''
@@ -232,10 +249,9 @@ function addPropertyRegistrationRow(prefill = {}) {
     controls.description.value = prefill.description ?? ''
     controls.floor.value = prefill.floor ?? ''
     controls.unitId.value = prefill.unitId ?? ''
-    controls.rental.value = prefill.rentalPeriod ?? ''
 
     setupRentalPeriodControl(controls.rental)
-    populateFeeSelect(controls.feeSelect, prefill.feeId ? String(prefill.feeId) : '')
+    populateFeeSelect(controls.feeSelect, prefill.feeId ?? '', prefill.feeName)
 
     controls.feeSelect.addEventListener('change', () => handleFeeChange(id))
     controls.floor.addEventListener('input', updatePropertyRegistrationCounts)
@@ -246,6 +262,8 @@ function addPropertyRegistrationRow(prefill = {}) {
     handleFeeChange(id, {
         isInitialLoad: true,
         initialAmount: prefill.amount,
+        initialMode: prefill.feeMode,
+        isSavedRow: prefill.isSavedRow,
         autoSelectSource: prefill.autoSelectSource === true
     })
     initializeMoneyInput(controls.amount)
@@ -260,14 +278,15 @@ function setupRentalPeriodControl(input) {
     input.setAttribute('title', 'Select payment period in months or Not Applicable')
 }
 
-function populateFeeSelect(select, selectedValue = '') {
+function populateFeeSelect(select, selectedValue = '', savedName = '') {
     if (!select) return
-    const options = ['<option value="">Select fee</option>']
+    select.replaceChildren(new Option(savedName && !selectedValue ? `${savedName} (select a fee)` : 'Select fee', ''))
     propertyfees.forEach((fee) => {
-        options.push(`<option value="${fee.id}">${fee.feename}</option>`)
+        select.add(new Option(fee.feename, fee.id))
     })
-    select.innerHTML = options.join('')
-    if (selectedValue) {
+    select.value = selectedValue
+    if (selectedValue && select.selectedIndex === -1) {
+        select.add(new Option(savedName || `Fee #${selectedValue}`, selectedValue))
         select.value = selectedValue
     }
 }
@@ -299,7 +318,9 @@ function handleFeeChange(rowId, options = {}) {
 
     const {
         initialAmount = null,
+        initialMode = '',
         isInitialLoad = false,
+        isSavedRow = false,
         autoSelectSource = false
     } = options
 
@@ -309,26 +330,21 @@ function handleFeeChange(rowId, options = {}) {
 
     controls.row.dataset.feeMode = ''
     controls.row.dataset.percentageRate = ''
-    if (controls.modeDisplay) controls.modeDisplay.textContent = ''
+    if (controls.modeDisplay) controls.modeDisplay.textContent = initialMode
     if (controls.amount) {
-        controls.amount.value = ''
+        controls.amount.value = initialAmount ?? ''
         controls.amount.readOnly = false
     }
     if (controls.applyCell) {
         controls.applyCell.innerHTML = ''
     }
 
-    const feeId = controls.feeSelect.value
-    if (!feeId) {
-        ensureDefaultFlatSelection()
-        recalculatePercentageRows()
-        return
-    }
-
-    const fee = propertyfees.find((item) => String(item.id) === feeId)
+    const fee = propertyfees.find((item) => String(item.id) === controls.feeSelect.value)
     if (!fee) {
-        ensureDefaultFlatSelection()
-        recalculatePercentageRows()
+        if (!isInitialLoad) {
+            ensureDefaultFlatSelection()
+            recalculatePercentageRows()
+        }
         return
     }
 
@@ -369,7 +385,7 @@ function handleFeeChange(rowId, options = {}) {
             controls.modeDisplay.textContent = Number.isFinite(rate) ? `${rate}%` : 'PERCENTAGE'
         }
         if (controls.amount) {
-            controls.amount.value = ''
+            if (!isSavedRow) controls.amount.value = ''
             controls.amount.readOnly = true
         }
     } else {
@@ -378,8 +394,10 @@ function handleFeeChange(rowId, options = {}) {
         }
     }
 
-    ensureDefaultFlatSelection()
-    recalculatePercentageRows()
+    if (!isSavedRow) {
+        ensureDefaultFlatSelection()
+        recalculatePercentageRows()
+    }
 }
 
 function renderApplyRadio(rowId, cell, checked) {
@@ -424,7 +442,7 @@ function handleAmountInput(rowId) {
     }
 }
 
-function recalculatePercentageRows() {
+function recalculatePercentageRows({ preserveExistingAmounts = false } = {}) {
     const tbody = document.getElementById('propertyregistrationtable')
     if (!tbody) return
     const checkedRadio = document.querySelector(`input[name="${APPLY_PERCENTAGE_GROUP}"]:checked`)
@@ -432,8 +450,9 @@ function recalculatePercentageRows() {
     if (checkedRadio) {
         const baseAmountInput = document.getElementById(`ar-${checkedRadio.value}`)
         if (baseAmountInput) {
-            const parsed = parseFloat(baseAmountInput.value)
-            if (!Number.isNaN(parsed)) {
+            const value = baseAmountInput.value.replace(/,/g, '').trim()
+            const parsed = Number(value)
+            if (value && Number.isFinite(parsed)) {
                 baseAmount = parsed
             }
         }
@@ -443,11 +462,11 @@ function recalculatePercentageRows() {
     rows.forEach((row) => {
         if ((row.dataset.feeMode || '').toUpperCase() === 'PERCENTAGE') {
             const amountInput = document.getElementById(`ar-${row.id}`)
-            if (!amountInput) return
+            if (!amountInput || (preserveExistingAmounts && amountInput.value !== '')) return
             const rate = parseFloat(row.dataset.percentageRate || '')
             if (baseAmount !== null && Number.isFinite(rate)) {
                 const computed = (baseAmount * rate) / 100
-                amountInput.value = Number.isFinite(computed) ? parseFloat(computed.toFixed(2)).toString() : ''
+                amountInput.value = Number.isFinite(computed) ? formatMoneyInputValue(Number(computed.toFixed(2))) : ''
             } else {
                 amountInput.value = ''
             }
@@ -462,8 +481,8 @@ function removePropertyRegistrationRow(rowId) {
     row.remove()
     if (wasSource) {
         ensureDefaultFlatSelection()
+        recalculatePercentageRows()
     }
-    recalculatePercentageRows()
     updatePropertyRegistrationCounts()
 }
 
@@ -494,7 +513,7 @@ async function propertyregistrationsubmit() {
         const rpCtrl = document.getElementById(`rp-${id}`)
         const rpVal = (rpCtrl?.value || '').trim() 
         if (rpVal !== PROPERTY_REGISTRATION_NOT_APPLICABLE_DURATION && (!/^\d+$/.test(rpVal) || parseInt(rpVal, 10) < 1)) {
-            return notification('Rental period must be a whole number in days and cannot be zero. Examples: 30, 60, 90, 120, 180. 30 days represents one month.', 0)
+            return notification('Select a valid payment period or Not Applicable.', 0)
         }
     }
 
