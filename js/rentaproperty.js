@@ -173,7 +173,8 @@ function isRentPropertyUnitEligible(unit, exitMode = getSelectedExitMode()) {
   const isSalesFee = feeName.startsWith('SALES ') || feeName.startsWith('PROPERTY SALES ');
   const isRentFee = RENT_ALLOWED_UNIT_FEES.includes(feeName);
   const unavailable = ['YES', 'TRUE', '1', 'SOLD', 'RENTED', 'TAKEN', 'OCCUPIED', 'ALLOCATED'].includes(occupancyValue);
-  return (exitMode === 'SALE' ? isSalesFee : exitMode === 'RENT' ? isRentFee : false) && !unavailable;
+  const hasCost = normalizeUnitAmount(unit) !== 0;
+  return (exitMode === 'SALE' ? isSalesFee : exitMode === 'RENT' ? isRentFee : false) && !unavailable && hasCost;
 }
 
 function rentPropertiesForExitMode(exitMode) {
