@@ -257,16 +257,19 @@ async function checkrentapropertyproperty(el) {
   const payload = new FormData();
   payload.append('id', pid);
   const r = await httpRequest2('../controllers/fetchrenewableunits', payload, null, 'json');
-  if (!r.status || !r.data.length) {
+  const availableUnits = r.status && Array.isArray(r.data)
+    ? r.data.filter(unit => Number(unit.rent) !== 0)
+    : [];
+  if (!availableUnits.length) {
     notification(r.message||'No units found', 0);
     document.getElementById('unitt').classList.add('hidden');
     return;
   }
   document.getElementById('unitt').classList.remove('hidden');
-  rentapropertyresult = r.data;
+  rentapropertyresult = availableUnits;
   document.getElementById('unitid').innerHTML =
     `<option value="">-- Select Property Unit --</option>` +
-    r.data.map(d =>
+    availableUnits.map(d =>
       `<option value="${d.id}">${d.unitname} ₦${Number(d.rent).toLocaleString()}</option>`
     ).join('');
 }
