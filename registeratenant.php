@@ -53,7 +53,7 @@
                                        <div class="form-group">
                                             <label for="imageurl" class="control-label">image url</label>
                                             <div id="imagePreview"></div>
-                                            <input type="file" name="imageurl" id="imageurl" class="form-control registeratenantverify" onchange="previewImage('imageurl')">
+                                            <input type="file" name="imageurl" id="imageurl" class="form-control" onchange="previewImage('imageurl')">
                                         </div>  
                                         <div class="form-group">
                                             <label for="country" class="control-label">occupation</label>
@@ -65,7 +65,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="country" class="control-label">date of birth</label>
-                                            <input type="date" name="dateofbirth" id="dateofbirth" class="form-control registeratenantverify">
+                                            <input type="date" name="dateofbirth" id="dateofbirth" class="form-control">
                                         </div>
                                     </div>
                                     <hr class="my-10">
