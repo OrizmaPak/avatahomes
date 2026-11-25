@@ -223,6 +223,43 @@ async function runPermissions(){
                      subitems[i].classList.remove('hidden');
              }}
         if(request.role != 'SUPERADMIN'){ 
+            const navigationPermissions = {
+                dashboard: 'DASHBOARD',
+                access_control: 'ACCESS CONTROL',
+                'user/deactivate': 'DEACTIVATE USER',
+                password: 'CHANGE PASSWORD',
+                organisationinfo: 'ORGANISATION INFO',
+                morefees: 'MORE FEES',
+                discounts: 'DISCOUNTS/PADDING',
+                propertyregistration: 'REGISTER PROPERTY',
+                viewpropertyregistration: 'VIEW PROPERTY',
+                floorplans: 'FLOOR PLANS',
+                registeratenant: 'REGISTER CLIENT',
+                viewtenants: 'VIEW CLIENTS',
+                viewenquires: 'VIEW ENQUIRIES',
+                rentaproperty: 'PROPERTY SALES/RENTALS',
+                viewrentaproperty: 'VIEW PROPERTIES RENTED',
+                salesreport: 'VIEW SALES',
+                pendingdiscountapprovals: 'DISCOUNT APPROVALS',
+                approvesalesdiscounts: 'APPROVE SALES DISCOUNTS',
+                duepayments: 'DUE PAYMENTS',
+                overduepayments: 'OVERDUE PAYMENTS',
+                installmentpayments: 'INSTALLMENT PAYMENTS',
+                duerentals: 'DUE RENTALS',
+                moredocuments: 'MORE DOCUMENTS',
+                otherpayments: 'OTHER PAYMENTS',
+                paymenthistory: 'PAYMENT HISTORY',
+                expenses: 'EXPENSES',
+                viewexpenses: 'VIEW EXPENSES',
+                net: 'NET TRANSACTIONS',
+                addglaccount: 'ADD GL ACCOUNT',
+                viewglaccount: 'VIEW GL ACCOUNTS',
+                addgltransaction: 'ADD GL TRANSACTION',
+                gltransactionhistory: 'GL TRANSACTION HISTORY',
+                trialbalance: 'TRIAL BALANCE',
+                incomestatement: 'INCOME STATEMENT',
+                balancesheet: 'BALANCE SHEET'
+            };
             const permissionAliases = {
                 'ACCESS CONTROL': ['ACCESS CONTROL'],
                 'CHANGE PASSWORD': ['CHANGE PASSWORD'],
@@ -266,7 +303,7 @@ async function runPermissions(){
                 'APPROVE SALES DISCOUNTS': ['APPROVAL SALES DISCOUNTS'],
                 'APPROVAL SALES DISCOUNTS': ['APPROVE SALES DISCOUNTS'],
                 'APPROVEDISCOUNT': ['APPROVE SALES DISCOUNTS'],
-                'DISCOUNT APPROVALS': ['APPROVEDISCOUNT', 'PENDING DISCOUNT APPROVALS', 'APPROVE SALES DISCOUNTS'],
+                'DISCOUNT APPROVALS': ['PENDING DISCOUNT APPROVALS', 'PENDING DISCOUNT APPROVAL'],
                 'DUE PROPERTY PAYMENTS': ['DUE RENTALS/RENEWALS'],
                 'DUE RENTALS/RENEWALS': ['DUE PROPERTY PAYMENTS'],
                 'DUE PAYMENTS': ['DUE PAYMENTS'],
@@ -275,6 +312,11 @@ async function runPermissions(){
                 'ORGANISATION INFO': ['ORGANISATION INFO'],
                 'MORE FEES': ['MORE FEES'],
                 'DISCOUNTS': ['DISCOUNTS'],
+                'DISCOUNTS/PADDING': ['DISCOUNTS'],
+                'PROPERTY SALES/RENTALS': ['PROPERTY SALES', 'RENT A PROPERTY'],
+                'VIEW PROPERTIES RENTED': ['VIEW PROPERTY SALES', 'VIEW RENTED PROPERTY'],
+                'VIEW SALES': ['SALES'],
+                'DUE RENTALS': ['DUE PROPERTY PAYMENTS', 'DUE RENTALS/RENEWALS'],
                 'OTHER PAYMENTS': ['OTHER PAYMENTS'],
                 'PAYMENT HISTORY': ['PAYMENT HISTORY'],
                 'EXPENSES': ['EXPENSES'],
@@ -295,8 +337,9 @@ async function runPermissions(){
                 : [];
             for(i=0; i<subitems.length; i++){
               const label = subitems[i].textContent.toUpperCase().trim();
-              const aliases = permissionAliases[label] || [];
-              const hasPermission = permissionList.includes(label) || aliases.some(alias => permissionList.includes(alias));
+              const permissionName = navigationPermissions[subitems[i].id] || label;
+              const aliases = permissionAliases[permissionName] || [];
+              const hasPermission = permissionList.includes(permissionName) || aliases.some(alias => permissionList.includes(alias));
               if(hasPermission){
                     if(permission_switch === 'ON')subitems[i].classList.remove('hidden');
                 }else{

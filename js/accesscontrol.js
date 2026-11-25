@@ -5,11 +5,9 @@ const admin_user = [
     "ACCESS CONTROL",
     "CHANGE PASSWORD",
     "DEACTIVATE USER",
-    "PROFILE",
-    "SELECT USER",
     "ORGANISATION INFO",
     "MORE FEES",
-    "DISCOUNTS"
+    "DISCOUNTS/PADDING"
 ]
 
 const property_user = [
@@ -19,19 +17,18 @@ const property_user = [
 ]
 
 const tenancy_rental = [ 
-    "REGISTER TENANT",
-    "VIEW TENANTS",
-    "VIEW ENQUIRES",
-    "PROPERTY SALES",
-    "VIEW PROPERTY SALES",
-    "SALES",
-    "PENDING DISCOUNT APPROVALS",
-    "APPROVEDISCOUNT",
+    "REGISTER CLIENT",
+    "VIEW CLIENTS",
+    "VIEW ENQUIRIES",
+    "PROPERTY SALES/RENTALS",
+    "VIEW PROPERTIES RENTED",
+    "VIEW SALES",
+    "DISCOUNT APPROVALS",
     "APPROVE SALES DISCOUNTS",
-    "DUE PROPERTY PAYMENTS",
     "DUE PAYMENTS",
     "OVERDUE PAYMENTS",
     "INSTALLMENT PAYMENTS",
+    "DUE RENTALS",
     "MORE DOCUMENTS"
   ]
   
@@ -63,14 +60,7 @@ const access_array = [
                     ]
 
 function permissionDisplayName(permission) {
-    const map = {
-        "ACCESS CONTROL": "ACCESS CONTROL",
-        "SELECT USER": "SELECT USER",
-        "REGISTER TENANT": "REGISTER CLIENT",
-        "VIEW TENANTS": "VIEW CLIENTS",
-        "VIEW ENQUIRIES": "VIEW ENQUIRES"
-    };
-    return map[permission] || permission;
+    return permission;
 }
 
 function permissionMatches(savedPermissions, permissionName) {
@@ -118,7 +108,7 @@ function permissionMatches(savedPermissions, permissionName) {
         "APPROVE SALES DISCOUNTS": ["APPROVAL SALES DISCOUNTS"],
         "APPROVAL SALES DISCOUNTS": ["APPROVE SALES DISCOUNTS"],
         "APPROVEDISCOUNT": ["APPROVE SALES DISCOUNTS"],
-        "DISCOUNT APPROVALS": ["APPROVEDISCOUNT", "PENDING DISCOUNT APPROVALS", "APPROVE SALES DISCOUNTS"],
+        "DISCOUNT APPROVALS": ["PENDING DISCOUNT APPROVALS", "PENDING DISCOUNT APPROVAL"],
         "DUE PROPERTY PAYMENTS": ["DUE RENTALS/RENEWALS"],
         "DUE RENTALS/RENEWALS": ["DUE PROPERTY PAYMENTS"],
         "DUE PAYMENTS": ["DUE PAYMENTS"],
@@ -126,6 +116,11 @@ function permissionMatches(savedPermissions, permissionName) {
         "ORGANISATION INFO": ["ORGANISATION INFO"],
         "MORE FEES": ["MORE FEES"],
         "DISCOUNTS": ["DISCOUNTS"],
+        "DISCOUNTS/PADDING": ["DISCOUNTS"],
+        "PROPERTY SALES/RENTALS": ["PROPERTY SALES", "RENT A PROPERTY"],
+        "VIEW PROPERTIES RENTED": ["VIEW PROPERTY SALES", "VIEW RENTED PROPERTY"],
+        "VIEW SALES": ["SALES"],
+        "DUE RENTALS": ["DUE PROPERTY PAYMENTS", "DUE RENTALS/RENEWALS"],
         "OTHER PAYMENTS": ["OTHER PAYMENTS"],
         "PAYMENT HISTORY": ["PAYMENT HISTORY"],
         "EXPENSES": ["EXPENSES"],

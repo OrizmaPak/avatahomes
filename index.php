@@ -180,7 +180,7 @@ if(!isset($_SESSION["wuseremail"]))
                                         <li class="nav-section-heading">Clients & Enquiries</li>
                                         <li class="navitem-child" id="registeratenant">Register Client</li>
                                         <li class="navitem-child" id="viewtenants">View Clients</li>
-                                        <li class="navitem-child" id="viewenquires">View Enquires</li>
+                                        <li class="navitem-child" id="viewenquires">View Enquiries</li>
                                         <li class="nav-section-heading">Property Transactions</li>
                                         <li class="navitem-child" id="rentaproperty">Property Sales/Rentals</li>
                                         <li class="navitem-child" id="viewrentaproperty">View Properties Rented</li>
@@ -258,7 +258,7 @@ if(!isset($_SESSION["wuseremail"]))
     <script src="./js/util.js?v=20260613a"></script>
     <script src="./js/receipts.js?v=20261028b"></script>
     <script src="./js/router.js?v=20261118a"></script>
-    <script src="./js/index.js?v=20261104a"></script>
+    <script src="./js/index.js?v=20261125a"></script>
     <script src="./js/oreutil.js?v=20261027a"></script>
 </body>
 
