@@ -12,6 +12,12 @@ function openClientForEdit(clientId) {
 
 window.openClientForEdit = openClientForEdit
 
+function getClientFullName(client = {}) {
+    return [client.firstname, client.othernames, client.lastname]
+        .filter(Boolean)
+        .join(' ')
+}
+
 async function viewtenantsActive() {
     const form = document.querySelector('#viewtenantssform')
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', e=>viewtenantsFormSubmitHandler('payload'))
@@ -73,16 +79,14 @@ async function onviewtenantsTableDataSignal() {
     let rows = getSignaledDatasource().map((item, index) => `
     <tr>
         <td>${index + 1 }</td>
-        <td>${item.tenantdata.firstname}</td>
-        <td>${item.tenantdata.lastname}</td>
+        <td>${getClientFullName(item.tenantdata)}</td>
         <td>${item.tenantdata.occupation}</td>
         <td>${item.tenantdata.phone}</td>
-        <td>${item.tenantdata.placeofbirth}</td>
         <td>${item.tenantdata.referee1}</td>
         <td>${item.tenantdata.referee2}</td>
         <td>
             ${item.dependentdata.length == 0 ? "NO DEPENDENTS" : item.dependentdata.length + " DEPENDENTS"}
-            ${item.dependentdata.length > 0 ? `<button title="View dependents" onclick="showDependantModal('${item.tenantdata.id}', '${item.tenantdata.firstname} ${item.tenantdata.lastname}')" class="material-symbols-outlined rounded-full bg-blue-500 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">visibility</button>` : ""}
+            ${item.dependentdata.length > 0 ? `<button title="View dependents" onclick="showDependantModal('${item.tenantdata.id}')" class="material-symbols-outlined rounded-full bg-blue-500 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">visibility</button>` : ""}
         </td>
         <td class="flex items-center gap-3">
             <button title="Edit row entry" onclick="openClientForEdit('${item.tenantdata.id}')" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
@@ -96,13 +100,15 @@ async function onviewtenantsTableDataSignal() {
 
 // Make sure Bootstrap 5 CSS (or a custom table style) and dayjs are loaded once in your project.
 
-async function showDependantModal(tenantId, tenantName) {
+async function showDependantModal(tenantId) {
     // 1️⃣  Fetch the right tenant record
     const record = datasource.find(d => d.tenantdata.id === tenantId);
     if (!record) {
       console.warn('Client not found:', tenantId);
       return; 
     }
+
+    const tenantName = getClientFullName(record.tenantdata);
    
     // 2️⃣  Build table rows
     const rowsHtml = record.dependentdata.map(dep => `

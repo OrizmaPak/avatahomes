@@ -126,7 +126,7 @@ const routerTree = {
     viewtenants: {
         template: 'viewtenants',
         startingFunction: 'viewtenantsActive', 
-        scriptName:  './js/viewtenants.js?v=20261125a'
+        scriptName:  './js/viewtenants.js?v=20261125b'
     },
     viewenquires: {
         template: 'viewenquires',

@@ -42,13 +42,11 @@
                                         <thead>
                                             <tr>
                                                 <th>s/n </th>
-                                                <th>first name</th>
-                                                <th>last name</th>
+                                                <th>full name</th>
                                                 <th>occupation</th>
                                                 <th>phone</th>
-                                                <th>place of birth</th>
-                                                <th>referee1</th>
-                                                <th>referee2</th>
+                                                <th>referee 1</th>
+                                                <th>referee 2</th>
                                                 <th>dependants</th>
                                                 <th>action</th>
                                             </tr>
