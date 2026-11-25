@@ -1,7 +1,9 @@
-let registeratenantid
 async function registeratenantActive() {
     const form = document.querySelector('#registeratenantform')
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', registeratenantsubmit)
+    const registeratenantid = `${sessionStorage.getItem('registeratenantid') || ''}`.trim()
+    sessionStorage.removeItem('registeratenantid')
+
     if(registeratenantid){
         document.getElementById('id').value = registeratenantid
         function payloadd(){
@@ -10,18 +12,19 @@ async function registeratenantActive() {
             return params
         }
          let request = await httpRequest2('../controllers/fetchtenants', payloadd())
-        //  request = JSON.parse(request)
-         if(request.status){
-             if(request.data.length){
-                 console.log('data gotten', request.data)
-                 populateData(request.data[0].tenantdata)
-             }
-         }else{
-             return notification(request.message, 0)
+         if(!request?.status){
+             return notification(request?.message || 'Unable to load this client.', 0)
          }
-         
+
+         const clients = Array.isArray(request.data) ? request.data : []
+         const selectedClient = clients.find((client) => `${client?.tenantdata?.id ?? client?.id ?? ''}` === registeratenantid)
+         if (!selectedClient) {
+             document.getElementById('id').value = ''
+             return notification('The selected client could not be found.', 0)
+         }
+
+         populateData(selectedClient.tenantdata || selectedClient)
     }
-    registeratenantid = ''
 }
 
 async function registeratenantsubmit(){

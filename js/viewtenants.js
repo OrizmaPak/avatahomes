@@ -1,4 +1,17 @@
 let viewtenantsid
+
+function openClientForEdit(clientId) {
+    const selectedClientId = `${clientId ?? ''}`.trim()
+    if (!selectedClientId) {
+        return notification('Unable to open this client for editing.', 0)
+    }
+
+    sessionStorage.setItem('registeratenantid', selectedClientId)
+    routerEvent('registeratenant')
+}
+
+window.openClientForEdit = openClientForEdit
+
 async function viewtenantsActive() {
     const form = document.querySelector('#viewtenantssform')
     if(form.querySelector('#submit')) form.querySelector('#submit').addEventListener('click', e=>viewtenantsFormSubmitHandler('payload'))
@@ -72,7 +85,7 @@ async function onviewtenantsTableDataSignal() {
             ${item.dependentdata.length > 0 ? `<button title="View dependents" onclick="showDependantModal('${item.tenantdata.id}', '${item.tenantdata.firstname} ${item.tenantdata.lastname}')" class="material-symbols-outlined rounded-full bg-blue-500 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">visibility</button>` : ""}
         </td>
         <td class="flex items-center gap-3">
-            <button title="Edit row entry" onclick="document.getElementById('registeratenant').click();registeratenantid = ${item.tenantdata.id}" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
+            <button title="Edit row entry" onclick="openClientForEdit('${item.tenantdata.id}')" class="material-symbols-outlined rounded-full bg-primary-g h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">edit</button>
             <button title="Delete row entry" onclick="viewtenantsremove('${item.tenantdata.id}')" class="material-symbols-outlined rounded-full bg-red-600 h-8 w-8 text-white drop-shadow-md text-xs" style="font-size: 18px;">delete</button>
         </td>
     </tr>`
